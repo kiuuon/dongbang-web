@@ -1,8 +1,8 @@
 import { supabase } from './supabaseClient';
 
-export async function login() {
+export async function login(provider: 'kakao' | 'google') {
   await supabase.auth.signInWithOAuth({
-    provider: 'kakao',
+    provider,
   });
 }
 

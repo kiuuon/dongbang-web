@@ -3,7 +3,6 @@ import Image from 'next/image';
 
 import { fetchSession, logout } from '@/lib/apis/auth';
 import KakaoLoginButton from '@/components/home/buttons/KakaoLoginButton';
-import NaverLoginButton from '@/components/home/buttons/NaverLoginButton';
 import GoogleLoginButton from '@/components/home/buttons/GoogleLoginButton';
 
 function Home() {
@@ -29,7 +28,6 @@ function Home() {
         </div>
         <div className="flex flex-col gap-[12px]">
           <KakaoLoginButton />
-          <NaverLoginButton />
           <GoogleLoginButton />
         </div>
       </div>
