@@ -9,5 +9,9 @@ export async function login() {
 export async function fetchSession() {
   const { data } = await supabase.auth.getSession();
 
-  return data;
+  return data.session;
+}
+
+export async function logout() {
+  await supabase.auth.signOut();
 }

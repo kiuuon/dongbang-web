@@ -1,13 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import { fetchSession } from '@/lib/apis/auth';
+import { fetchSession, logout } from '@/lib/apis/auth';
 import KakaoLoginButton from '@/components/home/buttons/KakaoLoginButton';
 import NaverLoginButton from '@/components/home/buttons/NaverLoginButton';
 import GoogleLoginButton from '@/components/home/buttons/GoogleLoginButton';
 
 function Home() {
   const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
+
+  const { mutate: handleLogout } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      window.location.href = '/';
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    },
+  });
 
   if (!session) {
     return (
@@ -25,7 +36,18 @@ function Home() {
     );
   }
 
-  return <div>{session.session?.user.email}</div>;
+  return (
+    <div className="flex h-screen flex-col items-center justify-center gap-[12px]">
+      <div>{session.user.email}</div>
+      <button
+        type="button"
+        className="cursor-pointer rounded bg-blue-500 px-4 py-2 text-white"
+        onClick={() => handleLogout()}
+      >
+        로그아웃
+      </button>
+    </div>
+  );
 }
 
 export default Home;
