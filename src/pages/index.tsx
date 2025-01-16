@@ -6,7 +6,7 @@ import KakaoLoginButton from '@/components/home/buttons/KakaoLoginButton';
 import GoogleLoginButton from '@/components/home/buttons/GoogleLoginButton';
 
 function Home() {
-  const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
+  const { data: session, isPending } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
 
   const { mutate: handleLogout } = useMutation({
     mutationFn: logout,
@@ -19,7 +19,11 @@ function Home() {
     },
   });
 
-  if (!session) {
+  if (isPending) {
+    return null;
+  }
+
+  if (!session?.user) {
     return (
       <div className="flex h-screen flex-col items-center justify-center bg-[#F5F5F5]">
         <Image src="/images/logo.png" alt="로고" width={180} height={170} />
@@ -36,7 +40,7 @@ function Home() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-[12px]">
-      <div>{session.user.email}</div>
+      <div>{session.user?.email}</div>
       <button
         type="button"
         className="cursor-pointer rounded bg-blue-500 px-4 py-2 text-white"

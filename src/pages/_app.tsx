@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
+import { fetchUser } from '@/lib/apis/user';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -14,8 +15,19 @@ export default function App({ Component, pageProps }: AppProps) {
     (async () => {
       const session = await fetchSession();
 
-      if (!session && router.pathname !== '/') {
+      if (!session.user && router.pathname !== '/') {
         router.push('/');
+      }
+    })();
+  }, [router]);
+
+  useEffect(() => {
+    (async () => {
+      const { user } = await fetchSession();
+      const userInfo = await fetchUser(user?.id || '');
+
+      if (user && !userInfo?.length && router.pathname !== '/sign-up') {
+        router.push('/sign-up');
       }
     })();
   }, [router]);
