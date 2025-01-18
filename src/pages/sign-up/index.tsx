@@ -166,7 +166,7 @@ function Signup() {
     }
   };
 
-  const handleUniversityBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleUniversityBlur = () => {
     if (universityList?.some((item) => item.name === university)) {
       setUniversityError(false);
     } else {

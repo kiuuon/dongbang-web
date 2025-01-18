@@ -13,8 +13,6 @@ function Home() {
     queryFn: fetchUser,
   });
 
-  console.log(userInfo);
-
   const { mutate: handleLogout } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
