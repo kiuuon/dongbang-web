@@ -1,11 +1,14 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState, useRef } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
+import { fetchSession } from '@/lib/apis/auth';
+import { fetchUniversityList, isNicknameExists } from '@/lib/apis/sign-up';
 import CheckIcon from '@/icons/check-icon';
 import CheckIcon2 from '@/icons/check-icon2';
-import { isNicknameExists } from '@/lib/apis/sign-up';
 
 function Signup() {
+  const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
+
   const [page, setPage] = useState(1);
   const [termOfUse, setTermOfUse] = useState(false); // 동방 이용약관 동의
   const [privacyPolicy, setPrivacyPolicy] = useState(false); // 개인정보 수집 및 이용 동의
@@ -14,20 +17,34 @@ function Signup() {
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false);
+
   const [birth, setBirth] = useState('');
   const [birthError, setBirthError] = useState(false);
+
   const [gender, setGender] = useState('');
+
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState(false);
+  const [isSameCheck, setIsSameCheck] = useState(false);
   const [sameNicknameError, setSameNicknameError] = useState(false);
   const [isAvailableNickname, setIsAvailableNickname] = useState(false);
+
   const [university, setUniversity] = useState('');
+  const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
+  const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
+  const useniversityDropdownRef = useRef<HTMLDivElement>(null);
+  const [universiryError, setUniversityError] = useState(false);
+
   const [clubCount, setClubCount] = useState('');
+
   const [mbti, setMbti] = useState('');
   const [mbtiError, setMbtiError] = useState(false);
+
   const [path, setPath] = useState('');
   const [pathInputDisabled, setPathInputDisabled] = useState(true);
   const [etcPath, setEtcPath] = useState('');
+
+  const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
 
   const handleFullAgreeButton = () => {
     if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
@@ -69,7 +86,7 @@ function Signup() {
     setBirth(event.target.value);
   };
 
-  const birthRegExp = /^[0-9]{6}$/;
+  const birthRegExp = /^[0-9]{8}$/;
   const handleBirthBlur = () => {
     if (!birth.match(birthRegExp)) {
       setBirthError(true);
@@ -79,6 +96,8 @@ function Signup() {
   };
 
   const handleNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSameCheck(false);
+    setIsAvailableNickname(false);
     setNickname(event.target.value);
   };
 
@@ -101,6 +120,7 @@ function Signup() {
       } else {
         setIsAvailableNickname(true);
         setSameNicknameError(false);
+        setIsSameCheck(true);
       }
     },
     onError: (error) => {
@@ -108,6 +128,51 @@ function Signup() {
       console.error(error);
     },
   });
+
+  const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUniversity(event.target.value);
+
+    if (!universityList) return;
+
+    if (event.target.value === '') {
+      setSearchedUniversityList([]);
+    } else {
+      const searchedList = universityList.filter((item) => item.name.includes(event.target.value));
+      setSearchedUniversityList(searchedList as Array<{ id: number; name: string }>);
+    }
+  };
+
+  useEffect(() => {
+    if (searchedUniversityList.length !== 0) {
+      setIsUniversityDropdownOpen(true);
+    } else {
+      setIsUniversityDropdownOpen(false);
+    }
+  }, [searchedUniversityList]);
+
+  const handleUniversityFocus = () => {
+    if (searchedUniversityList.length > 0) {
+      setIsUniversityDropdownOpen(true);
+    }
+  };
+
+  const handleUniversityBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (useniversityDropdownRef.current && !useniversityDropdownRef.current.contains(event.relatedTarget as Node)) {
+      setIsUniversityDropdownOpen(false);
+    }
+
+    if (universityList?.some((item) => item.name === university)) {
+      setUniversityError(false);
+    } else {
+      setUniversityError(true);
+    }
+  };
+
+  const handleUniversityClick = (n: string) => {
+    setUniversity(n);
+    setIsUniversityDropdownOpen(false);
+    setUniversityError(false);
+  };
 
   const handleMbti = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMbti(event.target.value.toUpperCase());
@@ -128,6 +193,36 @@ function Signup() {
 
   const handleEtcPath = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEtcPath(event.target.value);
+  };
+
+  const handleSignupButton = () => {
+    if (
+      nameError ||
+      birthError ||
+      nicknameError ||
+      universiryError ||
+      mbtiError ||
+      !isSameCheck ||
+      !isAvailableNickname ||
+      gender === '' ||
+      clubCount === ''
+    ) {
+      // eslint-disable-next-line no-alert
+      alert('잘못 입력된 항목이 있거나 닉네임 중복확인을 했는지 확인해주세요.');
+    } else {
+      const data = {
+        name,
+        birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
+        gender,
+        email: session?.user?.email,
+        nickname,
+        university,
+        clubCount,
+        mbti,
+        path: path === '기타' ? etcPath : path,
+      };
+      console.log(data);
+    }
   };
 
   if (page === 1) {
@@ -224,6 +319,7 @@ function Signup() {
           <div className="flex gap-[4px]">
             <input
               value={birth}
+              placeholder="ex) 000413"
               className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
               onChange={handleBirth}
               onBlur={handleBirthBlur}
@@ -289,11 +385,34 @@ function Signup() {
         </div>
         <div>
           <div className="text-[14px] text-[#969696]">학교</div>
-          <div className="flex gap-[15px]">
-            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
-            <button type="button" className="h-[20px] w-[30px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]">
-              찾기
-            </button>
+          <div className="relative flex gap-[4px]">
+            <input
+              value={university}
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              onChange={handleUniversity}
+              onFocus={handleUniversityFocus}
+              onBlur={handleUniversityBlur}
+            />
+            {universiryError && (
+              <div className="flex items-center text-[6px] text-[#CB0101]">존재하지 않는 대학교입니다.</div>
+            )}
+            {isUniversityDropdownOpen && (
+              <div
+                ref={useniversityDropdownRef}
+                className="absolute left-[0] top-[30px] h-[150px] w-[136px] overflow-y-auto rounded-[5px] border border-[#969696] bg-[#F5F5F5]"
+              >
+                {searchedUniversityList?.map((item) => (
+                  <button
+                    type="button"
+                    key={item.id}
+                    className="w-full cursor-pointer border-b border-[#969696] p-[5px] hover:bg-[#D9D9D9]"
+                    onClick={() => handleUniversityClick(item.name)}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div>
@@ -457,7 +576,11 @@ function Signup() {
         </div>
       </div>
       <div className="mt-[40px] flex justify-center">
-        <button type="button" className="h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]">
+        <button
+          type="button"
+          className="h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
+          onClick={handleSignupButton}
+        >
           가입하기
         </button>
       </div>

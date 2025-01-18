@@ -5,3 +5,9 @@ export async function isNicknameExists(nickname: string) {
 
   return (data?.length as number) > 0;
 }
+
+export async function fetchUniversityList() {
+  const { data } = await supabase.from('University').select('*');
+
+  return data;
+}
