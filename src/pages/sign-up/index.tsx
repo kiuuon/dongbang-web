@@ -12,6 +12,7 @@ function Signup() {
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false);
   const [birth, setBirth] = useState('');
+  const [birthError, setBirthError] = useState(false);
   const [gender, setGender] = useState('');
   const [nickname, setNickname] = useState('');
   const [university, setUniversity] = useState('');
@@ -52,6 +53,19 @@ function Signup() {
       setNameError(true);
     } else {
       setNameError(false);
+    }
+  };
+
+  const handleBirth = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBirth(event.target.value);
+  };
+
+  const birthRegExp = /^[0-9]{6}$/;
+  const handleBirthBlur = () => {
+    if (!birth.match(birthRegExp)) {
+      setBirthError(true);
+    } else {
+      setBirthError(false);
     }
   };
 
@@ -146,7 +160,15 @@ function Signup() {
         </div>
         <div>
           <div className="text-[14px] text-[#969696]">생년월일</div>
-          <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+          <div className="flex gap-[4px]">
+            <input
+              value={birth}
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              onChange={handleBirth}
+              onBlur={handleBirthBlur}
+            />
+            {birthError && <div className="flex items-center text-[6px] text-[#CB0101]">6자리 숫자로 입력해주세요</div>}
+          </div>
         </div>
         <div>
           <div className="text-[14px] text-[#969696]">성별</div>
