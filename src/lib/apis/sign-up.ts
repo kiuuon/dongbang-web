@@ -11,3 +11,7 @@ export async function fetchUniversityList() {
 
   return data;
 }
+
+export async function signUp(body: any) {
+  await supabase.from('User').insert([body]);
+}

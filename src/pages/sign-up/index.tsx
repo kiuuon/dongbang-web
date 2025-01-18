@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useQuery, useMutation } from '@tanstack/react-query';
 
+import { UserType } from '@/types/user-type';
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchUniversityList, isNicknameExists } from '@/lib/apis/sign-up';
+import { fetchUniversityList, isNicknameExists, signUp } from '@/lib/apis/sign-up';
 import CheckIcon from '@/icons/check-icon';
 import CheckIcon2 from '@/icons/check-icon2';
 
 function Signup() {
+  const router = useRouter();
   const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
 
   const [page, setPage] = useState(1);
@@ -197,6 +200,17 @@ function Signup() {
     setEtcPath(event.target.value);
   };
 
+  const { mutate: handleSignup } = useMutation({
+    mutationFn: (body: UserType) => signUp(body),
+    onSuccess: () => {
+      setIsModalOpen(true);
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    },
+  });
+
   const handleSignupButton = () => {
     if (
       nameError ||
@@ -213,19 +227,28 @@ function Signup() {
       alert('잘못 입력된 항목이 있거나 닉네임 중복확인을 했는지 확인해주세요.');
     } else {
       const data = {
+        id: session?.user?.id as string,
         name,
         birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
         gender,
-        email: session?.user?.email,
+        email: session?.user?.email as string,
         nickname,
-        university,
-        clubCount,
-        mbti,
-        path: path === '기타' ? etcPath : path,
+        university_id: universityList?.find((item) => item.name === university)?.id,
+        clubs_joined: clubCount,
+        mbti: mbti || null,
+        join_path: (path === '기타' ? etcPath : path) || null,
+        term_of_use: termOfUse,
+        privacy_policy: privacyPolicy,
+        third_party_consent: thirdPartyConsent,
+        marketing,
       };
+      handleSignup(data);
       setIsModalOpen(true);
-      console.log(data);
     }
+  };
+
+  const goToHome = () => {
+    router.push('/');
   };
 
   if (page === 1) {
@@ -593,7 +616,11 @@ function Signup() {
             <div className="flex w-[150px] text-center text-[14px] text-[#8C8C8C]">
               가입이 완료되었습니다 <br /> 즐거운 동아리 활동하세요
             </div>
-            <button type="button" className="h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]">
+            <button
+              type="button"
+              className="h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]"
+              onClick={goToHome}
+            >
               확인
             </button>
           </div>
