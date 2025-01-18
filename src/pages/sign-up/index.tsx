@@ -625,7 +625,7 @@ function Signup() {
       <div className="mt-[40px] flex justify-center">
         <button
           type="button"
-          className="h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
+          className="mb-[40px] h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
           onClick={handleSignupButton}
         >
           가입하기
@@ -639,7 +639,7 @@ function Signup() {
             </div>
             <button
               type="button"
-              className="mb-[40px] h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]"
+              className="h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]"
               onClick={goToHome}
             >
               확인
