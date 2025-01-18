@@ -69,6 +69,14 @@ function Signup() {
     }
   };
 
+  const clickMale = () => {
+    setGender('male');
+  };
+
+  const clickFemale = () => {
+    setGender('female');
+  };
+
   if (page === 1) {
     return (
       <div className="flex h-screen w-screen flex-col bg-[#F5F5F5] p-[40px]">
@@ -173,10 +181,18 @@ function Signup() {
         <div>
           <div className="text-[14px] text-[#969696]">성별</div>
           <div className="mb-[10px] mt-[5px] flex gap-[10px]">
-            <button type="button" className="h-[16px] w-[27px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[27px] rounded-[5px] ${gender === 'male' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'} text-[10px] ${gender === 'male' ? 'text-[#080808]' : 'text-[#969696]'}`}
+              onClick={clickMale}
+            >
               남
             </button>
-            <button type="button" className="h-[16px] w-[27px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[27px] rounded-[5px] ${gender === 'female' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'} text-[10px] ${gender === 'female' ? 'text-[#080808]' : 'text-[#969696]'}`}
+              onClick={clickFemale}
+            >
               여
             </button>
           </div>
