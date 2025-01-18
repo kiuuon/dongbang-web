@@ -26,6 +26,8 @@ function Signup() {
   const [mbti, setMbti] = useState('');
   const [mbtiError, setMbtiError] = useState(false);
   const [path, setPath] = useState('');
+  const [pathInputDisabled, setPathInputDisabled] = useState(true);
+  const [etcPath, setEtcPath] = useState('');
 
   const handleFullAgreeButton = () => {
     if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
@@ -122,6 +124,10 @@ function Signup() {
     } else {
       setMbtiError(false);
     }
+  };
+
+  const handleEtcPath = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEtcPath(event.target.value);
   };
 
   if (page === 1) {
@@ -359,29 +365,93 @@ function Signup() {
         <div>
           <div className="text-[14px] text-[#969696]">가입 경로(선택)</div>
           <div className="mt-[8px] flex flex-col items-start gap-[5px] text-[14px] text-[#969696]">
-            <button type="button" className="flex">
-              <CheckIcon2 color="#969696" />
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setPathInputDisabled(true);
+                setEtcPath('');
+                if (path === 'SNS') {
+                  setPath('');
+                } else {
+                  setPath('SNS');
+                }
+              }}
+            >
+              <CheckIcon2 color={path === 'SNS' ? '#5686E1' : '#969696'} />
               SNS
             </button>
-            <button type="button" className="flex">
-              <CheckIcon2 color="#969696" />
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setPathInputDisabled(true);
+                setEtcPath('');
+                if (path === '학교 행사') {
+                  setPath('');
+                } else {
+                  setPath('학교 행사');
+                }
+              }}
+            >
+              <CheckIcon2 color={path === '학교 행사' ? '#5686E1' : '#969696'} />
               학교 행사
             </button>
-            <button type="button" className="flex">
-              <CheckIcon2 color="#969696" />
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setPathInputDisabled(true);
+                setEtcPath('');
+                if (path === '지인 추천') {
+                  setPath('');
+                } else {
+                  setPath('지인 추천');
+                }
+              }}
+            >
+              <CheckIcon2 color={path === '지인 추천' ? '#5686E1' : '#969696'} />
               지인 추천
             </button>
-            <button type="button" className="flex">
-              <CheckIcon2 color="#969696" />
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setPathInputDisabled(true);
+                setEtcPath('');
+                if (path === '교내 어플') {
+                  setPath('');
+                } else {
+                  setPath('교내 어플');
+                }
+              }}
+            >
+              <CheckIcon2 color={path === '교내 어플' ? '#5686E1' : '#969696'} />
               교내 어플
             </button>
-            <button type="button" className="flex">
-              <CheckIcon2 color="#969696" />
+            <button
+              type="button"
+              className="flex"
+              onClick={() => {
+                setEtcPath('');
+                if (path === '기타') {
+                  setPath('');
+                  setPathInputDisabled(true);
+                } else {
+                  setPath('기타');
+                  setPathInputDisabled(false);
+                }
+              }}
+            >
+              <CheckIcon2 color={path === '기타' ? '#5686E1' : '#969696'} />
               기타
             </button>
             <input
               placeholder="ex) 블로그"
+              value={etcPath}
               className="ml-[20px] h-[27px] w-[174px] rounded-[10px] bg-[#E9E9E9] pl-[10px]"
+              disabled={pathInputDisabled}
+              onChange={handleEtcPath}
             />
           </div>
         </div>
