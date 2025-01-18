@@ -51,6 +51,7 @@ function Signup() {
 
   const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
 
+  // 이용 약관 동의 로직
   const handleFullAgreeButton = () => {
     if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
       setTermOfUse(false);
@@ -74,6 +75,7 @@ function Signup() {
     }
   };
 
+  // 이름 관련 로직
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
   };
@@ -87,6 +89,7 @@ function Signup() {
     }
   };
 
+  // 생일 관련 로직
   const handleBirth = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBirth(event.target.value);
   };
@@ -100,6 +103,7 @@ function Signup() {
     }
   };
 
+  // 닉네임 관련 로직
   const handleNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsSameCheck(false);
     setIsAvailableNickname(false);
@@ -134,6 +138,7 @@ function Signup() {
     },
   });
 
+  // 대학교 관련 로직
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUniversity(event.target.value);
 
@@ -162,10 +167,6 @@ function Signup() {
   };
 
   const handleUniversityBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (useniversityDropdownRef.current && !useniversityDropdownRef.current.contains(event.relatedTarget as Node)) {
-      setIsUniversityDropdownOpen(false);
-    }
-
     if (universityList?.some((item) => item.name === university)) {
       setUniversityError(false);
     } else {
@@ -173,12 +174,31 @@ function Signup() {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isUniversityDropdownOpen &&
+        useniversityDropdownRef.current &&
+        !useniversityDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUniversityDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isUniversityDropdownOpen]);
+
   const handleUniversityClick = (n: string) => {
     setUniversity(n);
     setIsUniversityDropdownOpen(false);
     setUniversityError(false);
   };
 
+  // mbti 관련 로직
   const handleMbti = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMbti(event.target.value.toUpperCase());
   };
@@ -196,6 +216,7 @@ function Signup() {
     }
   };
 
+  // 가입 경로 관련 로직
   const handleEtcPath = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEtcPath(event.target.value);
   };
