@@ -10,7 +10,7 @@ function KakaoLoginButton() {
       onClick={() => login('kakao')}
     >
       <Image src="/images/kakao_logo.png" alt="카카오 로고" width={50} height={50} />
-      카카오톡 계정으로으로 시작하기
+      카카오톡 계정으로 시작하기
     </button>
   );
 }

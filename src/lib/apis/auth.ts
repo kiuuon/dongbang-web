@@ -7,9 +7,15 @@ export async function login(provider: 'kakao' | 'google') {
 }
 
 export async function fetchSession() {
-  const { data } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getUser();
 
-  return data.session;
+  return data;
+}
+
+export async function fetchUserId() {
+  const { data } = await supabase.auth.getUser();
+
+  return data?.user?.id;
 }
 
 export async function logout() {
