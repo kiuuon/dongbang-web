@@ -1,6 +1,9 @@
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+
 import CheckIcon from '@/icons/check-icon';
 import CheckIcon2 from '@/icons/check-icon2';
-import { useState } from 'react';
+import { isNicknameExists } from '@/lib/apis/sign-up';
 
 function Signup() {
   const [page, setPage] = useState(1);
@@ -15,6 +18,9 @@ function Signup() {
   const [birthError, setBirthError] = useState(false);
   const [gender, setGender] = useState('');
   const [nickname, setNickname] = useState('');
+  const [nicknameError, setNicknameError] = useState(false);
+  const [sameNicknameError, setSameNicknameError] = useState(false);
+  const [isAvailableNickname, setIsAvailableNickname] = useState(false);
   const [university, setUniversity] = useState('');
   const [clubCount, setClubCount] = useState('');
   const [mbti, setMbti] = useState('');
@@ -76,6 +82,37 @@ function Signup() {
   const clickFemale = () => {
     setGender('female');
   };
+
+  const handleNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(event.target.value);
+  };
+
+  const nicknameRegExp = /^[a-zA-Z가-힣]{2,8}$/;
+  const handleNicknameBlur = () => {
+    if (!nickname.match(nicknameRegExp)) {
+      setNicknameError(true);
+      setIsAvailableNickname(false);
+    } else {
+      setNicknameError(false);
+    }
+  };
+
+  const { mutate: handleNicknameSameCheck } = useMutation({
+    mutationFn: () => isNicknameExists(nickname),
+    onSuccess: (data) => {
+      if (data) {
+        setIsAvailableNickname(false);
+        setSameNicknameError(true);
+      } else {
+        setIsAvailableNickname(true);
+        setSameNicknameError(false);
+      }
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    },
+  });
 
   if (page === 1) {
     return (
@@ -200,10 +237,34 @@ function Signup() {
         <div>
           <div className="text-[14px] text-[#969696]">닉네임</div>
           <div className="flex gap-[15px]">
-            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
-            <button type="button" className="h-[20px] w-[50px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]">
+            <input
+              value={nickname}
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              onChange={handleNickname}
+              onBlur={handleNicknameBlur}
+            />
+            <button
+              type="button"
+              className="h-[20px] w-[50px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]"
+              onClick={() => {
+                if (nickname.match(nicknameRegExp)) {
+                  handleNicknameSameCheck();
+                }
+              }}
+            >
               중복확인
             </button>
+            {nicknameError && (
+              <div className="flex items-center text-[6px] text-[#CB0101]">
+                2~8글자 이내에 한글 또는 영문을 입력해주세요
+              </div>
+            )}
+            {sameNicknameError && (
+              <div className="flex items-center text-[6px] text-[#CB0101]">이미 사용중인 닉네임입니다</div>
+            )}
+            {isAvailableNickname && (
+              <div className="flex items-center text-[6px] text-[#008000]">사용 가능한 닉네임입니다</div>
+            )}
           </div>
         </div>
         <div>
