@@ -12,6 +12,12 @@ export async function fetchSession() {
   return data;
 }
 
+export async function fetchUserId() {
+  const { data } = await supabase.auth.getUser();
+
+  return data?.user?.id;
+}
+
 export async function logout() {
   await supabase.auth.signOut();
 }

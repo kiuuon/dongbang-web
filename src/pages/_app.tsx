@@ -24,10 +24,12 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     (async () => {
       const { user } = await fetchSession();
-      const userInfo = await fetchUser(user?.id || '');
+      const userInfo = await fetchUser();
 
-      if (user && !userInfo?.length && router.pathname !== '/sign-up') {
+      if (user && !userInfo && router.pathname !== '/sign-up') {
         router.push('/sign-up');
+      } else if (user && userInfo && router.pathname === '/sign-up') {
+        router.push('/');
       }
     })();
   }, [router]);
