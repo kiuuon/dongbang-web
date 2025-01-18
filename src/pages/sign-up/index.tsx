@@ -1,4 +1,5 @@
 import CheckIcon from '@/icons/check-icon';
+import CheckIcon2 from '@/icons/check-icon2';
 import { useState } from 'react';
 
 function Signup() {
@@ -100,7 +101,107 @@ function Signup() {
     );
   }
 
-  return <div>page2</div>;
+  return (
+    <div className="flex h-screen w-screen flex-col bg-[#F5F5F5] p-[40px]">
+      <div className="mb-[25px] mt-[50px] text-[20px] font-black">회원가입</div>
+      <div>
+        <div>
+          <div className="text-[14px] text-[#969696]">이름</div>
+          <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">생년월일</div>
+          <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">성별</div>
+          <div className="mb-[10px] mt-[5px] flex gap-[10px]">
+            <button type="button" className="h-[16px] w-[27px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              남
+            </button>
+            <button type="button" className="h-[16px] w-[27px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              여
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">닉네임</div>
+          <div className="flex gap-[15px]">
+            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+            <button type="button" className="h-[20px] w-[50px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]">
+              중복확인
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">학교</div>
+          <div className="flex gap-[15px]">
+            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+            <button type="button" className="h-[20px] w-[30px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]">
+              찾기
+            </button>
+          </div>
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">가입한 동아리 수</div>
+          <div className="mb-[10px] mt-[5px] flex gap-[10px]">
+            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              1개
+            </button>
+            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              2개
+            </button>
+            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              3개
+            </button>
+            <button type="button" className="h-[16px] w-[50px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              4개 이상
+            </button>
+          </div>
+        </div>
+        <div>
+          <div>
+            <div className="text-[14px] text-[#969696]">MBTI</div>
+            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+          </div>
+        </div>
+        <div>
+          <div className="text-[14px] text-[#969696]">가입 경로</div>
+          <div className="mt-[8px] flex flex-col items-start gap-[5px] text-[14px] text-[#969696]">
+            <button type="button" className="flex">
+              <CheckIcon2 color="#969696" />
+              SNS
+            </button>
+            <button type="button" className="flex">
+              <CheckIcon2 color="#969696" />
+              학교 행사
+            </button>
+            <button type="button" className="flex">
+              <CheckIcon2 color="#969696" />
+              지인 추천
+            </button>
+            <button type="button" className="flex">
+              <CheckIcon2 color="#969696" />
+              교내 어플
+            </button>
+            <button type="button" className="flex">
+              <CheckIcon2 color="#969696" />
+              기타
+            </button>
+            <input
+              placeholder="ex) 블로그"
+              className="ml-[20px] h-[27px] w-[174px] rounded-[10px] bg-[#E9E9E9] pl-[10px]"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="mt-[40px] flex justify-center">
+        <button type="button" className="h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]">
+          가입하기
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default Signup;
