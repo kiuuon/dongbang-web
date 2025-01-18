@@ -9,6 +9,16 @@ function Signup() {
   const [thirdPartyConsent, setThirdPartyConsent] = useState(false); // 개인정보 제3자 제공 동의
   const [marketing, setMarketing] = useState(false); // 마케팅 정보 수신 동의
 
+  const [name, setName] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [birth, setBirth] = useState('');
+  const [gender, setGender] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [university, setUniversity] = useState('');
+  const [clubCount, setClubCount] = useState('');
+  const [mbti, setMbti] = useState('');
+  const [path, setPath] = useState('');
+
   const handleFullAgreeButton = () => {
     if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
       setTermOfUse(false);
@@ -29,6 +39,19 @@ function Signup() {
     } else {
       // eslint-disable-next-line no-alert
       alert('필수 약관에 동의해주세요.');
+    }
+  };
+
+  const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const nameRegExp = /^[a-zA-Z가-힣]{2,10}$/;
+  const handleNameBlur = () => {
+    if (!name.match(nameRegExp)) {
+      setNameError(true);
+    } else {
+      setNameError(false);
     }
   };
 
@@ -106,8 +129,20 @@ function Signup() {
       <div className="mb-[25px] mt-[50px] text-[20px] font-black">회원가입</div>
       <div>
         <div>
-          <div className="text-[14px] text-[#969696]">이름</div>
-          <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+          <div className="flex items-end text-[14px] text-[#969696]">이름</div>
+          <div className="flex gap-[4px]">
+            <input
+              value={name}
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              onChange={handleName}
+              onBlur={handleNameBlur}
+            />
+            {nameError && (
+              <div className="flex items-center text-[6px] text-[#CB0101]">
+                2~10글자 이내에 한글 또는 영문을 입력해주세요
+              </div>
+            )}
+          </div>
         </div>
         <div>
           <div className="text-[14px] text-[#969696]">생년월일</div>
@@ -156,6 +191,9 @@ function Signup() {
             </button>
             <button type="button" className="h-[16px] w-[50px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
               4개 이상
+            </button>
+            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+              없음
             </button>
           </div>
         </div>
