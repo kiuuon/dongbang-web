@@ -253,7 +253,7 @@ function Signup() {
 
   if (page === 1) {
     return (
-      <div className="flex h-screen w-screen flex-col bg-[#F5F5F5] p-[40px]">
+      <div className="flex min-h-screen flex-col bg-[#F5F5F5] p-[40px]">
         <div className="mb-[12px] mt-[50px] text-[20px] font-black">이용 약관 동의</div>
         <div className="mb-[370px] text-[16px]">
           서비스 이용에 필요한 약관 동의 사항입니다. 정책 및 약관을 확인해주세요.
@@ -310,7 +310,7 @@ function Signup() {
         <div className="mt-[40px] flex justify-center">
           <button
             type="button"
-            className="h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
+            className="mb-[40px] h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
             onClick={handleNextButton}
           >
             다음
@@ -321,7 +321,7 @@ function Signup() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-[#F5F5F5] p-[40px]">
+    <div className="flex min-h-screen flex-col bg-[#F5F5F5] p-[40px]">
       <div className="mb-[25px] mt-[50px] text-[20px] font-black">회원가입</div>
       <div>
         <div>
@@ -329,7 +329,7 @@ function Signup() {
           <div className="flex gap-[4px]">
             <input
               value={name}
-              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
               onChange={handleName}
               onBlur={handleNameBlur}
             />
@@ -346,7 +346,7 @@ function Signup() {
             <input
               value={birth}
               placeholder="ex) 20000413"
-              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
               onChange={handleBirth}
               onBlur={handleBirthBlur}
             />
@@ -381,7 +381,7 @@ function Signup() {
           <div className="flex gap-[15px]">
             <input
               value={nickname}
-              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
               onChange={handleNickname}
               onBlur={handleNicknameBlur}
             />
@@ -414,7 +414,7 @@ function Signup() {
           <div className="relative flex gap-[4px]">
             <input
               value={university}
-              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+              className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
               onChange={handleUniversity}
               onFocus={handleUniversityFocus}
               onBlur={handleUniversityBlur}
@@ -497,7 +497,7 @@ function Signup() {
             <div className="flex gap-[4px]">
               <input
                 value={mbti}
-                className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+                className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
                 onChange={handleMbti}
                 onBlur={handleMbtiBlur}
               />
@@ -594,7 +594,7 @@ function Signup() {
             <input
               placeholder="ex) 블로그"
               value={etcPath}
-              className="ml-[20px] h-[27px] w-[174px] rounded-[10px] bg-[#E9E9E9] pl-[10px]"
+              className="ml-[20px] h-[27px] w-[174px] rounded-[10px] bg-[#E9E9E9] pl-[10px] outline-none"
               disabled={pathInputDisabled}
               onChange={handleEtcPath}
             />
@@ -618,7 +618,7 @@ function Signup() {
             </div>
             <button
               type="button"
-              className="h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]"
+              className="mb-[40px] h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]"
               onClick={goToHome}
             >
               확인

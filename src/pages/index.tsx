@@ -46,7 +46,7 @@ function Home() {
   }
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-[12px]">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-[12px]">
       <div>이름: {userInfo?.name}</div>
       <div>닉네임: {userInfo?.nickname}</div>
       <div>이메일: {userInfo?.email}</div>
