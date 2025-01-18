@@ -44,6 +44,8 @@ function Signup() {
   const [pathInputDisabled, setPathInputDisabled] = useState(true);
   const [etcPath, setEtcPath] = useState('');
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
 
   const handleFullAgreeButton = () => {
@@ -221,6 +223,7 @@ function Signup() {
         mbti,
         path: path === '기타' ? etcPath : path,
       };
+      setIsModalOpen(true);
       console.log(data);
     }
   };
@@ -319,12 +322,12 @@ function Signup() {
           <div className="flex gap-[4px]">
             <input
               value={birth}
-              placeholder="ex) 000413"
+              placeholder="ex) 20000413"
               className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
               onChange={handleBirth}
               onBlur={handleBirthBlur}
             />
-            {birthError && <div className="flex items-center text-[6px] text-[#CB0101]">6자리 숫자로 입력해주세요</div>}
+            {birthError && <div className="flex items-center text-[6px] text-[#CB0101]">8자리 숫자로 입력해주세요</div>}
           </div>
         </div>
         <div>
@@ -584,6 +587,18 @@ function Signup() {
           가입하기
         </button>
       </div>
+      {isModalOpen && (
+        <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-[rgba(0,0,0,0.5)]">
+          <div className="shadow-modal flex h-[150px] w-[220px] flex-col items-center justify-center gap-[25px] rounded-[8px] bg-[#ECF5BD]">
+            <div className="flex w-[150px] text-center text-[14px] text-[#8C8C8C]">
+              가입이 완료되었습니다 <br /> 즐거운 동아리 활동하세요
+            </div>
+            <button type="button" className="h-[35px] w-[100px] rounded-[8px] bg-[#DEE8B7] text-[14px] text-[#8C8C8C]">
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
