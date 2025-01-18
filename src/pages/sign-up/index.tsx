@@ -76,14 +76,6 @@ function Signup() {
     }
   };
 
-  const clickMale = () => {
-    setGender('male');
-  };
-
-  const clickFemale = () => {
-    setGender('female');
-  };
-
   const handleNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
   };
@@ -122,7 +114,11 @@ function Signup() {
   const mbtiRegExp = /^(INTJ|INTP|ENTJ|ENTP|INFJ|INFP|ENFJ|ENFP|ISTJ|ISFJ|ESTJ|ESFJ|ISTP|ISFP|ESTP|ESFP)$/;
   const handleMbtiBlur = () => {
     if (!mbti.match(mbtiRegExp)) {
-      setMbtiError(true);
+      if (mbti.length !== 0) {
+        setMbtiError(true);
+      } else {
+        setMbtiError(false);
+      }
     } else {
       setMbtiError(false);
     }
@@ -235,14 +231,18 @@ function Signup() {
             <button
               type="button"
               className={`h-[16px] w-[27px] rounded-[5px] ${gender === 'male' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'} text-[10px] ${gender === 'male' ? 'text-[#080808]' : 'text-[#969696]'}`}
-              onClick={clickMale}
+              onClick={() => {
+                setGender('male');
+              }}
             >
               남
             </button>
             <button
               type="button"
               className={`h-[16px] w-[27px] rounded-[5px] ${gender === 'female' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'} text-[10px] ${gender === 'female' ? 'text-[#080808]' : 'text-[#969696]'}`}
-              onClick={clickFemale}
+              onClick={() => {
+                setGender('female');
+              }}
             >
               여
             </button>
@@ -293,26 +293,56 @@ function Signup() {
         <div>
           <div className="text-[14px] text-[#969696]">가입한 동아리 수</div>
           <div className="mb-[10px] mt-[5px] flex gap-[10px]">
-            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[30px] rounded-[5px] text-[10px] ${clubCount === '1' ? 'text-[#080808]' : 'text-[#969696]'} ${clubCount === '1' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'}`}
+              onClick={() => {
+                setClubCount('1');
+              }}
+            >
               1개
             </button>
-            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[30px] rounded-[5px] text-[10px] ${clubCount === '2' ? 'text-[#080808]' : 'text-[#969696]'} ${clubCount === '2' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'}`}
+              onClick={() => {
+                setClubCount('2');
+              }}
+            >
               2개
             </button>
-            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[30px] rounded-[5px] text-[10px] ${clubCount === '3' ? 'text-[#080808]' : 'text-[#969696]'} ${clubCount === '3' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'}`}
+              onClick={() => {
+                setClubCount('3');
+              }}
+            >
               3개
             </button>
-            <button type="button" className="h-[16px] w-[50px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[50px] rounded-[5px] text-[10px] ${clubCount === '4+' ? 'text-[#080808]' : 'text-[#969696]'} ${clubCount === '4+' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'}`}
+              onClick={() => {
+                setClubCount('4+');
+              }}
+            >
               4개 이상
             </button>
-            <button type="button" className="h-[16px] w-[30px] rounded-[5px] bg-[#D9D9D9] text-[10px] text-[#969696]">
+            <button
+              type="button"
+              className={`h-[16px] w-[30px] rounded-[5px] text-[10px] ${clubCount === '0' ? 'text-[#080808]' : 'text-[#969696]'} ${clubCount === '0' ? 'bg-[#BCBBBB]' : 'bg-[#D9D9D9]'}`}
+              onClick={() => {
+                setClubCount('0');
+              }}
+            >
               없음
             </button>
           </div>
         </div>
         <div>
           <div>
-            <div className="text-[14px] text-[#969696]">MBTI</div>
+            <div className="text-[14px] text-[#969696]">MBTI(선택)</div>
             <div className="flex gap-[4px]">
               <input
                 value={mbti}
@@ -327,7 +357,7 @@ function Signup() {
           </div>
         </div>
         <div>
-          <div className="text-[14px] text-[#969696]">가입 경로</div>
+          <div className="text-[14px] text-[#969696]">가입 경로(선택)</div>
           <div className="mt-[8px] flex flex-col items-start gap-[5px] text-[14px] text-[#969696]">
             <button type="button" className="flex">
               <CheckIcon2 color="#969696" />
