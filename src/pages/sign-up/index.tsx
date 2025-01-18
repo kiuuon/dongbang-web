@@ -24,6 +24,7 @@ function Signup() {
   const [university, setUniversity] = useState('');
   const [clubCount, setClubCount] = useState('');
   const [mbti, setMbti] = useState('');
+  const [mbtiError, setMbtiError] = useState(false);
   const [path, setPath] = useState('');
 
   const handleFullAgreeButton = () => {
@@ -113,6 +114,19 @@ function Signup() {
       console.error(error);
     },
   });
+
+  const handleMbti = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMbti(event.target.value.toUpperCase());
+  };
+
+  const mbtiRegExp = /^(INTJ|INTP|ENTJ|ENTP|INFJ|INFP|ENFJ|ENFP|ISTJ|ISFJ|ESTJ|ESFJ|ISTP|ISFP|ESTP|ESFP)$/;
+  const handleMbtiBlur = () => {
+    if (!mbti.match(mbtiRegExp)) {
+      setMbtiError(true);
+    } else {
+      setMbtiError(false);
+    }
+  };
 
   if (page === 1) {
     return (
@@ -299,7 +313,17 @@ function Signup() {
         <div>
           <div>
             <div className="text-[14px] text-[#969696]">MBTI</div>
-            <input className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]" />
+            <div className="flex gap-[4px]">
+              <input
+                value={mbti}
+                className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px]"
+                onChange={handleMbti}
+                onBlur={handleMbtiBlur}
+              />
+              {mbtiError && (
+                <div className="flex items-center text-[6px] text-[#CB0101]">올바른 MBTI 유형이 아닙니다</div>
+              )}
+            </div>
           </div>
         </div>
         <div>
