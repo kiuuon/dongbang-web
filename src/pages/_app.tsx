@@ -26,8 +26,8 @@ export default function App({ Component, pageProps }: AppProps) {
       const { user } = await fetchSession();
       const userInfo = await fetchUser();
 
-      if (user && !userInfo && router.pathname !== '/sign-up') {
-        router.push('/sign-up');
+      if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
+        router.push('/sign-up/terms');
       } else if (user && userInfo && router.pathname === '/sign-up') {
         router.push('/');
       }
