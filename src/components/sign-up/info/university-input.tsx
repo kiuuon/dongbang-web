@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchUniversityList } from '@/lib/apis/sign-up';
+import { signUpErrorMessages } from '@/lib/constants';
 import userInfoStore from '@/stores/sign-up/user-info-store';
 import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
 
@@ -87,7 +88,9 @@ function UniversityInput() {
           onBlur={handleUniversityBlur}
         />
         {universityError && (
-          <div className="flex items-center text-[6px] text-[#CB0101]">존재하지 않는 대학교입니다.</div>
+          <div className="flex items-center text-[6px] text-[#CB0101]">
+            {signUpErrorMessages.universityErrorMessage}
+          </div>
         )}
         {isUniversityDropdownOpen && (
           <div

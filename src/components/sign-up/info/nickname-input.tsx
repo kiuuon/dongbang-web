@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import { isNicknameExists } from '@/lib/apis/sign-up';
+import { signUpErrorMessages } from '@/lib/constants';
 import userInfoStore from '@/stores/sign-up/user-info-store';
 import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
 
@@ -70,15 +71,17 @@ function NicknameInput() {
           중복확인
         </button>
         {nicknameError && (
-          <div className="flex items-center text-[6px] text-[#CB0101]">
-            2~8글자 이내에 한글 또는 영문을 입력해주세요
-          </div>
+          <div className="flex items-center text-[6px] text-[#CB0101]">{signUpErrorMessages.nicknameErrorMessage}</div>
         )}
         {sameNicknameError && (
-          <div className="flex items-center text-[6px] text-[#CB0101]">이미 사용중인 닉네임입니다</div>
+          <div className="flex items-center text-[6px] text-[#CB0101]">
+            {signUpErrorMessages.sameNicknameErrorMessage}
+          </div>
         )}
         {isAvailableNickname && (
-          <div className="flex items-center text-[6px] text-[#008000]">사용 가능한 닉네임입니다</div>
+          <div className="flex items-center text-[6px] text-[#008000]">
+            {signUpErrorMessages.availableNicknameMessage}
+          </div>
         )}
       </div>
     </div>

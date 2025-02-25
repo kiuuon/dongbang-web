@@ -1,3 +1,4 @@
+import { signUpErrorMessages } from '@/lib/constants';
 import userInfoStore from '@/stores/sign-up/user-info-store';
 import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
 
@@ -31,7 +32,9 @@ function BirthInput() {
           onChange={handleBirth}
           onBlur={handleBirthBlur}
         />
-        {birthError && <div className="flex items-center text-[6px] text-[#CB0101]">8자리 숫자로 입력해주세요</div>}
+        {birthError && (
+          <div className="flex items-center text-[6px] text-[#CB0101]">{signUpErrorMessages.birthErrorMessage}</div>
+        )}
       </div>
     </div>
   );
