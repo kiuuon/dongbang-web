@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-import termsStore from '@/stores/terms-store';
+import termsStore from '@/stores/sign-up/terms-store';
 import CheckIcon from '@/icons/check-icon';
 
 function Terms() {

@@ -17,6 +17,8 @@ interface UserInfoStoreType {
   setMbti: (mbti: string) => void;
   path: string;
   setPath: (path: string) => void;
+  etcPath: string;
+  setEtcPath: (etcPath: string) => void;
 }
 
 const userInfoStore = create<UserInfoStoreType>((set) => ({
@@ -36,6 +38,8 @@ const userInfoStore = create<UserInfoStoreType>((set) => ({
   setMbti: (mbti) => set({ mbti }),
   path: '',
   setPath: (path) => set({ path }),
+  etcPath: '',
+  setEtcPath: (etcPath) => set({ etcPath }),
 }));
 
 export default userInfoStore;
