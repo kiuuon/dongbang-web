@@ -5,38 +5,54 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { UserType } from '@/types/user-type';
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchUniversityList, isNicknameExists, signUp } from '@/lib/apis/sign-up';
+import termsStore from '@/stores/terms-store';
+import userInfoStore from '@/stores/user-info-store';
 import CheckIcon2 from '@/icons/check-icon2';
 
 function Info() {
   const router = useRouter();
   const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
 
-  const [name, setName] = useState('');
+  const termOfUse = termsStore((state) => state.temrOfUse);
+  const privacyPolicy = termsStore((state) => state.privacyPolicy);
+  const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
+  const marketing = termsStore((state) => state.marketing);
+
+  const name = userInfoStore((state) => state.name);
+  const birth = userInfoStore((state) => state.birth);
+  const gender = userInfoStore((state) => state.gender);
+  const nickname = userInfoStore((state) => state.nickname);
+  const university = userInfoStore((state) => state.university);
+  const clubCount = userInfoStore((state) => state.clubCount);
+  const mbti = userInfoStore((state) => state.mbti);
+  const path = userInfoStore((state) => state.path);
+
+  const setName = userInfoStore((state) => state.setName);
   const [nameError, setNameError] = useState(false);
 
-  const [birth, setBirth] = useState('');
+  const setBirth = userInfoStore((state) => state.setBirth);
   const [birthError, setBirthError] = useState(false);
 
-  const [gender, setGender] = useState('');
+  const setGender = userInfoStore((state) => state.setGender);
 
-  const [nickname, setNickname] = useState('');
+  const setNickname = userInfoStore((state) => state.setNickname);
   const [nicknameError, setNicknameError] = useState(false);
   const [isSameCheck, setIsSameCheck] = useState(false);
   const [sameNicknameError, setSameNicknameError] = useState(false);
   const [isAvailableNickname, setIsAvailableNickname] = useState(false);
 
-  const [university, setUniversity] = useState('');
+  const setUniversity = userInfoStore((state) => state.setUniversity);
   const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
   const useniversityDropdownRef = useRef<HTMLDivElement>(null);
   const [universiryError, setUniversityError] = useState(false);
 
-  const [clubCount, setClubCount] = useState('');
+  const setClubCount = userInfoStore((state) => state.setClubCount);
 
-  const [mbti, setMbti] = useState('');
+  const setMbti = userInfoStore((state) => state.setMbti);
   const [mbtiError, setMbtiError] = useState(false);
 
-  const [path, setPath] = useState('');
+  const setPath = userInfoStore((state) => state.setPath);
   const [pathInputDisabled, setPathInputDisabled] = useState(true);
   const [etcPath, setEtcPath] = useState('');
 
@@ -216,24 +232,24 @@ function Info() {
       // eslint-disable-next-line no-alert
       alert('잘못 입력된 항목이 있거나 닉네임 중복확인을 했는지 확인해주세요.');
     } else {
-      // const data = {
-      //   id: session?.user?.id as string,
-      //   name,
-      //   birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
-      //   gender,
-      //   email: session?.user?.email as string,
-      //   nickname,
-      //   university_id: universityList?.find((item) => item.name === university)?.id,
-      //   clubs_joined: clubCount,
-      //   mbti: mbti || null,
-      //   join_path: (path === '기타' ? etcPath : path) || null,
-      //   term_of_use: termOfUse,
-      //   privacy_policy: privacyPolicy,
-      //   third_party_consent: thirdPartyConsent,
-      //   marketing,
-      // };
-      // handleSignup(data);
-      // setIsModalOpen(true);
+      const data = {
+        id: session?.user?.id as string,
+        name,
+        birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
+        gender,
+        email: session?.user?.email as string,
+        nickname,
+        university_id: universityList?.find((item) => item.name === university)?.id,
+        clubs_joined: clubCount,
+        mbti: mbti || null,
+        join_path: (path === '기타' ? etcPath : path) || null,
+        term_of_use: termOfUse,
+        privacy_policy: privacyPolicy,
+        third_party_consent: thirdPartyConsent,
+        marketing,
+      };
+      handleSignup(data);
+      setIsModalOpen(true);
     }
   };
 

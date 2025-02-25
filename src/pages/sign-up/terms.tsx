@@ -1,14 +1,18 @@
-import { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import termsStore from '@/stores/terms-store';
 import CheckIcon from '@/icons/check-icon';
 
 function Terms() {
   const router = useRouter();
-  const [termOfUse, setTermOfUse] = useState(false); // 동방 이용약관 동의
-  const [privacyPolicy, setPrivacyPolicy] = useState(false); // 개인정보 수집 및 이용 동의
-  const [thirdPartyConsent, setThirdPartyConsent] = useState(false); // 개인정보 제3자 제공 동의
-  const [marketing, setMarketing] = useState(false); // 마케팅 정보 수신 동의
+  const termOfUse = termsStore((state) => state.temrOfUse);
+  const setTermOfUse = termsStore((state) => state.setTemrOfUse);
+  const privacyPolicy = termsStore((state) => state.privacyPolicy);
+  const setPrivacyPolicy = termsStore((state) => state.setPrivacyPolicy);
+  const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
+  const setThirdPartyConsent = termsStore((state) => state.setThirdPartyConsent);
+  const marketing = termsStore((state) => state.marketing);
+  const setMarketing = termsStore((state) => state.setMarketing);
 
   const handleFullAgreeButton = () => {
     if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
