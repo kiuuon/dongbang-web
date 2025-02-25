@@ -5,18 +5,11 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { UserType } from '@/types/user-type';
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchUniversityList, isNicknameExists, signUp } from '@/lib/apis/sign-up';
-import CheckIcon from '@/icons/check-icon';
 import CheckIcon2 from '@/icons/check-icon2';
 
-function Signup() {
+function Info() {
   const router = useRouter();
   const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
-
-  const [page, setPage] = useState(1);
-  const [termOfUse, setTermOfUse] = useState(false); // 동방 이용약관 동의
-  const [privacyPolicy, setPrivacyPolicy] = useState(false); // 개인정보 수집 및 이용 동의
-  const [thirdPartyConsent, setThirdPartyConsent] = useState(false); // 개인정보 제3자 제공 동의
-  const [marketing, setMarketing] = useState(false); // 마케팅 정보 수신 동의
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false);
@@ -50,30 +43,6 @@ function Signup() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
-
-  // 이용 약관 동의 로직
-  const handleFullAgreeButton = () => {
-    if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
-      setTermOfUse(false);
-      setPrivacyPolicy(false);
-      setThirdPartyConsent(false);
-      setMarketing(false);
-    } else {
-      setTermOfUse(true);
-      setPrivacyPolicy(true);
-      setThirdPartyConsent(true);
-      setMarketing(true);
-    }
-  };
-
-  const handleNextButton = () => {
-    if (termOfUse && privacyPolicy && thirdPartyConsent) {
-      setPage(2);
-    } else {
-      // eslint-disable-next-line no-alert
-      alert('필수 약관에 동의해주세요.');
-    }
-  };
 
   // 이름 관련 로직
   const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,99 +216,30 @@ function Signup() {
       // eslint-disable-next-line no-alert
       alert('잘못 입력된 항목이 있거나 닉네임 중복확인을 했는지 확인해주세요.');
     } else {
-      const data = {
-        id: session?.user?.id as string,
-        name,
-        birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
-        gender,
-        email: session?.user?.email as string,
-        nickname,
-        university_id: universityList?.find((item) => item.name === university)?.id,
-        clubs_joined: clubCount,
-        mbti: mbti || null,
-        join_path: (path === '기타' ? etcPath : path) || null,
-        term_of_use: termOfUse,
-        privacy_policy: privacyPolicy,
-        third_party_consent: thirdPartyConsent,
-        marketing,
-      };
-      handleSignup(data);
-      setIsModalOpen(true);
+      // const data = {
+      //   id: session?.user?.id as string,
+      //   name,
+      //   birth: `${birth.slice(0, 4)}-${birth.slice(4, 6)}-${birth.slice(6, 8)}`,
+      //   gender,
+      //   email: session?.user?.email as string,
+      //   nickname,
+      //   university_id: universityList?.find((item) => item.name === university)?.id,
+      //   clubs_joined: clubCount,
+      //   mbti: mbti || null,
+      //   join_path: (path === '기타' ? etcPath : path) || null,
+      //   term_of_use: termOfUse,
+      //   privacy_policy: privacyPolicy,
+      //   third_party_consent: thirdPartyConsent,
+      //   marketing,
+      // };
+      // handleSignup(data);
+      // setIsModalOpen(true);
     }
   };
 
   const goToHome = () => {
     router.push('/');
   };
-
-  if (page === 1) {
-    return (
-      <div className="flex min-h-screen flex-col bg-[#F5F5F5] p-[40px]">
-        <div className="mb-[12px] mt-[50px] text-[20px] font-black">이용 약관 동의</div>
-        <div className="mb-[370px] text-[16px]">
-          서비스 이용에 필요한 약관 동의 사항입니다. 정책 및 약관을 확인해주세요.
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          className="flex cursor-pointer items-center gap-[8px] text-[16px]"
-          onClick={handleFullAgreeButton}
-          onKeyDown={handleFullAgreeButton}
-        >
-          <CheckIcon color={termOfUse && privacyPolicy && thirdPartyConsent && marketing ? '#6593C8' : '#9C9C9C'} />
-          전체 동의
-        </div>
-        <div className="my-[25px] h-[1px] w-full bg-[#B4B4B4]" />
-        <div>
-          <div
-            role="button"
-            tabIndex={0}
-            className="flex cursor-pointer items-center gap-[8px] text-[16px]"
-            onClick={() => setTermOfUse(!termOfUse)}
-            onKeyDown={() => setTermOfUse(!termOfUse)}
-          >
-            <CheckIcon color={termOfUse ? '#6593C8' : '#9C9C9C'} /> 동방 이용약간 동의 (필수)
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className="flex cursor-pointer items-center gap-[8px] text-[16px]"
-            onClick={() => setPrivacyPolicy(!privacyPolicy)}
-            onKeyDown={() => setPrivacyPolicy(!privacyPolicy)}
-          >
-            <CheckIcon color={privacyPolicy ? '#6593C8' : '#9C9C9C'} /> 개인정보 수집 및 이용 동의(필수)
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className="flex cursor-pointer items-center gap-[8px] text-[16px]"
-            onClick={() => setThirdPartyConsent(!thirdPartyConsent)}
-            onKeyDown={() => setThirdPartyConsent(!thirdPartyConsent)}
-          >
-            <CheckIcon color={thirdPartyConsent ? '#6593C8' : '#9C9C9C'} /> 개인정보 제3자 제공 동의(필수)
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className="flex cursor-pointer items-center gap-[8px] text-[16px]"
-            onClick={() => setMarketing(!marketing)}
-            onKeyDown={() => setMarketing(!marketing)}
-          >
-            <CheckIcon color={marketing ? '#6593C8' : '#9C9C9C'} /> 마케팅 정보 메일, SMS 수신 동의
-          </div>
-        </div>
-        <div className="mt-[40px] flex justify-center">
-          <button
-            type="button"
-            className="mb-[40px] h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
-            onClick={handleNextButton}
-          >
-            다음
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F5F5] p-[40px]">
@@ -633,7 +533,7 @@ function Signup() {
       </div>
       {isModalOpen && (
         <div className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-[rgba(0,0,0,0.5)]">
-          <div className="shadow-modal flex h-[150px] w-[220px] flex-col items-center justify-center gap-[25px] rounded-[8px] bg-[#ECF5BD]">
+          <div className="flex h-[150px] w-[220px] flex-col items-center justify-center gap-[25px] rounded-[8px] bg-[#ECF5BD] shadow-modal">
             <div className="flex w-[150px] text-center text-[14px] text-[#8C8C8C]">
               가입이 완료되었습니다 <br /> 즐거운 동아리 활동하세요
             </div>
@@ -651,4 +551,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Info;
