@@ -1,15 +1,16 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import { fetchSession, logout } from '@/lib/apis/auth';
-import { fetchUser } from '@/lib/apis/user';
 import KakaoLoginButton from '@/components/home/buttons/KakaoLoginButton';
 import GoogleLoginButton from '@/components/home/buttons/GoogleLoginButton';
+import { fetchSession, logout } from '@/lib/apis/auth';
+import { fetchUser } from '@/lib/apis/user';
+import { queryKey } from '@/lib/constants';
 
 function Home() {
   const { data: session, isPending } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
   const { data: userInfo } = useQuery({
-    queryKey: ['userInfo'],
+    queryKey: [queryKey.userInfo],
     queryFn: fetchUser,
   });
 

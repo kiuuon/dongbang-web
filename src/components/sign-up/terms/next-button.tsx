@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 
+import { signUpErrorMessages } from '@/lib/constants';
 import termsStore from '@/stores/sign-up/terms-store';
 
 function NextButton() {
@@ -13,7 +14,7 @@ function NextButton() {
       router.push('/sign-up/info');
     } else {
       // eslint-disable-next-line no-alert
-      alert('필수 약관에 동의해주세요.');
+      alert(signUpErrorMessages.termsErrorMessage);
     }
   };
 

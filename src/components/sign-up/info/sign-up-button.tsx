@@ -1,14 +1,15 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 
-import termsStore from '@/stores/sign-up/terms-store';
-import userInfoStore from '@/stores/sign-up/user-info-store';
 import { fetchSession } from '@/lib/apis/auth';
 import { signUp, fetchUniversityList } from '@/lib/apis/sign-up';
+import { queryKey, signUpErrorMessages } from '@/lib/constants';
 import { UserType } from '@/types/user-type';
+import termsStore from '@/stores/sign-up/terms-store';
+import userInfoStore from '@/stores/sign-up/user-info-store';
 import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
 
 function SignUpButton({ setIsModalOpen }: { setIsModalOpen: (isModalOpen: boolean) => void }) {
-  const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
+  const { data: session } = useQuery({ queryKey: [queryKey.session], queryFn: fetchSession });
 
   const termOfUse = termsStore((state) => state.temrOfUse);
   const privacyPolicy = termsStore((state) => state.privacyPolicy);
@@ -20,7 +21,7 @@ function SignUpButton({ setIsModalOpen }: { setIsModalOpen: (isModalOpen: boolea
   const gender = userInfoStore((state) => state.gender);
   const nickname = userInfoStore((state) => state.nickname);
   const university = userInfoStore((state) => state.university);
-  const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
+  const { data: universityList } = useQuery({ queryKey: [queryKey.universityList], queryFn: fetchUniversityList });
   const clubCount = userInfoStore((state) => state.clubCount);
   const mbti = userInfoStore((state) => state.mbti);
   const path = userInfoStore((state) => state.path);
@@ -58,7 +59,7 @@ function SignUpButton({ setIsModalOpen }: { setIsModalOpen: (isModalOpen: boolea
       clubCount === ''
     ) {
       // eslint-disable-next-line no-alert
-      alert('잘못 입력된 항목이 있거나 닉네임 중복확인을 했는지 확인해주세요.');
+      alert(signUpErrorMessages.infoErrorMessage);
     } else {
       const data = {
         id: session?.user?.id as string,

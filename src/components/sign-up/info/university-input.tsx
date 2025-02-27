@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchUniversityList } from '@/lib/apis/sign-up';
-import { signUpErrorMessages } from '@/lib/constants';
+import { queryKey, signUpErrorMessages } from '@/lib/constants';
 import userInfoStore from '@/stores/sign-up/user-info-store';
 import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
 
@@ -15,7 +15,7 @@ function UniversityInput() {
 
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
   const useniversityDropdownRef = useRef<HTMLDivElement>(null);
-  const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
+  const { data: universityList } = useQuery({ queryKey: [queryKey.universityList], queryFn: fetchUniversityList });
 
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUniversity(event.target.value);
