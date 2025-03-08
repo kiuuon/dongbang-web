@@ -13,7 +13,6 @@ function NextButton() {
     if (termOfUse && privacyPolicy && thirdPartyConsent) {
       router.push('/sign-up/info');
     } else {
-      // eslint-disable-next-line no-alert
       alert(signUpErrorMessages.termsErrorMessage);
     }
   };

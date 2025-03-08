@@ -13,22 +13,16 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     (async () => {
-      const session = await fetchSession();
-
-      if (!session.user && router.pathname !== '/') {
-        router.push('/');
-      }
-    })();
-  }, [router]);
-
-  useEffect(() => {
-    (async () => {
       const { user } = await fetchSession();
       const userInfo = await fetchUser();
 
+      if (!user && router.pathname !== '/') {
+        router.push('/');
+      }
+
       if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
         router.push('/sign-up/terms');
-      } else if (user && userInfo && router.pathname === '/sign-up') {
+      } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
         router.push('/');
       }
     })();

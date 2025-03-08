@@ -58,7 +58,6 @@ function SignUpButton({ setIsModalOpen }: { setIsModalOpen: (isModalOpen: boolea
       gender === '' ||
       clubCount === ''
     ) {
-      // eslint-disable-next-line no-alert
       alert(signUpErrorMessages.infoErrorMessage);
     } else {
       const data = {
