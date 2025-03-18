@@ -22,7 +22,7 @@ function Navigator() {
         <button
           type="button"
           aria-label="교내 동아리로 이동"
-          onClick={() => goToSelectedClubType('campus-club')}
+          onClick={() => goToSelectedClubType('campus')}
           className="h-[50px] w-[50px] rounded-[32px] border-[1px] border-[#569879] bg-[#CAEABA]"
         />
         <p className="text-[10px] text-[#569879]">교내 동아리</p>
@@ -31,7 +31,7 @@ function Navigator() {
         <button
           type="button"
           aria-label="연합 동아리로 이동"
-          onClick={() => goToSelectedClubType('union-club')}
+          onClick={() => goToSelectedClubType('union')}
           className="h-[50px] w-[50px] rounded-[32px] border-[1px] border-[#569879] bg-[#CAEABA]"
         />
         <p className="text-[10px] text-[#569879]">연합 동아리</p>
