@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import KakaoLoginButton from '@/components/home/buttons/KakaoLoginButton';
-import GoogleLoginButton from '@/components/home/buttons/GoogleLoginButton';
+import KakaoLoginButton from '@/components/login/KakaoLoginButton';
+import GoogleLoginButton from '@/components/login/GoogleLoginButton';
 
 function Login() {
   return (
