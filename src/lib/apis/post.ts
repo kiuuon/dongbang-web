@@ -1,12 +1,12 @@
 import { supabase } from './supabaseClient';
 import { fetchUserId } from './auth';
 
-export async function fetchPostsByClubType(clubType: 'my-club' | 'campus' | 'union', page: number) {
+export async function fetchPostsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
   const PAGE_SIZE = 5;
   const start = page * PAGE_SIZE;
   const end = start + PAGE_SIZE - 1;
 
-  if (clubType === 'my-club') {
+  if (clubType === 'my') {
     const userId = await fetchUserId();
     const { data: clubData } = await supabase.from('Club_User').select('club_id').eq('user_id', userId);
 
