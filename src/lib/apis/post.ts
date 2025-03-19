@@ -26,11 +26,28 @@ export async function fetchPostsByClubType(clubType: 'my' | 'campus' | 'union', 
     return data;
   }
 
-  if (clubType === 'campus' || clubType === 'union') {
+  if (clubType === 'campus') {
+    const userId = await fetchUserId();
+    const { data: userData } = await supabase.from('User').select('university_id').eq('id', userId).single();
+
+    const userUniversityId = userData?.university_id;
+
+    const { data } = await supabase
+      .from('Post')
+      .select('*, author:User(name), club:Club(university_id)')
+      .not('club', 'is', null)
+      .eq('club.university_id', userUniversityId)
+      .order('created_at', { ascending: false })
+      .range(start, end);
+
+    return data;
+  }
+
+  if (clubType === 'union') {
     const { data } = await supabase
       .from('Post')
       .select('*, author:User(name)')
-      .eq('club_type', clubType.split('-')[0])
+      .eq('club_type', clubType)
       .order('created_at', { ascending: false })
       .range(start, end);
 
