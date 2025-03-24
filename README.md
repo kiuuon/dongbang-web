@@ -10,3 +10,4 @@
 
 `TypeScript` `Next.js` `Tailwind CSS`  
 `Axios` `TanStack Query` `Supabase`  
+`React Hook Form` `Yup`
