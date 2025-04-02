@@ -83,7 +83,7 @@ function DetailForm() {
   };
 
   return (
-    <form className="flex flex-col gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
+    <form className="my-[40px] flex flex-col gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="logo"
         control={control}
@@ -103,6 +103,13 @@ function DetailForm() {
         <textarea {...register('description')} className="h-[256px] w-full resize-none rounded border p-2" />
       </div>
       {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+      <div>
+        <p className="text-[15px]">주의사항</p>
+        <p className="text-[13px] text-[#C80606]">존재하지 않는 동아리라 판단시 운영자에 의해 삭제될 수 있습니다</p>
+        <p className="text-[13px] text-[#C80606]">
+          동아리 개설 후 한달동안 동아리원이 2명 이하일 경우 삭제될 수 있습니다
+        </p>
+      </div>
       <button type="submit" className="rounded bg-[#CAEABA] p-2 text-white">
         개설하기
       </button>

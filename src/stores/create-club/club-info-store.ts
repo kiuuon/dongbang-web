@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 interface ClubInfoStoreType {
-  campusClubType: string | null;
-  setCampusClubType: (campusClubType: string | null) => void;
+  campusClubType?: string | undefined;
+  setCampusClubType: (campusClubType: string | undefined) => void;
   name: string;
   setName: (name: string) => void;
   category: string;
@@ -16,7 +16,7 @@ interface ClubInfoStoreType {
 }
 
 const clubInfoStore = create<ClubInfoStoreType>((set) => ({
-  campusClubType: null,
+  campusClubType: undefined,
   setCampusClubType: (campusClubType) => set({ campusClubType }),
   name: '',
   setName: (name) => set({ name }),

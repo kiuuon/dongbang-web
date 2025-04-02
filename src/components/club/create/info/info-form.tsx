@@ -11,6 +11,7 @@ import TagInput from './tag-input';
 
 function InfoForm() {
   const router = useRouter();
+  const { clubType } = router.query;
   const setClubCampusType = clubInfoStore((state) => state.setCampusClubType);
   const setName = clubInfoStore((state) => state.setName);
   const setCategory = clubInfoStore((state) => state.setCategory);
@@ -30,7 +31,7 @@ function InfoForm() {
   });
 
   const onSubmit = (data: {
-    campusClubType: string;
+    campusClubType?: string | undefined;
     name: string;
     category: string;
     location: string;
@@ -42,25 +43,33 @@ function InfoForm() {
     setCategory(data.category);
     setLocation(data.location);
     setDescription(data.description);
-    setTags(data.tags);
+    if (clubType === 'campus') {
+      setTags(data.tags);
+    } else {
+      const newTags = [...data.tags];
+      newTags.shift();
+      setTags(newTags);
+    }
 
-    router.push('/club/create/campus/detail');
+    router.push(`/club/create/${clubType}/detail`);
   };
 
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="campusClubType"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <CampusClubTypeInput
-            value={field.value}
-            onChange={field.onChange}
-            setDefaultCampusClubType={setDefaultCampusClubType}
-          />
-        )}
-      />
+    <form className="mt-[80px] flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+      {clubType === 'campus' && (
+        <Controller
+          name="campusClubType"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <CampusClubTypeInput
+              value={field.value}
+              onChange={field.onChange}
+              setDefaultCampusClubType={setDefaultCampusClubType}
+            />
+          )}
+        />
+      )}
       {errors.campusClubType && <p className="text-red-500">{errors.campusClubType.message}</p>}
       <input {...register('name')} placeholder="동아리명" className="rounded border p-2" />
       {errors.name && <p className="text-red-500">{errors.name.message}</p>}
@@ -73,7 +82,11 @@ function InfoForm() {
         )}
       />
       {errors.category && <p className="text-red-500">{errors.category.message}</p>}
-      <input {...register('location')} placeholder="학교 내 동아리 위치" className="rounded border p-2" />
+      <input
+        {...register('location')}
+        placeholder={clubType === 'campus' ? '학교 내 동아리 위치' : '동아리 활동 지역'}
+        className="rounded border p-2"
+      />
       {errors.location && <p className="text-red-500">{errors.location.message}</p>}
       <textarea
         {...register('description')}

@@ -3,7 +3,7 @@ function CampusClubTypeInput({
   onChange,
   setDefaultCampusClubType,
 }: {
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   setDefaultCampusClubType: React.Dispatch<React.SetStateAction<string>>;
 }) {
@@ -12,7 +12,7 @@ function CampusClubTypeInput({
     setDefaultCampusClubType(type);
   };
   return (
-    <div className="mt-[80px] flex flex-col text-[16px]">
+    <div className="flex flex-col text-[16px]">
       <div className="mt-[8px] flex flex-col gap-[8px]">
         <div className="flex gap-[8px]">
           <button

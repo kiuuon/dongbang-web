@@ -1,7 +1,12 @@
 import * as yup from 'yup';
 
 export const campusClubInfoSchema = yup.object().shape({
-  campusClubType: yup.string().required('동아리 종류를 선택하세요.'),
+  // campusClubType: yup.string().required('동아리 종류를 선택하세요.'),
+  campusClubType: yup.string().when('clubType', {
+    is: 'campus',
+    then: (schema) => schema.required('동아리 종류를 선택하세요.'),
+    otherwise: (schema) => schema.notRequired().strip(),
+  }),
   name: yup.string().required('이름을 입력하세요.'),
   category: yup.string().required('카테고리를 선택하세요.'),
   location: yup.string().required('동아리 위치를 입력하세요.'),

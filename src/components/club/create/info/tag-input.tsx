@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 function TagInput({
   value,
@@ -11,6 +12,8 @@ function TagInput({
   defaultCampusClubType: string;
   defaultCategory: string;
 }) {
+  const router = useRouter();
+  const { clubType } = router.query;
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
@@ -27,7 +30,13 @@ function TagInput({
       return;
     }
 
-    if (value.length >= 5) {
+    if (value.includes(inputValue)) {
+      alert('이미 추가된 태그입니다.');
+      return;
+    }
+
+    const maxTagCount = clubType === 'campus' ? 5 : 6;
+    if (value.length >= maxTagCount) {
       alert('최대 태그 수를 초과했습니다.');
       return;
     }
