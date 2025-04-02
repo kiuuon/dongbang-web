@@ -11,6 +11,12 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  if (pathname === '/club/create/campus/detail') {
+    if (!referer || !referer.includes(`${req.nextUrl.origin}/club/create/campus/info`)) {
+      return NextResponse.redirect(new URL('/club/create/campus/info', req.url));
+    }
+  }
+
   if (pathname === '/') {
     return NextResponse.redirect(new URL('/club/my', req.url));
   }

@@ -22,7 +22,7 @@ function LogoInput({ value, onChange }: { value: string; onChange: (value: strin
   };
 
   return (
-    <div className="mt-[80px] flex flex-col gap-[8px]">
+    <div className="mt-[40px] flex flex-col gap-[8px]">
       <p>로고</p>
       {!value && (
         <label

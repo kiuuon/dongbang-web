@@ -11,5 +11,10 @@ export const campusClubInfoSchema = yup.object().shape({
 
 export const clubDetailSchema = yup.object().shape({
   logo: yup.string().required('로고를 선택하세요.'),
-  activity: yup.array().required('활동 사진을 선택하세요.'),
+  activity: yup
+    .array()
+    .min(1, '활동 사진을 선택하세요.')
+    .max(5, '최대 5장까지만 업로드할 수 있습니다.')
+    .required('활동 사진을 선택하세요.'),
+  description: yup.string().max(300, '최대 300자까지 입력 가능합니다').required('동아리 상세 설명을 입력하세요.'),
 });
