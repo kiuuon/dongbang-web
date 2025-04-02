@@ -56,7 +56,7 @@ function DetailForm() {
       const { publicUrl: logo } = await uploadLogo({ file: data.logo, fileName: logoFileName });
 
       const activityUploadPromises = data.activity.map((file, index) => {
-        const activityFileName = `activity/${index}/${uuid}.png`;
+        const activityFileName = `activity/${uuid}/${index}.png`;
         return uploadActivityPhoto({ file, fileName: activityFileName });
       });
       const activityResults = await Promise.all(activityUploadPromises);
