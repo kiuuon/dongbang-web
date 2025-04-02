@@ -8,6 +8,7 @@ import { upload } from '@/lib/apis/image';
 import { createClub } from '@/lib/apis/club';
 import clubInfoStore from '@/stores/create-club/club-info-store';
 import { ClubType } from '@/types/club-type';
+import Loading from '@/components/common/loading';
 import ActivityInput from './ativity-input';
 import LogoInput from './logo-input';
 
@@ -30,15 +31,15 @@ function DetailForm() {
     resolver: yupResolver(clubDetailSchema),
   });
 
-  const { mutateAsync: uploadLogo } = useMutation({
+  const { mutateAsync: uploadLogo, isPending: isLogoUploading } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
-  const { mutateAsync: uploadActivityPhoto } = useMutation({
+  const { mutateAsync: uploadActivityPhoto, isPending: isActivityPhotoUploading } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
-  const { mutate: handleCreateClub } = useMutation({
+  const { mutate: handleCreateClub, isPending } = useMutation({
     mutationFn: async (body: ClubType) => createClub(body),
     onSuccess: () => {
       router.replace('/club/my');
@@ -113,6 +114,8 @@ function DetailForm() {
       <button type="submit" className="rounded bg-[#CAEABA] p-2 text-white">
         개설하기
       </button>
+
+      {(isPending || isLogoUploading || isActivityPhotoUploading) && <Loading />}
     </form>
   );
 }
