@@ -1,14 +1,18 @@
+import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { clubDetailSchema } from '@/lib/validationSchema';
 
 import { upload } from '@/lib/apis/image';
+import { createClub } from '@/lib/apis/club';
 import clubInfoStore from '@/stores/create-club/club-info-store';
+import { ClubType } from '@/types/club-type';
 import ActivityInput from './ativity-input';
 import LogoInput from './logo-input';
 
 function DetailForm() {
+  const router = useRouter();
   const uuid = crypto.randomUUID();
   const clubCampusType = clubInfoStore((state) => state.campusClubType);
   const name = clubInfoStore((state) => state.name);
@@ -34,32 +38,44 @@ function DetailForm() {
     mutationFn: ({ file, fileName }: { file: string; fileName: string }) => upload(file, fileName),
   });
 
+  const { mutate: handleCreateClub } = useMutation({
+    mutationFn: async (body: ClubType) => createClub(body),
+    onSuccess: () => {
+      router.replace('/club/my');
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    },
+  });
+
   const onSubmit = async (data: { logo: string; activity: string[]; description: string }) => {
     try {
       const logoFileName = `logo/${uuid}.png`;
-      const logo = await uploadLogo({ file: data.logo, fileName: logoFileName });
+      const { publicUrl: logo } = await uploadLogo({ file: data.logo, fileName: logoFileName });
 
-      const activityUploadPromises = data.activity.map((file) => {
-        const activityFileName = `activity/${uuid}.png`;
+      const activityUploadPromises = data.activity.map((file, index) => {
+        const activityFileName = `activity/${index}/${uuid}.png`;
         return uploadActivityPhoto({ file, fileName: activityFileName });
       });
       const activityResults = await Promise.all(activityUploadPromises);
       const activityPhotos = activityResults.map((res) => res.publicUrl);
 
       const body = {
-        detailClubType: clubCampusType,
+        type: router.query.clubType as string,
+        detail_type: clubCampusType || null,
         name,
         category,
         location,
         description,
         tags,
         logo,
-        activityPhotos,
-        detailDescription: data.description,
+        activity_photos: activityPhotos,
+        detail_description: data.description,
       };
 
       // TODO: API 요청
-      console.log(body);
+      handleCreateClub(body);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error uploading files:', error);

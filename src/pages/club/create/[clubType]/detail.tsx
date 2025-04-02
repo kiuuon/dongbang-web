@@ -1,4 +1,4 @@
-import DetailForm from '@/components/club/create/campus/detail/detail-form';
+import DetailForm from '@/components/club/create/detail/detail-form';
 
 function Detail() {
   return (
