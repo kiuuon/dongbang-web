@@ -13,8 +13,6 @@ function Main() {
   const router = useRouter();
   const { clubType } = router.query;
 
-  console.log(clubType);
-
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
     queryKey: ['posts', clubType],

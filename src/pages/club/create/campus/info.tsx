@@ -1,4 +1,4 @@
-import InfoForm from '@/components/club/create/campus/info-form';
+import InfoForm from '@/components/club/create/campus/info/info-form';
 
 function Info() {
   return (
