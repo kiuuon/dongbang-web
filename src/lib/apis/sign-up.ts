@@ -1,3 +1,4 @@
+import { UserType } from '@/types/user-type';
 import { supabase } from './supabaseClient';
 
 export async function isNicknameExists(nickname: string) {
@@ -12,6 +13,6 @@ export async function fetchUniversityList() {
   return data;
 }
 
-export async function signUp(body: any) {
+export async function signUp(body: UserType) {
   await supabase.from('User').insert([body]);
 }

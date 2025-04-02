@@ -4,7 +4,7 @@ function Navigator() {
   const router = useRouter();
 
   const goToSelectedClubType = (clubType: string) => {
-    router.push(`/${clubType}`);
+    router.push(`/club/${clubType}`);
   };
 
   return (
@@ -13,7 +13,7 @@ function Navigator() {
         <button
           type="button"
           aria-label="내 동아리로 이동"
-          onClick={() => goToSelectedClubType('my-club')}
+          onClick={() => goToSelectedClubType('my')}
           className="h-[50px] w-[50px] rounded-[32px] border-[1px] border-[#569879] bg-[#CAEABA]"
         />
         <p className="text-[10px] text-[#569879]">내 동아리</p>

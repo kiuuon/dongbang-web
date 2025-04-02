@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import Navigator from '@/components/main/navigator';
-import JoinClubPrompt from '@/components/main/join-club-prompt';
-import NotPost from '@/components/main/not-post';
+import Navigator from '@/components/club/navigator';
+import JoinClubPrompt from '@/components/club/join-club-prompt';
+import NotPost from '@/components/club/not-post';
 import { fetchPostsByClubType } from '@/lib/apis/post';
 
 function Main() {
@@ -16,7 +16,7 @@ function Main() {
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
     queryKey: ['posts', clubType],
-    queryFn: ({ pageParam }) => fetchPostsByClubType(clubType as 'my-club' | 'campus' | 'union', pageParam),
+    queryFn: ({ pageParam }) => fetchPostsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
   });
 
@@ -50,7 +50,20 @@ function Main() {
     }
 
     if (data?.pages[0].length === 0) {
-      return <NotPost />;
+      return (
+        <div>
+          <NotPost />
+          <button
+            type="button"
+            className="mt-4 w-full rounded-lg bg-[#FFD600] py-4 text-[#000000]"
+            onClick={() => {
+              router.push('/club/create');
+            }}
+          >
+            동아리 생성하기
+          </button>
+        </div>
+      );
     }
 
     return data?.pages.map((page) =>
