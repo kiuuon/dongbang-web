@@ -31,11 +31,11 @@ function DetailForm() {
   });
 
   const { mutateAsync: uploadLogo } = useMutation({
-    mutationFn: ({ file, fileName }: { file: string; fileName: string }) => upload(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
   const { mutateAsync: uploadActivityPhoto } = useMutation({
-    mutationFn: ({ file, fileName }: { file: string; fileName: string }) => upload(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
   const { mutate: handleCreateClub } = useMutation({
@@ -49,7 +49,7 @@ function DetailForm() {
     },
   });
 
-  const onSubmit = async (data: { logo: string; activity: string[]; description: string }) => {
+  const onSubmit = async (data: { logo: File; activity: File[]; description: string }) => {
     try {
       const logoFileName = `logo/${uuid}.png`;
       const { publicUrl: logo } = await uploadLogo({ file: data.logo, fileName: logoFileName });
@@ -87,15 +87,15 @@ function DetailForm() {
       <Controller
         name="logo"
         control={control}
-        defaultValue=""
-        render={({ field }) => <LogoInput value={field.value} onChange={field.onChange} />}
+        defaultValue={undefined}
+        render={({ field }) => <LogoInput onChange={field.onChange} />}
       />
       {errors.logo && <p className="text-red-500">{errors.logo.message}</p>}
       <Controller
         name="activity"
         control={control}
         defaultValue={[]}
-        render={({ field }) => <ActivityInput value={field.value as string[]} onChange={field.onChange} />}
+        render={({ field }) => <ActivityInput value={field.value} onChange={field.onChange} />}
       />
       {errors.activity && <p className="text-red-500">{errors.activity.message}</p>}
       <div className="flex flex-col gap-[8px]">

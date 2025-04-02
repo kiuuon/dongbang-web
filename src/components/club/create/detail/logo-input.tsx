@@ -1,17 +1,17 @@
-// import { useState } from 'react';
+import { useState } from 'react';
 
-function LogoInput({ value, onChange }: { value: string; onChange: (value: string | null) => void }) {
-  // const [preview, setPreview] = useState<string | null>(null);
+function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
+  const [preview, setPreview] = useState<string | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    onChange(file as File);
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        // setPreview(reader.result);
-        onChange(reader.result);
+        setPreview(reader.result);
       }
     };
     reader.readAsDataURL(file);
@@ -19,12 +19,13 @@ function LogoInput({ value, onChange }: { value: string; onChange: (value: strin
 
   const handleRemove = () => {
     onChange(null);
+    setPreview(null);
   };
 
   return (
     <div className="flex flex-col gap-[8px]">
       <p>로고</p>
-      {!value && (
+      {!preview && (
         <label
           htmlFor="file-upload"
           className="relative flex h-[144px] w-[144px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed bg-gray-100"
@@ -40,11 +41,11 @@ function LogoInput({ value, onChange }: { value: string; onChange: (value: strin
         </label>
       )}
 
-      {value && (
+      {preview && (
         <div
           className="relative h-[144px] w-[144px] rounded-lg border bg-gray-100"
           style={{
-            backgroundImage: `url(${value})`,
+            backgroundImage: `url(${preview})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}

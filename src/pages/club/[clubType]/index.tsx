@@ -81,6 +81,12 @@ function Main() {
     <div>
       <Navigator />
       {getContent()}
+      <Image
+        src="https://xaqwildtmncatwtlhcxu.supabase.co/storage/v1/object/public/club-image/logo/bd57d62b-3976-46fd-8817-997fc28a4d90.png"
+        alt="post-image"
+        width={500}
+        height={500}
+      />
 
       {hasNextPage && (
         <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">

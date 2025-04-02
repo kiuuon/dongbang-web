@@ -15,7 +15,7 @@ export const campusClubInfoSchema = yup.object().shape({
 });
 
 export const clubDetailSchema = yup.object().shape({
-  logo: yup.string().required('로고를 선택하세요.'),
+  logo: yup.mixed<File>().required('로고를 선택하세요.'),
   activity: yup
     .array()
     .min(1, '활동 사진을 선택하세요.')

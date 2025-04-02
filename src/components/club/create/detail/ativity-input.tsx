@@ -1,6 +1,11 @@
-function ActivityInput({ value, onChange }: { value: string[]; onChange: (value: string[]) => void }) {
+import { useState } from 'react';
+
+function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: File[]) => void }) {
+  const [preview, setPreview] = useState<string[] | null>([]);
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
+    onChange(Array.from(files || []));
     if (!files) return;
 
     const newPreviews: string[] = [];
@@ -12,7 +17,7 @@ function ActivityInput({ value, onChange }: { value: string[]; onChange: (value:
           newPreviews.push(reader.result);
 
           if (newPreviews.length === files.length) {
-            onChange([...newPreviews]);
+            setPreview([...newPreviews]);
           }
         }
       };
@@ -21,14 +26,16 @@ function ActivityInput({ value, onChange }: { value: string[]; onChange: (value:
   };
 
   const handleRemove = (index: number) => {
-    const newPreviews = value.filter((_, idx) => idx !== index);
-    onChange(newPreviews);
+    const newPreviews = preview?.filter((_, idx) => idx !== index);
+    setPreview(newPreviews || []);
+    const newFiles = value.filter((_, idx) => idx !== index);
+    onChange(newFiles);
   };
 
   return (
     <div className="flex flex-col gap-[8px]">
       <p>활동 사진</p>
-      {value.length === 0 && (
+      {preview?.length === 0 && (
         <label
           htmlFor="file-upload"
           className="relative flex h-[144px] w-[144px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed bg-gray-100"
@@ -47,12 +54,12 @@ function ActivityInput({ value, onChange }: { value: string[]; onChange: (value:
 
       <div className="w-full overflow-x-auto">
         <div className="flex w-max gap-[8px]">
-          {value.map((preview, index) => (
+          {preview?.map((prev, index) => (
             <div
-              key={preview}
+              key={prev}
               className="relative h-[144px] w-[144px] rounded-lg border bg-gray-100"
               style={{
-                backgroundImage: `url(${preview})`,
+                backgroundImage: `url(${prev})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
