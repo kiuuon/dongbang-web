@@ -8,3 +8,8 @@ export const campusClubInfoSchema = yup.object().shape({
   description: yup.string().max(50, '최대 50자까지 입력 가능합니다').required('한 줄 소개를 입력하세요.'),
   tags: yup.array().required('태그를 추가하세요.'),
 });
+
+export const clubDetailSchema = yup.object().shape({
+  logo: yup.string().required('로고를 선택하세요.'),
+  activity: yup.array().required('활동 사진을 선택하세요.'),
+});

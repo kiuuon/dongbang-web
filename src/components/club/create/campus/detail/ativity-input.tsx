@@ -1,8 +1,4 @@
-import { useState } from 'react';
-
-function ActivityInput() {
-  const [previews, setPreviews] = useState<string[]>([]);
-
+function ActivityInput({ value, onChange }: { value: string[]; onChange: (value: string[]) => void }) {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files) return;
@@ -16,7 +12,7 @@ function ActivityInput() {
           newPreviews.push(reader.result);
 
           if (newPreviews.length === files.length) {
-            setPreviews([...newPreviews]);
+            onChange([...newPreviews]);
           }
         }
       };
@@ -25,13 +21,14 @@ function ActivityInput() {
   };
 
   const handleRemove = (index: number) => {
-    setPreviews((prev) => prev.filter((_, idx) => idx !== index));
+    const newPreviews = value.filter((_, idx) => idx !== index);
+    onChange(newPreviews);
   };
 
   return (
     <div className="flex flex-col gap-[8px]">
       <p>활동 사진</p>
-      {previews.length === 0 && (
+      {value.length === 0 && (
         <label
           htmlFor="file-upload"
           className="relative flex h-[144px] w-[144px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed bg-gray-100"
@@ -50,7 +47,7 @@ function ActivityInput() {
 
       <div className="w-full overflow-x-auto">
         <div className="flex w-max gap-[8px]">
-          {previews.map((preview, index) => (
+          {value.map((preview, index) => (
             <div
               key={preview}
               className="relative h-[144px] w-[144px] rounded-lg border bg-gray-100"
