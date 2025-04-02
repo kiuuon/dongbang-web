@@ -27,6 +27,9 @@ function InfoForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    defaultValues: {
+      clubType: clubType as string,
+    },
     resolver: yupResolver(campusClubInfoSchema),
   });
 
