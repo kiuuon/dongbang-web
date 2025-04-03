@@ -207,11 +207,11 @@ function InfoForm() {
       </div>
       <button
         type="submit"
-        className="text-bold32 mb-[16px] mt-[48px] h-[74px] w-full rounded-[10px] bg-primary text-tertiary_dark"
+        className="text-bold32 mb-[16px] mt-[48px] h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"
       >
         가입하기
       </button>
-      {isModalOpen && <SignUpCompleteModal />}
+      {!isModalOpen && <SignUpCompleteModal />}
     </form>
   );
 }

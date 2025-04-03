@@ -37,7 +37,7 @@ function CheckBox() {
         {termOfUse && privacyPolicy && thirdPartyConsent && marketing ? <CheckIcon /> : <NoneCheckIcon />}
         전체 동의
       </div>
-      <div className="my-[25px] h-[1px] w-full bg-[#B4B4B4]" />
+      <div className="mb-[16px] mt-[8px] h-[1px] w-full bg-gray1" />
       <div className="flex flex-col gap-[12px] pl-[11px]">
         <div
           role="button"
