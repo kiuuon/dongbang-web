@@ -51,6 +51,11 @@
     font-size: 16px;
     font-weight: 600;
   }
+  .text-bold20 {
+    font-family: 'Pretendard Variable';
+    font-size: 20px;
+    font-weight: 600;
+  }
   .text-bold24 {
     font-family: 'Pretendard Variable';
     font-size: 24px;

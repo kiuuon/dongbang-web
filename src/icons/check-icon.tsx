@@ -1,9 +1,10 @@
-export default function CheckIcon({ color }: { color: string }) {
+export default function CheckIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="11.5" cy="11.5" r="10.5" stroke="#48E577" strokeWidth="2" />
       <path
-        d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-        stroke={color}
+        d="M4.7915 12.4583L8.62484 16.2916L18.2082 6.70831"
+        stroke="#48E577"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

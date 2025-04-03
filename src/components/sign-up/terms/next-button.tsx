@@ -19,7 +19,7 @@ function NextButton() {
   return (
     <button
       type="button"
-      className="mb-[40px] h-[40px] w-[152px] rounded-[10px] bg-[#D9D9D9] text-[16px]"
+      className="text-bold32 mb-[16px] h-[74px] w-full rounded-[10px] bg-primary text-tertiary_dark"
       onClick={handleNextButton}
     >
       다음
