@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 
-import { signUpErrorMessages } from '@/lib/constants';
 import termsStore from '@/stores/terms-store';
 
 function NextButton() {
@@ -13,7 +12,7 @@ function NextButton() {
     if (termOfUse && privacyPolicy && thirdPartyConsent) {
       router.push('/sign-up/info');
     } else {
-      alert(signUpErrorMessages.termsErrorMessage);
+      alert('필수 약관에 동의해주세요.');
     }
   };
 

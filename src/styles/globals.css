@@ -1,3 +1,64 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('/fonts/PretendardVariable.ttf') format('truetype');
+  font-style: normal;
+  line-height: normal;
+}
+
+@layer components {
+  .text-regular10 {
+    font-family: 'Pretendard Variable';
+    font-size: 10px;
+    font-weight: 400;
+  }
+  .text-regular12 {
+    font-family: 'Pretendard Variable';
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .text-regular16 {
+    font-family: 'Pretendard Variable';
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .text-regular24 {
+    font-family: 'Pretendard Variable';
+    font-size: 24px;
+    font-weight: 400;
+  }
+  .text-regular32 {
+    font-family: 'Pretendard Variable';
+    font-size: 32px;
+    font-weight: 400;
+  }
+
+  .text-bold10 {
+    font-family: 'Pretendard Variable';
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .text-bold12 {
+    font-family: 'Pretendard Variable';
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .text-bold16 {
+    font-family: 'Pretendard Variable';
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .text-bold24 {
+    font-family: 'Pretendard Variable';
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .text-bold32 {
+    font-family: 'Pretendard Variable';
+    font-size: 32px;
+    font-weight: 600;
+  }
+}
