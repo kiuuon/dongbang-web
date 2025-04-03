@@ -211,7 +211,7 @@ function InfoForm() {
       >
         가입하기
       </button>
-      {!isModalOpen && <SignUpCompleteModal />}
+      {isModalOpen && <SignUpCompleteModal />}
     </form>
   );
 }
