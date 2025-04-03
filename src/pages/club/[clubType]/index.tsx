@@ -7,6 +7,7 @@ import Navigator from '@/components/club/navigator';
 import JoinClubPrompt from '@/components/club/join-club-prompt';
 import NotPost from '@/components/club/not-post';
 import { fetchPostsByClubType } from '@/lib/apis/post';
+import { logout } from '@/lib/apis/auth';
 
 function Main() {
   const observerElement = useRef(null);
@@ -61,6 +62,16 @@ function Main() {
             }}
           >
             동아리 생성하기
+          </button>
+          <button
+            type="button"
+            className="mt-4 w-full rounded-lg bg-[#FFD600] py-4 text-[#000000]"
+            onClick={async () => {
+              await logout();
+              router.push('/login');
+            }}
+          >
+            로그아웃
           </button>
         </div>
       );

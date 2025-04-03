@@ -6,11 +6,11 @@ function GoogleLoginButton() {
   return (
     <button
       type="button"
-      className="flex h-[50px] w-[295px] items-center gap-[32px] rounded-[10px] bg-white pl-[8px] text-[12px]"
+      className="bg-white text-bold12 flex h-[50px] w-[295px] items-center gap-[44px] rounded-[10px] bg-[#fff] pl-[16px]"
       onClick={() => login('google')}
     >
-      <Image src="/images/google_logo.png" alt="구글 로고" width={50} height={50} />
-      구글 계정으로으로 시작하기
+      <Image src="/images/google_logo.png" alt="구글 로고" width={36} height={36} />
+      구글 계정으로 시작하기
     </button>
   );
 }

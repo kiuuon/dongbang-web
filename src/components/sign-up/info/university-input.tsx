@@ -85,7 +85,10 @@ function UniversityInput({
                 type="button"
                 key={item.id}
                 className={`text-regular12 h-[23px] w-[241px] cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
-                onClick={() => handleUniversityClick(item.name)}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  handleUniversityClick(item.name);
+                }}
               >
                 {item.name}
               </button>

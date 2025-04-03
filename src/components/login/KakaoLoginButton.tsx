@@ -6,7 +6,7 @@ function KakaoLoginButton() {
   return (
     <button
       type="button"
-      className="flex h-[50px] w-[295px] items-center gap-[32px] rounded-[10px] bg-[#FFEB3B] pl-[8px] text-[12px]"
+      className="text-bold12 flex h-[50px] w-[295px] items-center gap-[36px] rounded-[10px] bg-[#FFEB3B] pl-[8px]"
       onClick={() => login('kakao')}
     >
       <Image src="/images/kakao_logo.png" alt="카카오 로고" width={50} height={50} />
