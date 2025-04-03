@@ -6,7 +6,7 @@ import { clubDetailSchema } from '@/lib/validationSchema';
 
 import { upload } from '@/lib/apis/image';
 import { createClub } from '@/lib/apis/club';
-import clubInfoStore from '@/stores/create-club/club-info-store';
+import clubInfoStore from '@/stores/club-info-store';
 import { ClubType } from '@/types/club-type';
 import Loading from '@/components/common/loading';
 import ActivityInput from './ativity-input';
@@ -28,6 +28,7 @@ function DetailForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    mode: 'onBlur',
     resolver: yupResolver(clubDetailSchema),
   });
 

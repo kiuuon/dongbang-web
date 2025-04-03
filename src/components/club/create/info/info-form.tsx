@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { campusClubInfoSchema } from '@/lib/validationSchema';
 
-import clubInfoStore from '@/stores/create-club/club-info-store';
+import clubInfoStore from '@/stores/club-info-store';
 import CampusClubTypeInput from './campus-club-type-input';
 import CategoryInput from './category-input';
 import TagInput from './tag-input';
@@ -30,6 +30,7 @@ function InfoForm() {
     defaultValues: {
       clubType: clubType as string,
     },
+    mode: 'onBlur',
     resolver: yupResolver(campusClubInfoSchema),
   });
 

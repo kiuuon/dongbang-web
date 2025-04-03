@@ -2,23 +2,24 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchUniversityList } from '@/lib/apis/sign-up';
-import { queryKey, signUpErrorMessages } from '@/lib/constants';
-import userInfoStore from '@/stores/sign-up/user-info-store';
-import userInfoErrorStore from '@/stores/sign-up/user-info-error-store';
+import { queryKey } from '@/lib/constants';
 
-function UniversityInput() {
-  const university = userInfoStore((state) => state.university);
-  const setUniversity = userInfoStore((state) => state.setUniversity);
-  const universityError = userInfoErrorStore((state) => state.universityError);
-  const setUniversityError = userInfoErrorStore((state) => state.setUniversityError);
-  const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
-
-  const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
+function UniversityInput({
+  value,
+  onChange,
+  onBlur,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+}) {
   const useniversityDropdownRef = useRef<HTMLDivElement>(null);
+  const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
+  const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
   const { data: universityList } = useQuery({ queryKey: [queryKey.universityList], queryFn: fetchUniversityList });
 
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUniversity(event.target.value);
+    onChange(event.target.value);
 
     if (!universityList) return;
 
@@ -37,20 +38,6 @@ function UniversityInput() {
       setIsUniversityDropdownOpen(false);
     }
   }, [searchedUniversityList]);
-
-  const handleUniversityFocus = () => {
-    if (searchedUniversityList.length > 0) {
-      setIsUniversityDropdownOpen(true);
-    }
-  };
-
-  const handleUniversityBlur = () => {
-    if (universityList?.some((item) => item.name === university)) {
-      setUniversityError(false);
-    } else {
-      setUniversityError(true);
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,9 +58,8 @@ function UniversityInput() {
   }, [isUniversityDropdownOpen]);
 
   const handleUniversityClick = (n: string) => {
-    setUniversity(n);
+    onChange(n);
     setIsUniversityDropdownOpen(false);
-    setUniversityError(false);
   };
 
   return (
@@ -81,17 +67,12 @@ function UniversityInput() {
       <div className="text-[14px] text-[#969696]">학교</div>
       <div className="relative flex gap-[4px]">
         <input
-          value={university}
+          value={value}
           className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
           onChange={handleUniversity}
-          onFocus={handleUniversityFocus}
-          onBlur={handleUniversityBlur}
+          onBlur={onBlur}
         />
-        {universityError && (
-          <div className="flex items-center text-[6px] text-[#CB0101]">
-            {signUpErrorMessages.universityErrorMessage}
-          </div>
-        )}
+
         {isUniversityDropdownOpen && (
           <div
             ref={useniversityDropdownRef}

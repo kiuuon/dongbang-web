@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 
 import { signUpErrorMessages } from '@/lib/constants';
-import termsStore from '@/stores/sign-up/terms-store';
+import termsStore from '@/stores/terms-store';
 
 function NextButton() {
   const router = useRouter();

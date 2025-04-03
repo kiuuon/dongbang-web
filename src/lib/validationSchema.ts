@@ -1,5 +1,44 @@
 import * as yup from 'yup';
 
+export const getSignUpInfoSchema = (
+  universityList: { id: number; name: string }[],
+  isDuplicate: boolean,
+  isSameCheck: boolean,
+) =>
+  yup.object().shape({
+    name: yup
+      .string()
+      .required('이름을 입력하세요.')
+      .matches(/^[a-zA-Z가-힣]{2,10}$/, '2~10글자 이내에 한글 또는 영문을 입력해주세요.'),
+    gender: yup.string().required('성별을 선택하세요.'),
+    birth: yup
+      .string()
+      .required('생년월일을 입력하세요.')
+      .matches(/^[0-9]{8}$/, '8자리 숫자로 입력해주세요.'),
+    university: yup
+      .string()
+      .required('학교를 입력하세요.')
+      .test('isValidUniversity', '존재하지 않는 대학교입니다.', (value) => {
+        if (!value) return false;
+        return universityList.some((university: { id: number; name: string }) => university.name === value);
+      }),
+    nickname: yup
+      .string()
+      .required('닉네임을 입력하세요.')
+      .matches(/^[a-zA-Z가-힣]{2,8}$/, '2~8글자 이내에 한글 또는 영문을 입력해주세요.')
+      .test('isValidNickname', '중복 체크를 해주세요.', () => isSameCheck)
+      .test('isUniqueNickname', '이미 사용중인 닉네임입니다.', () => !isDuplicate),
+    clubCount: yup.string().required('동아리 수를 선택하세요.'),
+    mbti: yup
+      .string()
+      .notRequired()
+      .test('is-valid-mbti', '올바른 MBTI 유형이 아닙니다.', (value) => {
+        if (!value) return true;
+        return /^(INTJ|INTP|ENTJ|ENTP|INFJ|INFP|ENFJ|ENFP|ISTJ|ISFJ|ESTJ|ESFJ|ISTP|ISFP|ESTP|ESFP)$/.test(value);
+      }),
+    path: yup.string(),
+  });
+
 export const campusClubInfoSchema = yup.object().shape({
   clubType: yup.string(),
   campusClubType: yup.string().when('clubType', {
