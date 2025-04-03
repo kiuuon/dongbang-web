@@ -7,6 +7,12 @@
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export": "off",
     "react/jsx-props-no-spreading": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        "some": ["nesting", "id"]
+      }
+    ]
   }
 }

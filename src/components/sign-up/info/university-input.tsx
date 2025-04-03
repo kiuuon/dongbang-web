@@ -63,26 +63,28 @@ function UniversityInput({
   };
 
   return (
-    <div>
-      <div className="text-[14px] text-[#969696]">학교</div>
+    <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
+      <label htmlFor="university" className="text-bold12 flex text-gray2">
+        학교
+      </label>
       <div className="relative flex gap-[4px]">
         <input
+          id="university"
           value={value}
-          className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
+          className="text-bold12 w-[224px] text-center text-gray2 outline-none placeholder:text-gray0"
           onChange={handleUniversity}
           onBlur={onBlur}
         />
-
         {isUniversityDropdownOpen && (
           <div
             ref={useniversityDropdownRef}
-            className="absolute left-[0] top-[30px] h-[150px] w-[136px] overflow-y-auto rounded-[5px] border border-[#969696] bg-[#F5F5F5]"
+            className="absolute left-[-20px] top-[20px] h-[94px] w-[253px] overflow-y-auto rounded-b-[5px] border border-tertiary bg-[#fff] px-[5px]"
           >
-            {searchedUniversityList?.map((item) => (
+            {searchedUniversityList?.map((item, index) => (
               <button
                 type="button"
                 key={item.id}
-                className="w-full cursor-pointer border-b border-[#969696] p-[5px] hover:bg-[#D9D9D9]"
+                className={`text-regular12 h-[23px] w-[241px] cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
                 onClick={() => handleUniversityClick(item.name)}
               >
                 {item.name}

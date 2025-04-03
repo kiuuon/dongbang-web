@@ -6,6 +6,7 @@ export interface UserType {
   email: string;
   nickname: string;
   university_id: number;
+  major: string;
   clubs_joined: string;
   mbti: string | null;
   join_path: string | null;

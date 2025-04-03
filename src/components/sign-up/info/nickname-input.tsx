@@ -39,19 +39,23 @@ function NicknameInput({
   });
 
   return (
-    <div>
-      <div className="text-[14px] text-[#969696]">닉네임</div>
+    <div className="relative flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
+      <label htmlFor="nickname" className="text-bold12 flex text-gray2">
+        닉네임
+      </label>
       <div className="flex gap-[15px]">
         <input
+          id="nickname"
           value={value}
-          className="mb-[10px] h-[24px] w-[136px] rounded-[5px] border-b border-[#969696] bg-[#F5F5F5] pl-[5px] outline-none"
+          className="text-bold12 w-[224px] text-center text-gray2 outline-none placeholder:text-gray0"
           onChange={handleNickname}
           onBlur={onBlur}
         />
         <button
           type="button"
-          className="h-[20px] w-[50px] rounded-[10px] bg-[#E9E9E9] text-[10px] text-[#969696]"
-          onClick={() => {
+          className="text-regular12 absolute right-[20px] top-[10px] flex h-[18px] w-[56px] items-center justify-center rounded-[5px] border border-gray2 bg-primary text-gray2"
+          onMouseDown={(event) => {
+            event.preventDefault();
             handleNicknameSameCheck();
           }}
         >

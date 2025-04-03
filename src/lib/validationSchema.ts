@@ -18,16 +18,16 @@ export const getSignUpInfoSchema = (
     university: yup
       .string()
       .required('학교를 입력하세요.')
-      .test('isValidUniversity', '존재하지 않는 대학교입니다.', (value) => {
-        if (!value) return false;
-        return universityList.some((university: { id: number; name: string }) => university.name === value);
-      }),
+      .test('isValidUniversity', '존재하지 않는 대학교입니다.', (value) =>
+        universityList.some((university: { id: number; name: string }) => university.name === value),
+      ),
+    major: yup.string().required('학과를 입력하세요.'),
     nickname: yup
       .string()
       .required('닉네임을 입력하세요.')
       .matches(/^[a-zA-Z가-힣]{2,8}$/, '2~8글자 이내에 한글 또는 영문을 입력해주세요.')
-      .test('isValidNickname', '중복 체크를 해주세요.', () => isSameCheck)
-      .test('isUniqueNickname', '이미 사용중인 닉네임입니다.', () => !isDuplicate),
+      .test('isUniqueNickname', '이미 사용중인 닉네임입니다.', () => !isDuplicate)
+      .test('isValidNickname', '중복 체크를 해주세요.', () => isSameCheck),
     clubCount: yup.string().required('동아리 수를 선택하세요.'),
     mbti: yup
       .string()
