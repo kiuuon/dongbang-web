@@ -15,7 +15,7 @@ function SignUpCompleteModal() {
         </div>
         <button
           type="button"
-          className="text-bold16 h-[34px] w-[106px] rounded-[7px] bg-tertiary text-[#fff]"
+          className="text-bold16 text-white h-[34px] w-[106px] rounded-[7px] bg-tertiary"
           onClick={goToHome}
         >
           확인

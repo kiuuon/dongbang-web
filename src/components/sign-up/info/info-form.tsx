@@ -110,14 +110,14 @@ function InfoForm() {
           className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
         />
       </div>
-      {errors.name && <span className="text-bold10 text-error">{errors.name.message}</span>}
+      {errors.name && <span className="text-regular12 text-error">{errors.name.message}</span>}
       <Controller
         name="gender"
         control={control}
         defaultValue=""
         render={({ field }) => <GenderInput value={field.value} onChange={field.onChange} />}
       />
-      {errors.gender && <span className="text-bold10 text-error">{errors.gender.message}</span>}
+      {errors.gender && <span className="text-regular12 text-error">{errors.gender.message}</span>}
       <div>
         <label htmlFor="birth" className="text-bold16 flex text-gray2">
           생년월일
@@ -129,14 +129,14 @@ function InfoForm() {
           className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none placeholder:text-gray0"
         />
       </div>
-      {errors.birth && <span className="text-bold10 text-error">{errors.birth.message}</span>}
+      {errors.birth && <span className="text-regular12 text-error">{errors.birth.message}</span>}
       <Controller
         name="university"
         control={control}
         defaultValue=""
         render={({ field }) => <UniversityInput value={field.value} onChange={field.onChange} onBlur={field.onBlur} />}
       />
-      {errors.university && <span className="text-bold10 text-error">{errors.university.message}</span>}
+      {errors.university && <span className="text-regular12 text-error">{errors.university.message}</span>}
       <div>
         <label htmlFor="major" className="text-bold16 flex text-gray2">
           학과
@@ -147,7 +147,7 @@ function InfoForm() {
           className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
         />
       </div>
-      {errors.major && <span className="text-bold10 text-error">{errors.major.message}</span>}
+      {errors.major && <span className="text-regular12 text-error">{errors.major.message}</span>}
       <Controller
         name="nickname"
         control={control}
@@ -162,15 +162,15 @@ function InfoForm() {
           />
         )}
       />
-      {errors.nickname && <span className="text-bold10 text-error">{errors.nickname.message}</span>}
-      {isSameCheck && <span className="text-bold10 text-[#48E577]">사용 가능한 닉네임입니다.</span>}
+      {errors.nickname && <span className="text-regular12 text-error">{errors.nickname.message}</span>}
+      {isSameCheck && <span className="text-regular12 text-[#48E577]">사용 가능한 닉네임입니다.</span>}
       <Controller
         name="clubCount"
         control={control}
         defaultValue=""
         render={({ field }) => <ClubCountInput value={field.value} onChange={field.onChange} />}
       />
-      {errors.clubCount && <span className="text-bold10 text-error">{errors.clubCount.message}</span>}
+      {errors.clubCount && <span className="text-regular12 text-error">{errors.clubCount.message}</span>}
 
       <Controller
         name="path"

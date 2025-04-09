@@ -6,12 +6,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
+import Tab from '@/components/layout/tab';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
+  const { pathname } = router;
   const queryClient = new QueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+
+  const NoneTabPage = ['/login', '/sign-up/terms', '/sign-up/info'];
 
   useEffect(() => {
     (async () => {
@@ -45,6 +49,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
+      {!NoneTabPage.includes(pathname) && <Tab />}
     </QueryClientProvider>
   );
 }

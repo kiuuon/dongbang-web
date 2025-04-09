@@ -78,13 +78,13 @@ function UniversityInput({
         {isUniversityDropdownOpen && (
           <div
             ref={useniversityDropdownRef}
-            className="absolute left-[80px] top-[50px] z-20 max-h-[141px] w-[187px] overflow-y-auto border border-t-0 border-tertiary bg-[#fff]"
+            className="bg-white absolute left-[80px] top-[50px] z-20 max-h-[141px] w-[187px] overflow-y-auto border border-t-0 border-tertiary"
           >
             {searchedUniversityList?.map((item, index) => (
               <button
                 type="button"
                 key={item.id}
-                className={`text-regular12 h-[28px] w-full cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
+                className={`text-bold 16 h-[28px] w-full cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
                 onMouseDown={(event) => {
                   event.preventDefault();
                   handleUniversityClick(item.name);

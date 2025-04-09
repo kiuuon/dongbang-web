@@ -4,7 +4,7 @@ function Navigator() {
   const router = useRouter();
 
   const goToSelectedClubType = (clubType: string) => {
-    router.push(`/club/${clubType}`);
+    router.push(`/post/${clubType}`);
   };
 
   return (
