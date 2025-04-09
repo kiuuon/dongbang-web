@@ -63,28 +63,28 @@ function UniversityInput({
   };
 
   return (
-    <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-      <label htmlFor="university" className="text-bold12 flex text-gray2">
+    <div>
+      <label htmlFor="university" className="text-bold16 flex text-gray2">
         학교
       </label>
       <div className="relative flex gap-[4px]">
         <input
           id="university"
           value={value}
-          className="text-bold12 w-[224px] text-center text-gray2 outline-none placeholder:text-gray0"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
           onChange={handleUniversity}
           onBlur={onBlur}
         />
         {isUniversityDropdownOpen && (
           <div
             ref={useniversityDropdownRef}
-            className="absolute left-[-20px] top-[20px] h-[94px] w-[253px] overflow-y-auto rounded-b-[5px] border border-tertiary bg-[#fff] px-[5px]"
+            className="absolute left-[80px] top-[50px] z-20 max-h-[141px] w-[187px] overflow-y-auto border border-t-0 border-tertiary bg-[#fff]"
           >
             {searchedUniversityList?.map((item, index) => (
               <button
                 type="button"
                 key={item.id}
-                className={`text-regular12 h-[23px] w-[241px] cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
+                className={`text-regular12 h-[28px] w-full cursor-pointer ${index !== 0 && 'border-t'} border-tertiary pl-[2px]`}
                 onMouseDown={(event) => {
                   event.preventDefault();
                   handleUniversityClick(item.name);

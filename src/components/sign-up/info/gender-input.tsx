@@ -1,11 +1,11 @@
 function GenderInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
-    <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-      <div className="text-bold12 flex text-gray2">성별</div>
-      <div className="flex h-[30px] w-[224px]">
+    <div>
+      <div className="text-bold16 flex text-gray2">성별</div>
+      <div className="flex h-[50px] w-full">
         <button
           type="button"
-          className={`h-[30px] w-[112px] rounded-l-[5px] border border-gray2 ${value === 'male' ? 'bg-secondary' : 'bg-primary'} text-bold12 ${value === 'male' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[176px] rounded-l-[5px] border border-gray2 ${value === 'male' ? 'bg-secondary' : 'bg-primary'} text-bold16 ${value === 'male' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             onChange('male');
           }}
@@ -14,7 +14,7 @@ function GenderInput({ value, onChange }: { value: string; onChange: (value: str
         </button>
         <button
           type="button"
-          className={`h-[30px] w-[112px] rounded-r-[5px] border border-l-0 border-gray2 ${value === 'female' ? 'bg-secondary' : 'bg-primary'} text-bold12 ${value === 'female' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[176px] rounded-r-[5px] border border-l-0 border-gray2 ${value === 'female' ? 'bg-secondary' : 'bg-primary'} text-bold16 ${value === 'female' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             onChange('female');
           }}

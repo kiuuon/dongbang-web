@@ -8,7 +8,6 @@ export interface UserType {
   university_id: number;
   major: string;
   clubs_joined: string;
-  mbti: string | null;
   join_path: string | null;
   term_of_use: boolean;
   privacy_policy: boolean;

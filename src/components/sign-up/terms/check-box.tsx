@@ -80,7 +80,7 @@ function CheckBox() {
           onKeyDown={() => setMarketing(!marketing)}
         >
           {marketing ? <CheckIcon /> : <NoneCheckIcon />}
-          <div className="text-bold16">[선택]</div>
+          <div className="text-regular16">[선택]</div>
           <div className="text-regular16 text-tertiary">마케팅 정보 수신 동의</div>
         </div>
       </div>

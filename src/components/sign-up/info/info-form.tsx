@@ -24,7 +24,6 @@ interface UserInfoType {
   major: string;
   nickname: string;
   clubCount: string;
-  mbti?: string | null;
   path?: string;
 }
 
@@ -61,7 +60,6 @@ function InfoForm() {
     register,
     trigger,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm({
     mode: 'onBlur',
@@ -91,7 +89,6 @@ function InfoForm() {
       university_id: universityList?.find((item) => item.name === data.university)?.id,
       major: data.major,
       clubs_joined: data.clubCount,
-      mbti: data.mbti || null,
       join_path: data.path || null,
       term_of_use: termOfUse,
       privacy_policy: privacyPolicy,
@@ -102,109 +99,86 @@ function InfoForm() {
   };
 
   return (
-    <form className="mt-[20px] flex w-full flex-col gap-[16px]" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-[8px]">
-        <div className="text-bold16 text-black text-[20px]">소속 정보</div>
-        <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-          <label htmlFor="name" className="text-bold12 flex text-gray2">
-            이름
-          </label>
-          <input
-            id="name"
-            {...register('name')}
-            className="text-bold12 w-[224px] text-center text-gray2 outline-none"
-          />
-        </div>
-        {errors.name && <span className="text-bold10 text-error">{errors.name.message}</span>}
-        <Controller
-          name="gender"
-          control={control}
-          defaultValue=""
-          render={({ field }) => <GenderInput value={field.value} onChange={field.onChange} />}
-        />
-        {errors.gender && <span className="text-bold10 text-error">{errors.gender.message}</span>}
-        <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-          <label htmlFor="birth" className="text-bold12 flex text-gray2">
-            생년월일
-          </label>
-          <input
-            id="birth"
-            {...register('birth')}
-            placeholder="ex) 20000413"
-            className="text-bold12 w-[224px] text-center text-gray2 outline-none placeholder:text-gray0"
-          />
-        </div>
-        {errors.birth && <span className="text-bold10 text-error">{errors.birth.message}</span>}
-        <Controller
-          name="university"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <UniversityInput value={field.value} onChange={field.onChange} onBlur={field.onBlur} />
-          )}
-        />
-        {errors.university && <span className="text-bold10 text-error">{errors.university.message}</span>}
-        <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-          <label htmlFor="major" className="text-bold12 flex text-gray2">
-            학과
-          </label>
-          <input
-            id="major"
-            {...register('major')}
-            className="text-bold12 w-[224px] text-center text-gray2 outline-none"
-          />
-        </div>
-        {errors.major && <span className="text-bold10 text-error">{errors.major.message}</span>}
-      </div>
-      <div className="flex flex-col gap-[8px]">
-        <div className="text-bold16 text-black text-[20px]">닉네임</div>
-        <Controller
-          name="nickname"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <NicknameInput
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              setIsDuplicate={setIsDuplicate}
-              setIsSameCheck={setIsSameCheck}
-            />
-          )}
-        />
-        {errors.nickname && <span className="text-bold10 text-error">{errors.nickname.message}</span>}
-        {isSameCheck && <span className="text-bold10 text-[#48E577]">사용 가능한 닉네임입니다.</span>}
-      </div>
-      <div className="flex flex-col gap-[8px]">
-        <div className="text-bold16 text-black text-[20px]">구분 정보</div>
-        <Controller
-          name="clubCount"
-          control={control}
-          defaultValue=""
-          render={({ field }) => <ClubCountInput value={field.value} onChange={field.onChange} />}
-        />
-        {errors.clubCount && <span className="text-bold10 text-error">{errors.clubCount.message}</span>}
-        <div className="flex h-[40px] w-full items-center justify-between rounded-[5px] border border-tertiary pl-[8px] pr-[20px]">
-          <label htmlFor="mbti" className="text-bold12 flex text-gray2">
-            MBTI(선택)
-          </label>
-          <input
-            id="mbti"
-            {...register('mbti')}
-            className="text-bold12 w-[224px] text-center text-gray2 outline-none"
-            onChange={(event) => {
-              setValue('mbti', event.target.value.toUpperCase());
-            }}
-          />
-        </div>
-        {errors.mbti && <span className="text-bold10 text-error">{errors.mbti.message}</span>}
-        <Controller
-          name="path"
-          control={control}
-          defaultValue=""
-          render={({ field }) => <PathInput value={field.value} onChange={field.onChange} />}
+    <form className="mt-[20px] flex w-full flex-col gap-[8px]" onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label htmlFor="name" className="text-bold16 flex text-gray2">
+          이름
+        </label>
+        <input
+          id="name"
+          {...register('name')}
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
         />
       </div>
+      {errors.name && <span className="text-bold10 text-error">{errors.name.message}</span>}
+      <Controller
+        name="gender"
+        control={control}
+        defaultValue=""
+        render={({ field }) => <GenderInput value={field.value} onChange={field.onChange} />}
+      />
+      {errors.gender && <span className="text-bold10 text-error">{errors.gender.message}</span>}
+      <div>
+        <label htmlFor="birth" className="text-bold16 flex text-gray2">
+          생년월일
+        </label>
+        <input
+          id="birth"
+          {...register('birth')}
+          placeholder="ex) 20000413"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none placeholder:text-gray0"
+        />
+      </div>
+      {errors.birth && <span className="text-bold10 text-error">{errors.birth.message}</span>}
+      <Controller
+        name="university"
+        control={control}
+        defaultValue=""
+        render={({ field }) => <UniversityInput value={field.value} onChange={field.onChange} onBlur={field.onBlur} />}
+      />
+      {errors.university && <span className="text-bold10 text-error">{errors.university.message}</span>}
+      <div>
+        <label htmlFor="major" className="text-bold16 flex text-gray2">
+          학과
+        </label>
+        <input
+          id="major"
+          {...register('major')}
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
+        />
+      </div>
+      {errors.major && <span className="text-bold10 text-error">{errors.major.message}</span>}
+      <Controller
+        name="nickname"
+        control={control}
+        defaultValue=""
+        render={({ field }) => (
+          <NicknameInput
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            setIsDuplicate={setIsDuplicate}
+            setIsSameCheck={setIsSameCheck}
+          />
+        )}
+      />
+      {errors.nickname && <span className="text-bold10 text-error">{errors.nickname.message}</span>}
+      {isSameCheck && <span className="text-bold10 text-[#48E577]">사용 가능한 닉네임입니다.</span>}
+      <Controller
+        name="clubCount"
+        control={control}
+        defaultValue=""
+        render={({ field }) => <ClubCountInput value={field.value} onChange={field.onChange} />}
+      />
+      {errors.clubCount && <span className="text-bold10 text-error">{errors.clubCount.message}</span>}
+
+      <Controller
+        name="path"
+        control={control}
+        defaultValue=""
+        render={({ field }) => <PathInput value={field.value} onChange={field.onChange} />}
+      />
+
       <button
         type="submit"
         className="text-bold32 mb-[16px] mt-[48px] h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"

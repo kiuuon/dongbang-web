@@ -29,13 +29,6 @@ export const getSignUpInfoSchema = (
       .test('isUniqueNickname', '이미 사용중인 닉네임입니다.', () => !isDuplicate)
       .test('isValidNickname', '중복 체크를 해주세요.', () => isSameCheck),
     clubCount: yup.string().required('동아리 수를 선택하세요.'),
-    mbti: yup
-      .string()
-      .notRequired()
-      .test('is-valid-mbti', '올바른 MBTI 유형이 아닙니다.', (value) => {
-        if (!value) return true;
-        return /^(INTJ|INTP|ENTJ|ENTP|INFJ|INFP|ENFJ|ENFP|ISTJ|ISFJ|ESTJ|ESFJ|ISTP|ISFP|ESTP|ESFP)$/.test(value);
-      }),
     path: yup.string(),
   });
 
