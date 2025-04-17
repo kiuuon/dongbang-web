@@ -47,13 +47,7 @@ function InfoForm() {
     setCategory(data.category);
     setLocation(data.location);
     setDescription(data.description);
-    if (clubType === 'campus') {
-      setTags(data.tags);
-    } else {
-      const newTags = [...data.tags];
-      newTags.shift();
-      setTags(newTags);
-    }
+    setTags(data.tags);
 
     router.push(`/club/create/${clubType}/detail`);
   };
@@ -101,7 +95,7 @@ function InfoForm() {
       <Controller
         name="tags"
         control={control}
-        defaultValue={['', '']}
+        defaultValue={clubType === 'union' ? ['연합 동아리', ''] : ['', '']}
         render={({ field }) => (
           <TagInput
             value={field.value}

@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 @font-face {
   font-family: 'Pretendard Variable';
   src: url('/fonts/PretendardVariable.ttf') format('truetype');
@@ -49,6 +57,11 @@
   .text-bold12 {
     font-family: 'Pretendard Variable';
     font-size: 12px;
+    font-weight: 600;
+  }
+  .text-bold14 {
+    font-family: 'Pretendard Variable';
+    font-size: 14px;
     font-weight: 600;
   }
   .text-bold16 {

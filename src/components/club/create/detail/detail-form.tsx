@@ -43,7 +43,7 @@ function DetailForm() {
   const { mutate: handleCreateClub, isPending } = useMutation({
     mutationFn: async (body: ClubType) => createClub(body),
     onSuccess: () => {
-      router.replace('/club/my');
+      router.replace('/post/my');
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
