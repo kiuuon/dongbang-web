@@ -18,7 +18,9 @@ function TagInput({
 
   useEffect(() => {
     const newTag = [...value];
-    newTag[0] = defaultCampusClubType;
+    if (clubType !== 'union') {
+      newTag[0] = defaultCampusClubType;
+    }
     newTag[1] = defaultCategory;
 
     onChange(newTag);
