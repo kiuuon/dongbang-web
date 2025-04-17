@@ -35,7 +35,7 @@ function JoinClubPrompt() {
         </button>
       </div>
       {clubList?.length !== 0 && (
-        <div className="flex flex-col gap-[8px]">
+        <div className="mb-[100px] flex flex-col gap-[8px]">
           <div className="text-bold16 ml-[12px]">동아리 추천</div>
           <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto pl-[5px]">
             {clubList?.map((club, index) => (
