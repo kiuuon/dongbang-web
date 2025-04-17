@@ -5,7 +5,7 @@ function GenderInput({ value, onChange }: { value: string; onChange: (value: str
       <div className="flex h-[50px] w-full">
         <button
           type="button"
-          className={`h-[50px] w-[176px] rounded-l-[5px] border border-gray2 ${value === 'male' ? 'bg-secondary' : 'bg-primary'} text-bold16 ${value === 'male' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[176px] rounded-l-[5px] border border-gray0 ${value === 'male' ? 'bg-secondary_light' : 'bg-white'} text-bold16 ${value === 'male' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             onChange('male');
           }}
@@ -14,7 +14,7 @@ function GenderInput({ value, onChange }: { value: string; onChange: (value: str
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[176px] rounded-r-[5px] border border-l-0 border-gray2 ${value === 'female' ? 'bg-secondary' : 'bg-primary'} text-bold16 ${value === 'female' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[176px] rounded-r-[5px] border border-l-0 border-gray0 ${value === 'female' ? 'bg-secondary_light' : 'bg-white'} text-bold16 ${value === 'female' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             onChange('female');
           }}

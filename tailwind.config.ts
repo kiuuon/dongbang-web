@@ -9,7 +9,9 @@ export default {
   theme: {
     colors: {
       primary: '#F3ECDE',
+      primary_dark: '#C8BBA3',
       secondary: '#FFE6A1',
+      secondary_light: '#FFF3CE',
       tertiary: '#A17C4A',
       tertiary_dark: '#5C4A25',
       white: '#FFFFFF',

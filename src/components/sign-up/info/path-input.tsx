@@ -14,7 +14,7 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
       <div className="flex h-[50px] w-full rounded-[5px]">
         <button
           type="button"
-          className={`h-[50px] w-[88px] rounded-l-[5px] border border-gray2 ${value === 'SNS' ? 'bg-secondary' : 'bg-primary'} text-bold12 ${value === 'SNS' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[88px] rounded-l-[5px] border border-gray0 ${value === 'SNS' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === 'SNS' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             setEtcPath('');
             if (value === 'SNS') {
@@ -28,7 +28,7 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[88px] border border-l-0 border-gray2 ${value === '지인 추천' ? 'bg-secondary' : 'bg-primary'} text-bold12 ${value === '지인 추천' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[88px] border border-l-0 border-gray0 ${value === '지인 추천' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === '지인 추천' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             setEtcPath('');
             if (value === '지인 추천') {
@@ -42,7 +42,7 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[88px] border border-l-0 border-gray2 ${value === '검색' ? 'bg-secondary' : 'bg-primary'} text-bold12 ${value === '검색' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[50px] w-[88px] border border-l-0 border-gray0 ${value === '검색' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === '검색' ? 'text-tertiary_dark' : 'text-gray2'}`}
           onClick={() => {
             setEtcPath('');
             if (value === '검색') {
@@ -57,7 +57,7 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
         <input
           placeholder="기타"
           value={etcPath}
-          className={`text-bold12 h-[50px] w-[88px] rounded-r-[5px] border border-l-0 border-gray2 ${etcPath !== '' ? 'bg-secondary' : 'bg-primary'} text-center ${etcPath !== '' ? 'text-tertiary_dark' : 'text-gray2'} outline-none`}
+          className={`text-bold12 h-[50px] w-[88px] rounded-r-[5px] border border-l-0 border-gray0 ${etcPath !== '' ? 'bg-secondary_light' : 'bg-white'} text-center ${etcPath !== '' ? 'text-tertiary_dark' : 'text-gray2'} outline-none`}
           onChange={handleEtcPath}
         />
       </div>

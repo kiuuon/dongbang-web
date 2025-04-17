@@ -107,7 +107,7 @@ function InfoForm() {
         <input
           id="name"
           {...register('name')}
-          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none"
         />
       </div>
       {errors.name && <span className="text-regular12 text-error">{errors.name.message}</span>}
@@ -126,7 +126,7 @@ function InfoForm() {
           id="birth"
           {...register('birth')}
           placeholder="ex) 20000413"
-          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none placeholder:text-gray0"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none placeholder:text-gray0"
         />
       </div>
       {errors.birth && <span className="text-regular12 text-error">{errors.birth.message}</span>}
@@ -144,7 +144,7 @@ function InfoForm() {
         <input
           id="major"
           {...register('major')}
-          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none"
         />
       </div>
       {errors.major && <span className="text-regular12 text-error">{errors.major.message}</span>}

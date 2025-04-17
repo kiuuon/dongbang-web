@@ -47,13 +47,13 @@ function NicknameInput({
         <input
           id="nickname"
           value={value}
-          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-tertiary pl-[8px] pr-[20px] text-center text-gray2 outline-none"
+          className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none"
           onChange={handleNickname}
           onBlur={onBlur}
         />
         <button
           type="button"
-          className="text-regular12 absolute right-[20px] top-[41px] flex h-[18px] w-[56px] items-center justify-center rounded-[5px] border border-gray2 bg-primary text-gray2"
+          className="text-regular12 border-primary_dark absolute right-[20px] top-[41px] flex h-[18px] w-[56px] items-center justify-center rounded-[5px] border bg-primary text-gray2"
           onMouseDown={(event) => {
             event.preventDefault();
             handleNicknameSameCheck();
