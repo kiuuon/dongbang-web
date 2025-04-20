@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import Header from '@/components/post/header';
+import PostHeader from '@/components/post/post-header';
 import JoinClubPrompt from '@/components/post/join-club-prompt';
 import NotPost from '@/components/post/not-post';
 import { fetchPostsByClubType } from '@/lib/apis/post';
@@ -70,7 +70,7 @@ function Main() {
 
   return (
     <div>
-      <Header />
+      <PostHeader />
       {getContent()}
 
       {hasNextPage && (

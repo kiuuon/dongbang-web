@@ -6,7 +6,7 @@ import RightArrowIcon from '@/icons/right-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 
-function Header() {
+function PostHeader() {
   const router = useRouter();
   const { clubType } = router.query;
   const clubTypeName = {
@@ -43,7 +43,7 @@ function Header() {
 
   return (
     <header
-      className={`fixed left-0 top-0 flex h-[48px] w-full items-center justify-between bg-white pl-[20px] pt-[12px] ${
+      className={`fixed left-0 top-0 flex h-[48px] w-full items-center justify-between bg-white pl-[20px] pt-[12px] transition-transform duration-300 ${
         show ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
@@ -102,4 +102,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default PostHeader;
