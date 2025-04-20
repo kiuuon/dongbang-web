@@ -40,7 +40,7 @@ function NicknameInput({
 
   return (
     <div className="relative">
-      <label htmlFor="nickname" className="text-bold16 flex text-gray2">
+      <label htmlFor="nickname" className="text-bold16 mb-[2px] flex text-gray2">
         닉네임
       </label>
       <div className="flex gap-[15px]">
@@ -53,7 +53,7 @@ function NicknameInput({
         />
         <button
           type="button"
-          className="text-regular12 border-primary_dark absolute right-[20px] top-[41px] flex h-[18px] w-[56px] items-center justify-center rounded-[5px] border bg-primary text-gray2"
+          className="text-regular12 absolute right-[20px] top-[41px] flex h-[18px] w-[56px] items-center justify-center rounded-[5px] border border-primary_dark bg-primary text-gray2"
           onMouseDown={(event) => {
             event.preventDefault();
             handleNicknameSameCheck();

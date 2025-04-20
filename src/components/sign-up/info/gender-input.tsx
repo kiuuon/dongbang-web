@@ -1,7 +1,7 @@
 function GenderInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
     <div>
-      <div className="text-bold16 flex text-gray2">성별</div>
+      <div className="text-bold16 mb-[2px] flex text-gray2">성별</div>
       <div className="flex h-[50px] w-full">
         <button
           type="button"

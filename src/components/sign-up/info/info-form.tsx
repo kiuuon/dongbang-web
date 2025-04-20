@@ -101,7 +101,7 @@ function InfoForm() {
   return (
     <form className="mt-[20px] flex w-full flex-col gap-[8px]" onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label htmlFor="name" className="text-bold16 flex text-gray2">
+        <label htmlFor="name" className="text-bold16 mb-[2px] flex text-gray2">
           이름
         </label>
         <input
@@ -119,7 +119,7 @@ function InfoForm() {
       />
       {errors.gender && <span className="text-regular12 text-error">{errors.gender.message}</span>}
       <div>
-        <label htmlFor="birth" className="text-bold16 flex text-gray2">
+        <label htmlFor="birth" className="text-bold16 mb-[2px] flex text-gray2">
           생년월일
         </label>
         <input
@@ -138,7 +138,7 @@ function InfoForm() {
       />
       {errors.university && <span className="text-regular12 text-error">{errors.university.message}</span>}
       <div>
-        <label htmlFor="major" className="text-bold16 flex text-gray2">
+        <label htmlFor="major" className="text-bold16 mb-[2px] flex text-gray2">
           학과
         </label>
         <input
@@ -181,7 +181,7 @@ function InfoForm() {
 
       <button
         type="submit"
-        className="text-bold32 mb-[16px] mt-[48px] h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"
+        className="text-bold32 mb-[16px] mt-[30px] h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"
       >
         가입하기
       </button>

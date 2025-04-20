@@ -22,22 +22,22 @@ function Header() {
   };
 
   return (
-    <header className="flex h-[36px] w-full items-center justify-between bg-white pl-[20px] pr-[16px]">
-      <div className="flex items-center gap-[20px]">
+    <header className="flex h-[36px] w-full items-center justify-between bg-white pl-[20px]">
+      <div className="flex items-center gap-[8px]">
         <button
           type="button"
           className="flex cursor-pointer items-center"
           onClick={() => setIsNavigationOpen((prev) => !prev)}
         >
-          <div className="text-regular20 text-tertiary_light">{clubTypeName}</div>
+          <div className="text-regular24 text-tertiary_light">{clubTypeName}</div>
           {isNavigationOpen ? <RightArrowIcon /> : <BottomArrowIcon />}
         </button>
         {isNavigationOpen && (
-          <div className="flex items-center gap-[20px]">
+          <div className="flex items-center gap-[12px]">
             {clubType !== 'my' && (
               <button
                 type="button"
-                className="text-regular20 cursor-pointer text-gray1"
+                className="text-regular24 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('my')}
               >
                 내 동아리
@@ -46,7 +46,7 @@ function Header() {
             {clubType !== 'campus' && (
               <button
                 type="button"
-                className="text-regular20 cursor-pointer text-gray1"
+                className="text-regular24 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('campus')}
               >
                 교내 동아리
@@ -55,7 +55,7 @@ function Header() {
             {clubType !== 'union' && (
               <button
                 type="button"
-                className="text-regular20 cursor-pointer text-gray1"
+                className="text-regular24 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('union')}
               >
                 연합 동아리
@@ -65,7 +65,7 @@ function Header() {
         )}
       </div>
       {!isNavigationOpen && (
-        <div className="flex items-center gap-[25px]">
+        <div className="mr-[20px] flex items-center gap-[25px]">
           <button type="button">
             <BellIcon />
           </button>

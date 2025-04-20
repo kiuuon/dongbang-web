@@ -45,7 +45,7 @@ function UniversityInput({
 
   return (
     <div className="flex flex-col">
-      <label htmlFor="university" className="text-bold16 flex text-gray2">
+      <label htmlFor="university" className="text-bold16 mb-[2px] flex text-gray2">
         학교
       </label>
       <input

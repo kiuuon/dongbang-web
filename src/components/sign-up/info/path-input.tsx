@@ -10,7 +10,7 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
 
   return (
     <div>
-      <div className="text-bold16 flex text-gray2">가입 경로(선택)</div>
+      <div className="text-bold16 mb-[2px] flex text-gray2">가입 경로(선택)</div>
       <div className="flex h-[50px] w-full rounded-[5px]">
         <button
           type="button"
