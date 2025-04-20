@@ -10,6 +10,16 @@
   display: none; /* Chrome, Safari, Opera */
 }
 
+ul {
+  all: revert;
+  margin: 0;
+  padding: 0 0 0 20px;
+}
+
+li::marker {
+  color: black;
+}
+
 @font-face {
   font-family: 'Pretendard Variable';
   src: url('/fonts/PretendardVariable.ttf') format('truetype');

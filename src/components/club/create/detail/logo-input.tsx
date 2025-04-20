@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import PlusIcon from '@/icons/plus-icon';
+
 function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
   const [preview, setPreview] = useState<string | null>(null);
 
@@ -23,27 +25,27 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
   };
 
   return (
-    <div className="flex flex-col gap-[8px]">
-      <p>로고</p>
+    <div className="flex flex-col">
+      <div className="text-bold16 mb-[2px] flex text-gray2">로고</div>
       {!preview && (
         <label
           htmlFor="file-upload"
-          className="relative flex h-[144px] w-[144px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed bg-gray-100"
+          className="relative flex h-[70px] w-[70px] cursor-pointer items-center justify-center rounded-lg border border-gray0"
         >
           <input
             id="file-upload"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="absolute h-full w-full cursor-pointer opacity-0"
+            className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
           />
-          <span className="text-gray-500">추가하기</span>
+          <PlusIcon />
         </label>
       )}
 
       {preview && (
         <div
-          className="relative h-[144px] w-[144px] rounded-lg border bg-gray-100"
+          className="relative h-[70px] w-[70px] rounded-lg border"
           style={{
             backgroundImage: `url(${preview})`,
             backgroundSize: 'cover',
@@ -53,7 +55,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-500 shadow hover:bg-red-500 hover:text-white"
+            className="text-regular12 absolute -right-1 -top-1 z-10 flex h-[12px] w-[12px] items-center justify-center rounded-full bg-white shadow hover:text-white"
           >
             x
           </button>

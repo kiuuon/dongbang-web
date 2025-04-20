@@ -32,7 +32,7 @@ function Create() {
       <button
         type="button"
         className="flex h-[140px] w-full flex-col items-start"
-        onClick={() => goToClubCreate('campus/info')}
+        onClick={() => goToClubCreate('union/info')}
       >
         <div className="text-bold32 mt-[12px] flex h-[38px] items-center justify-center">연합 동아리</div>
         <div className="text-regular16 h-[19px] text-secondary">전국/지역에서 다른 학교 학생들과 활동하는 동아리</div>
