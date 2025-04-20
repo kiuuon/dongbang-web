@@ -22,22 +22,22 @@ function Header() {
   };
 
   return (
-    <header className="flex h-[40px] w-full items-center justify-between bg-primary px-[20px]">
-      <div className="flex h-[20px] items-center gap-[10px]">
+    <header className="flex h-[36px] w-full items-center justify-between bg-white pl-[20px] pr-[16px]">
+      <div className="flex items-center gap-[20px]">
         <button
           type="button"
           className="flex cursor-pointer items-center"
           onClick={() => setIsNavigationOpen((prev) => !prev)}
         >
-          <div className="text-regular16 text-tertiary_light">{clubTypeName}</div>
+          <div className="text-regular20 text-tertiary_light">{clubTypeName}</div>
           {isNavigationOpen ? <RightArrowIcon /> : <BottomArrowIcon />}
         </button>
         {isNavigationOpen && (
-          <div className="flex items-center gap-[10px]">
+          <div className="flex items-center gap-[20px]">
             {clubType !== 'my' && (
               <button
                 type="button"
-                className="text-regular16 cursor-pointer text-gray1"
+                className="text-regular20 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('my')}
               >
                 내 동아리
@@ -46,7 +46,7 @@ function Header() {
             {clubType !== 'campus' && (
               <button
                 type="button"
-                className="text-regular16 cursor-pointer text-gray1"
+                className="text-regular20 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('campus')}
               >
                 교내 동아리
@@ -55,7 +55,7 @@ function Header() {
             {clubType !== 'union' && (
               <button
                 type="button"
-                className="text-regular16 cursor-pointer text-gray1"
+                className="text-regular20 cursor-pointer text-gray1"
                 onClick={() => goToSelectedClubType('union')}
               >
                 연합 동아리
@@ -64,14 +64,16 @@ function Header() {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-[25px]">
-        <button type="button">
-          <BellIcon />
-        </button>
-        <button type="button">
-          <MessageIcon />
-        </button>
-      </div>
+      {!isNavigationOpen && (
+        <div className="flex items-center gap-[25px]">
+          <button type="button">
+            <BellIcon />
+          </button>
+          <button type="button">
+            <MessageIcon />
+          </button>
+        </div>
+      )}
     </header>
   );
 }

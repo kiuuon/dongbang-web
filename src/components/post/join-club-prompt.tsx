@@ -24,18 +24,18 @@ function JoinClubPrompt() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-[204px]">
+    <div className="flex h-[calc(100vh-40px)] w-full flex-col justify-between pb-[100px]">
       <div className="mt-[144px] flex w-full flex-col items-center justify-center gap-[12px]">
         <p className="text-regular20">가입한 동아리가 없어요</p>
         <button
           type="button"
-          className="text-regular20 h-[36px] w-[136px] rounded-[10px] bg-secondary text-tertiary_dark"
+          className="text-regular20 mb-[96px] h-[36px] w-[136px] rounded-[10px] bg-secondary text-tertiary_dark"
         >
           가입하러가기
         </button>
       </div>
       {clubList?.length !== 0 && (
-        <div className="mb-[100px] flex flex-col gap-[8px]">
+        <div className="flex flex-col gap-[8px]">
           <div className="text-bold16 ml-[12px]">동아리 추천</div>
           <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto pl-[5px]">
             {clubList?.map((club, index) => (
