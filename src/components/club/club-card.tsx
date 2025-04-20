@@ -16,6 +16,7 @@ function ClubCard({ club }: { club: any }) {
             width: '50px',
             height: '50px',
             borderRadius: '5px',
+            border: '0.5px solid #E0E0E0',
           }}
         />
         <div className="mb-[22px] flex h-[74px] w-[99px] flex-col items-center">
