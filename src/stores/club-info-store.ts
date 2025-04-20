@@ -7,8 +7,8 @@ interface ClubInfoStoreType {
   setName: (name: string) => void;
   category: string;
   setCategory: (category: string) => void;
-  location: string;
-  setLocation: (location: string) => void;
+  location: string | undefined;
+  setLocation: (location: string | undefined) => void;
   description: string;
   setDescription: (description: string) => void;
   tags: string[];

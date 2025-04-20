@@ -6,10 +6,8 @@ function ProgressBar() {
   const router = useRouter();
   const { pathname } = router;
 
-  console.log(pathname.split('/'));
-
   return (
-    <div className="flex w-full flex-col gap-[8px] pt-[12px]">
+    <div className="fixed left-0 top-0 z-10 flex w-full flex-col gap-[8px] bg-white px-[20px] pt-[12px]">
       <BackButton />
       <div className="t-0 relative flex w-full items-center justify-between pl-[34px] pr-[21px] pt-[5px]">
         <div className={`h-[13px] w-[13px] rounded-[16px] ${pathname === '/club/create' ? 'bg-gray2' : 'bg-gray0'}`} />
