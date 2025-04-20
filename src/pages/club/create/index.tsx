@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
 
+import ProgressBar from '@/components/club/create/progress-bar';
+
 function Create() {
   const router = useRouter();
 
@@ -8,7 +10,8 @@ function Create() {
   };
 
   return (
-    <div className="mt-[160px] flex flex-col items-start justify-center gap-[100px] px-[32px]">
+    <div className="flex flex-col items-start justify-center gap-[100px] px-[20px]">
+      <ProgressBar />
       <button
         type="button"
         className="flex h-[40px] flex-col items-start"

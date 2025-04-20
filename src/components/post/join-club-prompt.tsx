@@ -24,7 +24,7 @@ function JoinClubPrompt() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-40px)] w-full flex-col justify-between pb-[100px]">
+    <div className="flex h-screen w-full flex-col justify-between pb-[100px]">
       <div className="mt-[144px] flex w-full flex-col items-center justify-center gap-[12px]">
         <p className="text-regular20">가입한 동아리가 없어요</p>
         <button
