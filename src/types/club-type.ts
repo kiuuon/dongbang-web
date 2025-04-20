@@ -2,7 +2,7 @@ export interface ClubType {
   type: string;
   name: string;
   category: string;
-  location: string;
+  location: string | undefined;
   description: string;
   tags: string[];
   logo: string;

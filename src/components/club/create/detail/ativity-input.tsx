@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import PlusIcon from '@/icons/plus-icon';
+
 function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: File[]) => void }) {
   const [preview, setPreview] = useState<string[] | null>([]);
 
@@ -33,12 +35,15 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
   };
 
   return (
-    <div className="flex flex-col gap-[8px]">
-      <p>활동 사진</p>
+    <div className="flex flex-col">
+      <div className="mb-[2px] flex items-center gap-[10px]">
+        <div className="text-bold16 text-gray2">활동 사진</div>
+        <div className="text-regular12 text-error">최대 5장까지 업로드 가능합니다</div>
+      </div>
       {preview?.length === 0 && (
         <label
           htmlFor="file-upload"
-          className="relative flex h-[144px] w-[144px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed bg-gray-100"
+          className="relative flex h-[70px] w-[70px] cursor-pointer items-center justify-center rounded-lg border border-gray0"
         >
           <input
             id="file-upload"
@@ -46,9 +51,9 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
             accept="image/*"
             multiple
             onChange={handleImageChange}
-            className="absolute h-full w-full cursor-pointer opacity-0"
+            className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
           />
-          <span className="text-gray-500">추가하기</span>
+          <PlusIcon />
         </label>
       )}
 
@@ -57,7 +62,7 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
           {preview?.map((prev, index) => (
             <div
               key={prev}
-              className="relative h-[144px] w-[144px] rounded-lg border bg-gray-100"
+              className="relative h-[70px] w-[70px] rounded-lg border"
               style={{
                 backgroundImage: `url(${prev})`,
                 backgroundSize: 'cover',
@@ -67,7 +72,7 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
               <button
                 type="button"
                 onClick={() => handleRemove(index)}
-                className="absolute -right-2 -top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-500 shadow hover:bg-red-500 hover:text-white"
+                className="text-regular12 absolute -right-1 -top-1 z-10 flex h-[12px] w-[12px] items-center justify-center rounded-full bg-white shadow hover:text-white"
               >
                 x
               </button>

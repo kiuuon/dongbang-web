@@ -15,7 +15,14 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const NoneTabPage = ['/login', '/sign-up/terms', '/sign-up/info'];
+  const NoneTabPage = [
+    '/login',
+    '/sign-up/terms',
+    '/sign-up/info',
+    '/club/create',
+    '/club/create/[clubType]/info',
+    '/club/create/[clubType]/detail',
+  ];
 
   useEffect(() => {
     (async () => {

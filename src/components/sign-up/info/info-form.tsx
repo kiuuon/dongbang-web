@@ -4,6 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getSignUpInfoSchema } from '@/lib/validationSchema';
 
+import SubmitButton from '@/components/common/submit-button';
 import { fetchUniversityList, signUp } from '@/lib/apis/sign-up';
 import { fetchSession } from '@/lib/apis/auth';
 import { queryKey } from '@/lib/constants';
@@ -75,7 +76,7 @@ function InfoForm() {
   });
 
   useEffect(() => {
-    trigger('nickname'); // isSameCheck나 isDuplicate가 바뀔 때 트리거!
+    trigger('nickname');
   }, [isSameCheck, isDuplicate, trigger]);
 
   const onSubmit = (data: UserInfoType) => {
@@ -99,7 +100,7 @@ function InfoForm() {
   };
 
   return (
-    <form className="mt-[20px] flex w-full flex-col gap-[8px]" onSubmit={handleSubmit(onSubmit)}>
+    <form className="mt-[56px] flex w-full flex-col gap-[8px]" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <label htmlFor="name" className="text-bold16 mb-[2px] flex text-gray2">
           이름
@@ -179,12 +180,7 @@ function InfoForm() {
         render={({ field }) => <PathInput value={field.value} onChange={field.onChange} />}
       />
 
-      <button
-        type="submit"
-        className="text-bold32 mb-[16px] mt-[30px] h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"
-      >
-        가입하기
-      </button>
+      <SubmitButton>가입하기</SubmitButton>
       {isModalOpen && <SignUpCompleteModal />}
     </form>
   );

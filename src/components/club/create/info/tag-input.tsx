@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
+import PlusIcon from '@/icons/plus-icon';
+
 function TagInput({
   value,
   onChange,
@@ -53,14 +55,18 @@ function TagInput({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col">
+      <div className="text-bold16 mb-[2px] flex text-gray2">태그</div>
+      <div className="mb-[8px] flex flex-wrap gap-2">
         {Array.from(value).map((tag, index) =>
           tag === '' ? null : (
-            <span key={tag} className="flex gap-2 rounded-[5px] bg-[#D9D9D9] p-2">
+            <span
+              key={tag}
+              className="text-bold16 flex gap-[12px] rounded-[5px] border border-gray0 bg-secondary_light px-[16px] py-[6px] text-tertiary_dark"
+            >
               {tag}
               {index !== 0 && index !== 1 && (
-                <button type="button" onClick={() => handleRemoveTag(index)}>
+                <button type="button" className="text-regular12 text-error" onClick={() => handleRemoveTag(index)}>
                   x
                 </button>
               )}
@@ -68,17 +74,16 @@ function TagInput({
           ),
         )}
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-[12px]">
         <input
           type="text"
-          placeholder="태그"
           value={inputValue}
-          className="rounded border p-2"
+          className="h-[50px] w-[172px] rounded-[5px] border border-gray0 p-[8px]"
           onChange={(event) => setInputValue(event.target.value)}
           maxLength={10}
         />
-        <button type="button" className="rounded bg-[#D9D9D9] p-2 text-white" onClick={handleAddTag}>
-          추가
+        <button type="button" onClick={handleAddTag}>
+          <PlusIcon />
         </button>
       </div>
     </div>

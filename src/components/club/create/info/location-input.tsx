@@ -1,22 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 
-function CategoryInput({
-  value,
-  onChange,
-  setDefaultCategory,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  setDefaultCategory: React.Dispatch<React.SetStateAction<string>>;
-}) {
+function LocationInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
-  const categoryInputRef = useRef<HTMLDivElement>(null);
-  const category = ['노래', '맛집', '여행', '운동', '자기개발', '취미', '친목'];
+  const loactionInputRef = useRef<HTMLDivElement>(null);
+  const location = [
+    '전국',
+    '서울',
+    '경기',
+    '인천',
+    '강원',
+    '충북',
+    '충남',
+    '대전',
+    '세종',
+    '전북',
+    '전남',
+    '광주',
+    '경북',
+    '경남',
+    '대구',
+    '부산',
+    '울산',
+    '제주',
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (categoryInputRef.current && !categoryInputRef.current.contains(target)) {
+      if (loactionInputRef.current && !loactionInputRef.current.contains(target)) {
         setIsOpen(false);
       }
     };
@@ -28,8 +39,8 @@ function CategoryInput({
   }, []);
 
   return (
-    <div className="relative" ref={categoryInputRef}>
-      <div className="text-bold16 mb-[2px] flex text-gray2">카테고리</div>
+    <div className="relative" ref={loactionInputRef}>
+      <div className="text-bold16 mb-[2px] flex text-gray2">동아리 활동 지역</div>
       <button
         type="button"
         className="text-bold16 flex h-[50px] w-full items-center rounded-[5px] border border-gray0 pl-[8px] text-gray3"
@@ -39,13 +50,12 @@ function CategoryInput({
       </button>
       {isOpen && (
         <div className="text-regular16 absolute z-10 mt-[4px] w-full rounded border border-gray0 bg-white text-gray3">
-          {category.map((item) => (
+          {location.map((item) => (
             <button
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
                 onChange(item);
-                setDefaultCategory(item);
                 setIsOpen(false);
               }}
             >
@@ -58,4 +68,4 @@ function CategoryInput({
   );
 }
 
-export default CategoryInput;
+export default LocationInput;
