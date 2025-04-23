@@ -11,7 +11,7 @@ function Tab() {
   const router = useRouter();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-[62px] justify-around border-t border-gray0 bg-white">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-[62px] justify-around border-t-[0.5px] border-gray0 bg-white">
       <Link href="/" className="mt-[12px] flex w-[40px] flex-col items-center">
         <HomeIcon color={router.pathname.startsWith('/post') ? '#FFE6A1' : '#B4B4B4'} />
         <div className={`text-regular10 ${router.pathname.startsWith('/post') ? 'text-secondary' : 'text-gray1'}`}>
