@@ -3,6 +3,9 @@ import { supabase } from './supabaseClient';
 export async function login(provider: 'kakao' | 'google') {
   await supabase.auth.signInWithOAuth({
     provider,
+    options: {
+      redirectTo: `${window.location.origin}/login/callback`,
+    },
   });
 }
 

@@ -1,10 +1,12 @@
 import Image from 'next/image';
 
-function ClubCard({ club }: { club: any }) {
+import { ClubType } from '@/types/club-type';
+
+function ClubCard({ club }: { club: ClubType }) {
   return (
     <div className="relative flex w-[158px] flex-col items-center gap-[16px]">
-      <Image src="/images/light.png" alt="조명" width={40} height={46} />
-      <Image src="/images/door.png" alt="문" width={140} height={230} />
+      <Image src="/images/light.png" alt="조명" width={40} height={46} priority />
+      <Image src="/images/door.png" alt="문" width={140} height={230} priority />
       <div className="absolute flex h-full w-full flex-col items-center justify-end gap-[19px]">
         <Image
           src={club.logo}

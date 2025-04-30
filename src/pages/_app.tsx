@@ -17,6 +17,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const NoneTabPage = [
     '/login',
+    '/login/callback',
     '/sign-up/terms',
     '/sign-up/info',
     '/club/create',
