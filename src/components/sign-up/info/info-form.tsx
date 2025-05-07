@@ -61,7 +61,7 @@ function InfoForm() {
     register,
     trigger,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -180,7 +180,7 @@ function InfoForm() {
         render={({ field }) => <PathInput value={field.value} onChange={field.onChange} />}
       />
 
-      <SubmitButton>가입하기</SubmitButton>
+      <SubmitButton disabled={!isValid || isSubmitting}>가입하기</SubmitButton>
       {isModalOpen && <SignUpCompleteModal />}
     </form>
   );
