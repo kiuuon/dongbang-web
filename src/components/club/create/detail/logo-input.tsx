@@ -26,7 +26,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
 
   return (
     <div className="flex flex-col">
-      <div className="text-bold16 mb-[2px] flex text-gray2">로고</div>
+      <div className="text-bold12 mb-[10px]">로고</div>
       {!preview && (
         <label
           htmlFor="file-upload"
@@ -45,7 +45,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
 
       {preview && (
         <div
-          className="relative h-[70px] w-[70px] rounded-lg border"
+          className="relative h-[70px] w-[70px] rounded-lg border border-gray0 bg-cover bg-center"
           style={{
             backgroundImage: `url(${preview})`,
             backgroundSize: 'cover',

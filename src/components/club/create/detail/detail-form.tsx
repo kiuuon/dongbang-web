@@ -27,7 +27,7 @@ function DetailForm() {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(clubDetailSchema),
@@ -85,50 +85,41 @@ function DetailForm() {
   };
 
   return (
-    <form className="flex h-full min-h-screen flex-col justify-between pt-[112px]" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-[8px]">
-        <Controller
-          name="logo"
-          control={control}
-          defaultValue={undefined}
-          render={({ field }) => <LogoInput onChange={field.onChange} />}
-        />
-        {errors.logo && <p className="text-regular12 text-error">{errors.logo.message}</p>}
-        <Controller
-          name="activity"
-          control={control}
-          defaultValue={[]}
-          render={({ field }) => <ActivityInput value={field.value} onChange={field.onChange} />}
-        />
-        {errors.activity && <p className="text-regular12 text-error">{errors.activity.message}</p>}
-        <div>
-          <label htmlFor="description" className="text-bold16 mb-[2px] flex text-gray2">
-            동아리 상세 설명
-          </label>
-          <textarea
-            id="description"
-            {...register('description')}
-            className="h-[240px] w-full resize-none rounded border border-gray0 p-[8px]"
+    <form className="flex h-full min-h-[calc(100vh-92px)] flex-col justify-between" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col gap-[16px]">
+        <div className="mt-[24px] flex flex-col">
+          <Controller
+            name="logo"
+            control={control}
+            defaultValue={undefined}
+            render={({ field }) => <LogoInput onChange={field.onChange} />}
           />
+          {errors.logo && <p className="text-regular10 mt-[8px] text-error">{errors.logo.message}</p>}
         </div>
-        {errors.description && <p className="text-regular12 text-error">{errors.description.message}</p>}
-        <div className="flex flex-col gap-[5px]">
-          <p className="text-bold16 ml-[20px] h-[19px]">주의사항</p>
-          <ul>
-            <li className="text-regular16 h-[38px] text-error">
-              <p className="h-[19px]">존재하지 않는 동아리라 판단시 운영자에 의해 삭제될</p>
-              <p className="h-[19px]">수 있습니다.</p>
-            </li>
-          </ul>
-          <ul>
-            <li className="text-regular16 h-[38px] text-error">
-              <p className="h-[19px]">동아리 개설 후 한달동안 동아리원이 2명 이하일 경우</p>
-              <p className="h-[19px]">삭제될 수 있습니다.</p>
-            </li>
-          </ul>
+        <div className="flex flex-col">
+          <Controller
+            name="activity"
+            control={control}
+            defaultValue={[]}
+            render={({ field }) => <ActivityInput value={field.value} onChange={field.onChange} />}
+          />
+          {errors.activity && <p className="text-regular10 mt-[8px] text-error">{errors.activity.message}</p>}
+        </div>
+        <div className="flex flex-col">
+          <div className="flex flex-col gap-[10px]">
+            <label htmlFor="description" className="text-bold12">
+              동아리 상세 설명
+            </label>
+            <textarea
+              id="description"
+              {...register('description')}
+              className="text-regular14 h-[240px] w-full resize-none rounded-[8px] border border-gray0 p-[16px]"
+            />
+          </div>
+          {errors.description && <p className="text-regular10 mt-[8px] text-error">{errors.description.message}</p>}
         </div>
       </div>
-      <SubmitButton>개설하기</SubmitButton>
+      <SubmitButton disabled={!isValid || isSubmitting}>개설하기</SubmitButton>
       {(isPending || isLogoUploading || isActivityPhotoUploading) && <Loading />}
     </form>
   );

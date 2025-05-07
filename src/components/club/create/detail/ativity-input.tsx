@@ -36,9 +36,9 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
 
   return (
     <div className="flex flex-col">
-      <div className="mb-[2px] flex items-center gap-[10px]">
-        <div className="text-bold16 text-gray2">활동 사진</div>
-        <div className="text-regular12 text-error">최대 5장까지 업로드 가능합니다</div>
+      <div className="mb-[10px] flex items-center gap-[25px]">
+        <div className="text-bold12">활동 사진</div>
+        <div className="text-regular12 text-primary">최대 5장까지 업로드 가능합니다</div>
       </div>
       {preview?.length === 0 && (
         <label
@@ -62,7 +62,7 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
           {preview?.map((prev, index) => (
             <div
               key={prev}
-              className="relative h-[70px] w-[70px] rounded-lg border"
+              className="relative h-[70px] w-[70px] rounded-lg"
               style={{
                 backgroundImage: `url(${prev})`,
                 backgroundSize: 'cover',
