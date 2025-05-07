@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 
-import ProgressBar from '@/components/club/create/progress-bar';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import ProgressBar from '@/components/club/create/progress-bar';
 import RightArrowIcon2 from '@/icons/right-arrow-icon2';
 
 function Create() {

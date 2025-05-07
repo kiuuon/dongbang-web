@@ -12,49 +12,46 @@ function CampusClubTypeInput({
     setDefaultCampusClubType(type);
   };
   return (
-    <div className="flex flex-col text-[16px]">
-      <div className="mt-[8px] flex flex-col gap-[8px]">
-        <div className="text-bold16 mb-[2px] flex text-gray2">동아리</div>
-        <div className="flex w-full gap-[8px]">
-          <button
-            type="button"
-            className={`h-[32px] w-full rounded-[5px] ${value === '총동아리' ? 'text-tertiary_dark' : 'text-gray2'} ${value === '총동아리' ? 'bg-secondary_light' : 'bg-white'} border border-gray0`}
-            onClick={() => handleClick('총동아리')}
-          >
-            총동아리
-          </button>
-          <button
-            type="button"
-            className={`h-[32px] w-full rounded-[5px] ${value === '중앙 동아리' ? 'text-tertiary_dark' : 'text-gray2'} ${value === '중앙 동아리' ? 'bg-secondary_light' : 'bg-white'} border border-gray0`}
-            onClick={() => handleClick('중앙 동아리')}
-          >
-            중앙 동아리
-          </button>
-          <button
-            type="button"
-            className={`h-[32px] w-full rounded-[5px] ${value === '단과대 동아리' ? 'text-tertiary_dark' : 'text-gray2'} ${value === '단과대 동아리' ? 'bg-secondary_light' : 'bg-white'} border border-gray0`}
-            onClick={() => handleClick('단과대 동아리')}
-          >
-            단과대 동아리
-          </button>
-        </div>
-        <div className="flex gap-[8px]">
-          <button
-            type="button"
-            className={`h-[32px] w-full rounded-[5px] ${value === '과 동아리' ? 'text-tertiary_dark' : 'text-gray2'} ${value === '과 동아리' ? 'bg-secondary_light' : 'bg-white'} border border-gray0`}
-            onClick={() => handleClick('과 동아리')}
-          >
-            과 동아리
-          </button>
-          <button
-            type="button"
-            className={`h-[32px] w-full rounded-[5px] ${value === '소모임' ? 'text-tertiary_dark' : 'text-gray2'} ${value === '소모임' ? 'bg-secondary_light' : 'bg-white'} border border-gray0`}
-            onClick={() => handleClick('소모임')}
-          >
-            소모임
-          </button>
-          <div className="w-full" />
-        </div>
+    <div className="flex flex-col">
+      <div className="text-bold12 mb-[18px]">동아리</div>
+      <div className="mb-[16px] flex w-full gap-[12px]">
+        <button
+          type="button"
+          className={`h-[32px] rounded-[24px] px-[13px] ${value === '총동아리' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'}`}
+          onClick={() => handleClick('총동아리')}
+        >
+          총동아리
+        </button>
+        <button
+          type="button"
+          className={`h-[32px] rounded-[24px] px-[13px] ${value === '중앙 동아리' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'}`}
+          onClick={() => handleClick('중앙 동아리')}
+        >
+          중앙 동아리
+        </button>
+        <button
+          type="button"
+          className={`h-[32px] rounded-[24px] px-[13px] ${value === '단과대 동아리' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'}`}
+          onClick={() => handleClick('단과대 동아리')}
+        >
+          단과대 동아리
+        </button>
+        <button
+          type="button"
+          className={`h-[32px] rounded-[24px] px-[13px] ${value === '과 동아리' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'}`}
+          onClick={() => handleClick('과 동아리')}
+        >
+          과 동아리
+        </button>
+      </div>
+      <div className="flex gap-[12px]">
+        <button
+          type="button"
+          className={`h-[32px] rounded-[24px] px-[13px] ${value === '소모임' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'}`}
+          onClick={() => handleClick('소모임')}
+        >
+          소모임
+        </button>
       </div>
     </div>
   );

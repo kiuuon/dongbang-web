@@ -27,7 +27,7 @@ function InfoForm() {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm({
     defaultValues: {
       clubType: clubType as string,
@@ -55,34 +55,41 @@ function InfoForm() {
   };
 
   return (
-    <form className="flex h-full min-h-screen flex-col justify-between pt-[112px]" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col gap-[8px]">
-        {clubType === 'campus' && (
-          <Controller
-            name="campusClubType"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CampusClubTypeInput
-                value={field.value}
-                onChange={field.onChange}
-                setDefaultCampusClubType={setDefaultCampusClubType}
-              />
-            )}
-          />
-        )}
-        {errors.campusClubType && <p className="text-regular12 text-error">{errors.campusClubType.message}</p>}
-        <div>
-          <label htmlFor="name" className="text-bold16 mb-[2px] flex text-gray2">
-            동아리명
-          </label>
-          <input
-            id="name"
-            {...register('name')}
-            className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none"
-          />
+    <form className="flex h-full min-h-[calc(100vh-92px)] flex-col justify-between" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col gap-[16px]">
+        <div className="mb-[8px] mt-[24px] flex flex-col">
+          {clubType === 'campus' && (
+            <Controller
+              name="campusClubType"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <CampusClubTypeInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  setDefaultCampusClubType={setDefaultCampusClubType}
+                />
+              )}
+            />
+          )}
+          {errors.campusClubType && (
+            <p className="text-regular10 mt-[8px] text-error">{errors.campusClubType.message}</p>
+          )}
         </div>
-        {errors.name && <p className="text-regular12 text-error">{errors.name.message}</p>}
+        <div>
+          <div className="flex flex-col gap-[10px]">
+            <label htmlFor="name" className="text-bold12">
+              동아리명
+            </label>
+            <input
+              id="name"
+              {...register('name')}
+              placeholder="동아리 명을 입력해 주세요."
+              className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
+            />
+          </div>
+          {errors.name && <p className="text-regular10 mt-[8px] text-error">{errors.name.message}</p>}
+        </div>
         <Controller
           name="category"
           control={control}
@@ -91,38 +98,44 @@ function InfoForm() {
             <CategoryInput value={field.value} onChange={field.onChange} setDefaultCategory={setDefaultCategory} />
           )}
         />
-        {errors.category && <p className="text-regular12 text-error">{errors.category.message}</p>}
-        {clubType === 'campus' ? (
-          <div>
-            <label htmlFor="loaction" className="text-bold16 mb-[2px] flex text-gray2">
-              학교 내 동아리 위치
+        {errors.category && <p className="text-regular10 mt-[8px] text-error">{errors.category.message}</p>}
+        <div>
+          {clubType === 'campus' ? (
+            <div className="flex flex-col gap-[10px]">
+              <label htmlFor="name" className="text-bold12">
+                학교 내 동아리 위치
+              </label>
+              <input
+                id="location"
+                {...register('location')}
+                placeholder="동아리 위치를 입력해 주세요."
+                className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
+              />
+            </div>
+          ) : (
+            <Controller
+              name="location"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <LocationInput value={field.value as string} onChange={field.onChange} />}
+            />
+          )}
+          {errors.location && <p className="text-regular10 mt-[8px] text-error">{errors.location.message}</p>}
+        </div>
+        <div>
+          <div className="flex flex-col gap-[10px]">
+            <label htmlFor="name" className="text-bold12">
+              동아리 한 줄 소개
             </label>
-            <input
-              id="location"
-              {...register('location')}
-              className="text-bold16 flex h-[50px] w-full rounded-[5px] border border-gray0 pl-[8px] text-gray3 outline-none"
+            <textarea
+              id="description"
+              {...register('description')}
+              placeholder="동아리를 한 줄로 소개해 주세요."
+              className="text-regular14 flex h-[48px] w-full resize-none rounded-[8px] border border-gray0 py-[12px] pl-[16px] leading-normal outline-none placeholder:text-gray1"
             />
           </div>
-        ) : (
-          <Controller
-            name="location"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <LocationInput value={field.value as string} onChange={field.onChange} />}
-          />
-        )}
-        {errors.location && <p className="text-regular12 text-error">{errors.location.message}</p>}
-        <div>
-          <label htmlFor="description" className="text-bold16 mb-[2px] flex text-gray2">
-            동아리 한 줄 소개
-          </label>
-          <textarea
-            id="description"
-            {...register('description')}
-            className="text-bold16 flex w-full resize-none rounded-[5px] border border-gray0 p-[8px] text-gray3 outline-none"
-          />
+          {errors.description && <p className="text-regular10 mt-[8px] text-error">{errors.description.message}</p>}
         </div>
-        {errors.description && <p className="text-regular12 text-error">{errors.description.message}</p>}
         <Controller
           name="tags"
           control={control}
@@ -137,7 +150,7 @@ function InfoForm() {
           )}
         />
       </div>
-      <SubmitButton>다음</SubmitButton>
+      <SubmitButton disabled={!isValid || isSubmitting}>다음</SubmitButton>
     </form>
   );
 }

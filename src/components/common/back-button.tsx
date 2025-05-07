@@ -10,7 +10,7 @@ function BackButton() {
   };
 
   return (
-    <button type="button" className="mt-[8px] h-[24px] w-[24px]" onClick={handleBackButtonClick}>
+    <button type="button" className="h-[24px] w-[24px]" onClick={handleBackButtonClick}>
       <LeftArrowIcon />
     </button>
   );

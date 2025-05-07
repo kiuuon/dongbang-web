@@ -38,6 +38,11 @@ li::marker {
     font-size: 12px;
     font-weight: 400;
   }
+  .text-regular14 {
+    font-family: 'Pretendard Variable';
+    font-size: 14px;
+    font-weight: 400;
+  }
   .text-regular16 {
     font-family: 'Pretendard Variable';
     font-size: 16px;

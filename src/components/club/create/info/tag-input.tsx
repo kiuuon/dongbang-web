@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import PlusIcon from '@/icons/plus-icon';
+import XIcon2 from '@/icons/x-icon2';
 
 function TagInput({
   value,
@@ -56,35 +56,40 @@ function TagInput({
 
   return (
     <div className="flex flex-col">
-      <div className="text-bold16 mb-[2px] flex text-gray2">태그</div>
-      <div className="mb-[8px] flex flex-wrap gap-2">
+      <div className="text-bold12 mb-[10px]">동아리 태그</div>
+      <div className="relative mb-[16px] flex gap-[12px]">
+        <input
+          type="text"
+          value={inputValue}
+          placeholder="태그를 입력해 주세요."
+          className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
+          onChange={(event) => setInputValue(event.target.value)}
+          maxLength={10}
+        />
+        <button
+          type="button"
+          className="text-bold12 absolute right-[16px] top-0 flex h-[48px] items-center text-primary"
+          onClick={handleAddTag}
+        >
+          추가
+        </button>
+      </div>
+      <div className="mb-[8px] flex flex-wrap gap-[16px]">
         {Array.from(value).map((tag, index) =>
           tag === '' ? null : (
             <span
               key={tag}
-              className="text-bold16 flex gap-[12px] rounded-[5px] border border-gray0 bg-secondary_light px-[16px] py-[6px] text-tertiary_dark"
+              className="text-bold12 flex gap-[8px] rounded-[24px] border border-primary px-[14px] py-[9px] text-primary"
             >
               {tag}
               {index !== 0 && index !== 1 && (
-                <button type="button" className="text-regular12 text-error" onClick={() => handleRemoveTag(index)}>
-                  x
+                <button type="button" onClick={() => handleRemoveTag(index)}>
+                  <XIcon2 />
                 </button>
               )}
             </span>
           ),
         )}
-      </div>
-      <div className="flex gap-[12px]">
-        <input
-          type="text"
-          value={inputValue}
-          className="h-[50px] w-[172px] rounded-[5px] border border-gray0 p-[8px]"
-          onChange={(event) => setInputValue(event.target.value)}
-          maxLength={10}
-        />
-        <button type="button" onClick={handleAddTag}>
-          <PlusIcon />
-        </button>
       </div>
     </div>
   );

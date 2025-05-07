@@ -1,8 +1,9 @@
-function SubmitButton({ children }: { children: React.ReactNode }) {
+function SubmitButton({ children, disabled }: { children: React.ReactNode; disabled: boolean }) {
   return (
     <button
       type="submit"
-      className="text-bold32 mb-[32px] mt-[16px] h-[74px] min-h-[74px] w-full rounded-[5px] bg-primary text-tertiary_dark"
+      disabled={disabled}
+      className={`text-bold16 mb-[21px] mt-[32px] h-[56px] min-h-[56px] w-full rounded-[24px] ${disabled ? 'bg-gray0' : 'bg-primary'} text-white`}
     >
       {children}
     </button>
