@@ -12,8 +12,6 @@ function Club() {
     queryFn: fetchMyClubs,
   });
 
-  console.log(myClubs);
-
   if (!myClubs) {
     return null;
   }

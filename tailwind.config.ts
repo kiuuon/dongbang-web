@@ -22,7 +22,7 @@ export default {
       gray2: '#989898',
       gray3: '#6B6B6B',
       gray4: '#3C3C3C',
-      error: '#FF5252',
+      error: '#F40707',
     },
     extend: {
       boxShadow: {
