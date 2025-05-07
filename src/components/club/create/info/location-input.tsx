@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import BottomArrowIcon2 from '@/icons/bottom-arrow-icon2';
+
 function LocationInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const loactionInputRef = useRef<HTMLDivElement>(null);
@@ -40,16 +42,21 @@ function LocationInput({ value, onChange }: { value: string; onChange: (value: s
 
   return (
     <div className="relative" ref={loactionInputRef}>
-      <div className="text-bold16 mb-[2px] flex text-gray2">동아리 활동 지역</div>
-      <button
-        type="button"
-        className="text-bold16 flex h-[50px] w-full items-center rounded-[5px] border border-gray0 pl-[8px] text-gray3"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {value !== '' && value}
-      </button>
+      <div className="text-bold12 mb-[10px]">동아리 활동 지역</div>
+      <div className="relative h-[48px]">
+        <button
+          type="button"
+          className={`text-regular14 flex h-[48px] w-full items-center rounded-[8px] border border-gray0 pl-[16px] outline-none ${value !== '' ? 'text-black' : 'text-gray1'}`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {value !== '' ? value : '활동 지역을 선택해주세요.'}
+        </button>
+        <div className="absolute right-[16px] top-0 flex h-[48px] items-center">
+          <BottomArrowIcon2 />
+        </div>
+      </div>
       {isOpen && (
-        <div className="text-regular16 absolute z-10 mt-[4px] w-full rounded border border-gray0 bg-white text-gray3">
+        <div className="text-regular14 absolute z-10 mt-[4px] w-full rounded-[8px] border border-gray0 bg-white">
           {location.map((item) => (
             <button
               type="button"

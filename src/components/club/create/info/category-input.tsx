@@ -1,5 +1,6 @@
-import BottomArrowIcon2 from '@/icons/bottom-arrow-icon2';
 import { useEffect, useRef, useState } from 'react';
+
+import BottomArrowIcon2 from '@/icons/bottom-arrow-icon2';
 
 function CategoryInput({
   value,
