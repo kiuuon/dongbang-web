@@ -8,7 +8,7 @@ export default {
   ],
   theme: {
     colors: {
-      primary: '#F3ECDE',
+      primary: '#F9A825',
       primary_dark: '#C8BBA3',
       secondary: '#FFE6A1',
       secondary_light: '#FFF3CE',
@@ -19,7 +19,7 @@ export default {
       black: '#000000',
       gray0: '#E0E0E0',
       gray1: '#B4B4B4',
-      gray2: '#969696',
+      gray2: '#989898',
       gray3: '#6B6B6B',
       gray4: '#3C3C3C',
       error: '#FF5252',
