@@ -1,22 +1,12 @@
-import { useState } from 'react';
-
 function PathInput({ value, onChange }: { value: string | undefined; onChange: (value: string) => void }) {
-  const [etcPath, setEtcPath] = useState('');
-
-  const handleEtcPath = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEtcPath(event.target.value);
-    onChange(event.target.value);
-  };
-
   return (
     <div>
-      <div className="text-bold16 mb-[2px] flex text-gray2">가입 경로(선택)</div>
-      <div className="flex h-[50px] w-full rounded-[5px]">
+      <div className="text-bold12 mb-[18px]">가입 경로 (선택)</div>
+      <div className="flex h-[32px] w-full gap-[16px]">
         <button
           type="button"
-          className={`h-[50px] w-[88px] rounded-l-[5px] border border-gray0 ${value === 'SNS' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === 'SNS' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`text-regular12 h-[32px] w-[68px] rounded-[24px] ${value === 'SNS' ? 'bg-primary' : 'bg-gray0'} ${value === 'SNS' ? 'text-white' : 'text-black'}`}
           onClick={() => {
-            setEtcPath('');
             if (value === 'SNS') {
               onChange('');
             } else {
@@ -28,23 +18,21 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[88px] border border-l-0 border-gray0 ${value === '지인 추천' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === '지인 추천' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`text-regular12 h-[32px] w-[68px] rounded-[24px] ${value === '지인' ? 'bg-primary' : 'bg-gray0'} ${value === '지인' ? 'text-white' : 'text-black'}`}
           onClick={() => {
-            setEtcPath('');
-            if (value === '지인 추천') {
+            if (value === '지인') {
               onChange('');
             } else {
-              onChange('지인 추천');
+              onChange('지인');
             }
           }}
         >
-          지인 추천
+          지인
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[88px] border border-l-0 border-gray0 ${value === '검색' ? 'bg-secondary_light' : 'bg-white'} text-bold12 ${value === '검색' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`text-regular12 h-[32px] w-[68px] rounded-[24px] ${value === '검색' ? 'bg-primary' : 'bg-gray0'} ${value === '검색' ? 'text-white' : 'text-black'}`}
           onClick={() => {
-            setEtcPath('');
             if (value === '검색') {
               onChange('');
             } else {
@@ -54,12 +42,19 @@ function PathInput({ value, onChange }: { value: string | undefined; onChange: (
         >
           검색
         </button>
-        <input
-          placeholder="기타"
-          value={etcPath}
-          className={`text-bold12 h-[50px] w-[88px] rounded-r-[5px] border border-l-0 border-gray0 ${etcPath !== '' ? 'bg-secondary_light' : 'bg-white'} text-center ${etcPath !== '' ? 'text-tertiary_dark' : 'text-gray2'} outline-none`}
-          onChange={handleEtcPath}
-        />
+        <button
+          type="button"
+          className={`text-regular12 h-[32px] w-[68px] rounded-[24px] ${value === '기타' ? 'bg-primary' : 'bg-gray0'} ${value === '기타' ? 'text-white' : 'text-black'}`}
+          onClick={() => {
+            if (value === '기타') {
+              onChange('');
+            } else {
+              onChange('기타');
+            }
+          }}
+        >
+          기타
+        </button>
       </div>
     </div>
   );

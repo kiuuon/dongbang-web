@@ -11,6 +11,12 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  if (pathname === '/sign-up/complete') {
+    if (!referer || !referer.includes(`${req.nextUrl.origin}/sign-up/info`)) {
+      return NextResponse.redirect(new URL('/sign-up/terms', req.url));
+    }
+  }
+
   if (pathname === '/club/create/campus/detail') {
     if (!referer || !referer.includes(`${req.nextUrl.origin}/club/create/campus/info`)) {
       return NextResponse.redirect(new URL('/club/create/campus/info', req.url));

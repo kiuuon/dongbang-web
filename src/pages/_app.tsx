@@ -20,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
     '/login/callback',
     '/sign-up/terms',
     '/sign-up/info',
+    '/sign-up/complete',
     '/club/create',
     '/club/create/[clubType]/info',
     '/club/create/[clubType]/detail',
@@ -42,8 +43,10 @@ export default function App({ Component, pageProps }: AppProps) {
       if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
         router.push('/sign-up/terms');
       } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
-        setIsRegistered(true);
-        router.push('/');
+        if (router.pathname !== '/sign-up/complete') {
+          setIsRegistered(true);
+          router.push('/');
+        }
       } else {
         setIsRegistered(true);
       }

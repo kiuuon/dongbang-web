@@ -1,11 +1,11 @@
 function GenderInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   return (
     <div>
-      <div className="text-bold16 mb-[2px] flex text-gray2">성별</div>
-      <div className="flex h-[50px] w-full">
+      <div className="text-bold12 mb-[18px]">성별</div>
+      <div className="flex h-[32px] w-full gap-[16px]">
         <button
           type="button"
-          className={`h-[50px] w-[176px] rounded-l-[5px] border border-gray0 ${value === 'male' ? 'bg-secondary_light' : 'bg-white'} text-bold16 ${value === 'male' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[32px] w-[68px] rounded-[24px] ${value === 'male' ? 'bg-primary' : 'bg-gray0'} text-bold12 ${value === 'male' ? 'text-white' : 'text-black'}`}
           onClick={() => {
             onChange('male');
           }}
@@ -14,7 +14,7 @@ function GenderInput({ value, onChange }: { value: string; onChange: (value: str
         </button>
         <button
           type="button"
-          className={`h-[50px] w-[176px] rounded-r-[5px] border border-l-0 border-gray0 ${value === 'female' ? 'bg-secondary_light' : 'bg-white'} text-bold16 ${value === 'female' ? 'text-tertiary_dark' : 'text-gray2'}`}
+          className={`h-[32px] w-[68px] rounded-[24px] ${value === 'female' ? 'bg-primary' : 'bg-gray0'} text-bold12 ${value === 'female' ? 'text-white' : 'text-black'}`}
           onClick={() => {
             onChange('female');
           }}

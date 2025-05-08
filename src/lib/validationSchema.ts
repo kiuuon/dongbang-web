@@ -14,7 +14,7 @@ export const getSignUpInfoSchema = (
     birth: yup
       .string()
       .required('생년월일을 입력하세요')
-      .matches(/^[0-9]{8}$/, '8자리 숫자로 입력하세요'),
+      .matches(/^[0-9]{6}$/, '6자리 숫자로 입력하세요'),
     university: yup
       .string()
       .required('학교를 입력하세요')

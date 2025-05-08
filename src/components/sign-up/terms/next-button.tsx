@@ -9,11 +9,7 @@ function NextButton() {
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
 
   const handleNextButton = () => {
-    if (termOfUse && privacyPolicy && thirdPartyConsent) {
-      router.push('/sign-up/info');
-    } else {
-      alert('필수 약관에 동의해주세요.');
-    }
+    router.push('/sign-up/info');
   };
 
   const isDisabled = !(termOfUse && privacyPolicy && thirdPartyConsent);
