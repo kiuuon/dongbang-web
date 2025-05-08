@@ -11,8 +11,12 @@ function MyPage() {
         type="button"
         className="mt-4 w-full rounded-lg bg-[#FFD600] py-4 text-[#000000]"
         onClick={async () => {
-          await logout();
-          router.push('/login');
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage('logout');
+          } else {
+            await logout();
+            router.push('/login');
+          }
         }}
       >
         로그아웃
