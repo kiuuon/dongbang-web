@@ -16,11 +16,14 @@ function NextButton() {
     }
   };
 
+  const isDisabled = !(termOfUse && privacyPolicy && thirdPartyConsent);
+
   return (
     <button
       type="button"
-      className="text-bold32 mb-[16px] h-[74px] w-full rounded-[10px] bg-primary text-tertiary_dark"
+      className={`text-bold16 mb-[21px] h-[56px] w-full rounded-[24px] ${isDisabled ? 'bg-gray0' : 'bg-primary'} text-white`}
       onClick={handleNextButton}
+      disabled={isDisabled}
     >
       다음
     </button>
