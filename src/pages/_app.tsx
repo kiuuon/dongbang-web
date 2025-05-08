@@ -1,6 +1,6 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -60,7 +60,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
-      {!NoneTabPage.includes(pathname) && <Tab />}
+
+      {!window.ReactNativeWebView && !NoneTabPage.includes(pathname) && <Tab />}
     </QueryClientProvider>
   );
 }
