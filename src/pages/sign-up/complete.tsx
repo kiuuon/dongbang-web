@@ -4,6 +4,10 @@ function Complete() {
   const router = useRouter();
 
   const goToHome = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('sign up complete');
+      return;
+    }
     router.push('/');
   };
 

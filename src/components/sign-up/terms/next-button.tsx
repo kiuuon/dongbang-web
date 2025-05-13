@@ -7,8 +7,21 @@ function NextButton() {
   const termOfUse = termsStore((state) => state.temrOfUse);
   const privacyPolicy = termsStore((state) => state.privacyPolicy);
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
+  const marketing = termsStore((state) => state.marketing);
 
   const handleNextButton = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          termOfUse,
+          privacyPolicy,
+          thirdPartyConsent,
+          marketing,
+        }),
+      );
+      return;
+    }
+
     router.push('/sign-up/info');
   };
 

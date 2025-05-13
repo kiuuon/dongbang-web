@@ -15,6 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isWebView, setIsWebView] = useState(true);
 
   const NoneTabPage = [
     '/login',
@@ -26,6 +27,12 @@ export default function App({ Component, pageProps }: AppProps) {
     '/club/create/[clubType]/info',
     '/club/create/[clubType]/detail',
   ];
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   useEffect(() => {
     const handler = async (event: MessageEvent) => {
@@ -77,22 +84,14 @@ export default function App({ Component, pageProps }: AppProps) {
     })();
   }, [router]);
 
-  if (typeof window !== 'undefined' && !window.ReactNativeWebView && !isAuthenticated && router.pathname !== '/login')
-    return null;
+  if (!isWebView && !isAuthenticated && router.pathname !== '/login') return null;
 
-  if (
-    typeof window !== 'undefined' &&
-    !window.ReactNativeWebView &&
-    !isRegistered &&
-    !router.pathname.startsWith('/sign-up/')
-  )
-    return null;
+  if (!isWebView && !isRegistered && !router.pathname.startsWith('/sign-up/')) return null;
 
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
-
-      {typeof window !== 'undefined' && !window.ReactNativeWebView && !NoneTabPage.includes(pathname) && <Tab />}
+      {!isWebView && !NoneTabPage.includes(pathname) && <Tab />}
     </QueryClientProvider>
   );
 }

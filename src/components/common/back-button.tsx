@@ -6,6 +6,10 @@ function BackButton() {
   const router = useRouter();
 
   const handleBackButtonClick = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('back');
+      return;
+    }
     router.back();
   };
 

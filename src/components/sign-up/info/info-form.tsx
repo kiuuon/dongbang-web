@@ -106,6 +106,23 @@ function InfoForm() {
       third_party_consent: thirdPartyConsent,
       marketing,
     };
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          id: session?.user?.id as string,
+          name: data.name,
+          birth: `${+data.birth.slice(0, 2) < 50 ? '20' : '19'}${data.birth.slice(0, 2)}-${data.birth.slice(2, 4)}-${data.birth.slice(4, 6)}`,
+          gender: data.gender,
+          email: session?.user?.email as string,
+          nickname: data.nickname,
+          university_id: universityList?.find((item) => item.name === data.university)?.id,
+          major: data.major,
+          clubs_joined: data.clubCount,
+          join_path: data.path || null,
+        }),
+      );
+      return;
+    }
     handleSignup(body);
   };
 
@@ -189,7 +206,9 @@ function InfoForm() {
           )}
         />
         {errors.nickname && <span className="text-regular10 mt-[8px] text-error">{errors.nickname.message}</span>}
-        {isSameCheck && <span className="text-regular10 mt-[8px] text-[#009E25]">사용 가능한 닉네임입니다.</span>}
+        {!errors.nickname && isSameCheck && (
+          <span className="text-regular10 mt-[8px] text-[#009E25]">사용 가능한 닉네임입니다.</span>
+        )}
       </div>
       <div className="mb-[8px] flex flex-col">
         <Controller
