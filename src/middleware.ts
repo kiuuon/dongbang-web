@@ -4,6 +4,12 @@ import type { NextRequest } from 'next/server';
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const referer = req.headers.get('referer');
+  const userAgent = req.headers.get('user-agent') || '';
+  const isRNWebView = userAgent.includes('rn-webview');
+
+  if (isRNWebView) {
+    return NextResponse.next();
+  }
 
   if (pathname === '/sign-up/info') {
     if (!referer || !referer.includes(`${req.nextUrl.origin}/sign-up/terms`)) {

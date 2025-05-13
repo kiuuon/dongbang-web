@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import Tab from '@/components/layout/tab';
+import { supabase } from '@/lib/apis/supabaseClient';
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -27,9 +28,32 @@ export default function App({ Component, pageProps }: AppProps) {
   ];
 
   useEffect(() => {
+    const handler = async (event: MessageEvent) => {
+      const { data } = await supabase.auth.getSession();
+      const { accessToken, refreshToken } = event.data;
+      if (!data.session) {
+        await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+      }
+    };
+
+    window.addEventListener('message', handler);
+
+    return () => {
+      window.removeEventListener('message', handler);
+    };
+  }, []);
+
+  useEffect(() => {
     (async () => {
       const { user } = await fetchSession();
       const userInfo = await fetchUser();
+
+      if (window.ReactNativeWebView) {
+        return;
+      }
 
       if (!user && router.pathname !== '/login') {
         router.push('/login');
@@ -53,15 +77,22 @@ export default function App({ Component, pageProps }: AppProps) {
     })();
   }, [router]);
 
-  if (!isAuthenticated && router.pathname !== '/login') return null;
+  if (typeof window !== 'undefined' && !window.ReactNativeWebView && !isAuthenticated && router.pathname !== '/login')
+    return null;
 
-  if (!isRegistered && !router.pathname.startsWith('/sign-up/')) return null;
+  if (
+    typeof window !== 'undefined' &&
+    !window.ReactNativeWebView &&
+    !isRegistered &&
+    !router.pathname.startsWith('/sign-up/')
+  )
+    return null;
 
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
 
-      {!window.ReactNativeWebView && !NoneTabPage.includes(pathname) && <Tab />}
+      {typeof window !== 'undefined' && !window.ReactNativeWebView && !NoneTabPage.includes(pathname) && <Tab />}
     </QueryClientProvider>
   );
 }
