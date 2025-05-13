@@ -14,6 +14,10 @@ function CreateClubButton() {
         type="button"
         className="text-regular10 absolute bottom-[22px] flex h-[74px] w-[99px] flex-col items-center justify-center"
         onClick={() => {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage('create club');
+            return;
+          }
           router.push('/club/create');
         }}
       >

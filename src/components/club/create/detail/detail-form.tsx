@@ -77,7 +77,18 @@ function DetailForm() {
         detail_description: data.description,
       };
 
-      handleCreateClub(body);
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: router.query.clubType as string,
+            logo,
+            activity_photos: activityPhotos,
+            detail_description: data.description,
+          }),
+        );
+      } else {
+        handleCreateClub(body);
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error uploading files:', error);

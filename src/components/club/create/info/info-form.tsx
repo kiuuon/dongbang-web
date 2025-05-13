@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -27,6 +27,7 @@ function InfoForm() {
     control,
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -35,6 +36,15 @@ function InfoForm() {
     mode: 'onBlur',
     resolver: yupResolver(campusClubInfoSchema),
   });
+
+  useEffect(() => {
+    if (clubType === 'union') {
+      setValue('tags', ['연합 동아리', ''], {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [clubType, setValue]);
 
   const onSubmit = (data: {
     campusClubType?: string | undefined;
@@ -50,6 +60,20 @@ function InfoForm() {
     setLocation(data.location);
     setDescription(data.description);
     setTags(data.tags);
+
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          campusClubType: defaultCampusClubType,
+          name: data.name,
+          category: data.category,
+          location: data.location,
+          description: data.description,
+          tags: data.tags,
+        }),
+      );
+      return;
+    }
 
     router.push(`/club/create/${clubType}/detail`);
   };
@@ -139,7 +163,8 @@ function InfoForm() {
         <Controller
           name="tags"
           control={control}
-          defaultValue={clubType === 'union' ? ['연합 동아리', ''] : ['', '']}
+          // defaultValue={clubType === 'union' ? ['연합 동아리', ''] : ['', '']}
+          defaultValue={['', '']}
           render={({ field }) => (
             <TagInput
               value={field.value}

@@ -9,7 +9,11 @@ function Create() {
   const router = useRouter();
 
   const goToClubCreate = (clubType: string) => {
-    router.push(`/club/create/${clubType}`);
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(clubType);
+      return;
+    }
+    router.push(`/club/create/${clubType}/info`);
   };
 
   return (
@@ -21,7 +25,7 @@ function Create() {
       <button
         type="button"
         className="mb-[21px] mt-[103px] flex h-[136px] w-full flex-col items-start border-b border-gray0"
-        onClick={() => goToClubCreate('campus/info')}
+        onClick={() => goToClubCreate('campus')}
       >
         <div className="flex h-[38px] w-full items-center justify-between">
           <div className="text-bold32">교내 동아리</div>
@@ -41,7 +45,7 @@ function Create() {
       <button
         type="button"
         className="flex h-[136px] w-full flex-col items-start"
-        onClick={() => goToClubCreate('union/info')}
+        onClick={() => goToClubCreate('union')}
       >
         <div className="flex h-[38px] w-full items-center justify-between">
           <div className="text-bold32">연합 동아리</div>
