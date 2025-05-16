@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -6,12 +6,14 @@ import Image from 'next/image';
 import PostHeader from '@/components/post/post-header';
 import JoinClubPrompt from '@/components/post/join-club-prompt';
 import NotPost from '@/components/post/not-post';
+import NavigationModal from '@/components/post/navigation-modal';
 import { fetchPostsByClubType } from '@/lib/apis/post';
 
 function Main() {
   const observerElement = useRef(null);
   const router = useRouter();
   const { clubType } = router.query;
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
@@ -70,7 +72,7 @@ function Main() {
 
   return (
     <div>
-      <PostHeader />
+      <PostHeader setIsNavigationOpen={setIsNavigationOpen} />
       {getContent()}
 
       {hasNextPage && (
@@ -78,6 +80,7 @@ function Main() {
           Loading...
         </div>
       )}
+      {isNavigationOpen && <NavigationModal setIsNavigationOpen={setIsNavigationOpen} />}
     </div>
   );
 }
