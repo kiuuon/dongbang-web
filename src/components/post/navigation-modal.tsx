@@ -23,7 +23,7 @@ function NavigationModal({
 
   const closeModal = () => {
     setIsVisible(false);
-    setTimeout(() => setIsNavigationOpen(false), 200);
+    setTimeout(() => setIsNavigationOpen(false), 300);
   };
 
   const handleDragEnd = (_: any, info: { offset: { y: number } }) => {
@@ -49,7 +49,7 @@ function NavigationModal({
     <div
       tabIndex={0}
       role="button"
-      className="fixed left-0 top-0 z-50 flex h-screen w-screen items-end bg-black/50"
+      className="fixed left-0 top-0 z-50 flex h-screen w-screen items-end bg-black bg-opacity-60"
       onClick={handleOutsideClick}
       onKeyDown={handleOutsideClick}
     >
@@ -65,11 +65,11 @@ function NavigationModal({
         dragElastic={0}
         onDragEnd={handleDragEnd}
       >
-        <div className="mb-[24px] mt-[5px] h-[2px] w-[37px] rounded-[10px] bg-black" />
+        <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
         {clubType !== 'my' && (
           <button
             type="button"
-            className="text-bold20 flex h-[76px] w-full items-center border-b border-b-gray0"
+            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
             onClick={() => goToSelectedClubType('my')}
           >
             내 동아리
@@ -78,7 +78,7 @@ function NavigationModal({
         {clubType !== 'campus' && (
           <button
             type="button"
-            className="text-bold20 flex h-[76px] w-full items-center border-b border-b-gray0"
+            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
             onClick={() => goToSelectedClubType('campus')}
           >
             교내 동아리
@@ -87,7 +87,7 @@ function NavigationModal({
         {clubType !== 'union' && (
           <button
             type="button"
-            className="text-bold20 flex h-[76px] w-full items-center border-b border-b-gray0"
+            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
             onClick={() => goToSelectedClubType('union')}
           >
             연합 동아리

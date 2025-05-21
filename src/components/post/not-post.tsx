@@ -1,13 +1,10 @@
+import Image from 'next/image';
+
 function NotPost() {
   return (
-    <div className="mt-[144px] flex w-full flex-col items-center justify-center gap-[12px]">
-      <p className="text-regular20">아직 올라온 게시글이 없어요</p>
-      <button
-        type="button"
-        className="text-regular20 h-[36px] w-[136px] rounded-[10px] bg-secondary text-tertiary_dark"
-      >
-        글 작성하기
-      </button>
+    <div className="mt-[177px] flex w-full flex-col items-center justify-center gap-[25px]">
+      <Image src="/images/post.gif" alt="post" width={70} height={70} priority />
+      <p className="text-bold20 text-gray1">작성된 글이 없습니다</p>
     </div>
   );
 }

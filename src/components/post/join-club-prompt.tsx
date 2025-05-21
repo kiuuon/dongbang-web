@@ -24,28 +24,23 @@ function JoinClubPrompt() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col justify-between pb-[100px]">
-      <div className="mt-[144px] flex w-full flex-col items-center justify-center gap-[12px]">
-        <p className="text-regular20">가입한 동아리가 없어요</p>
-        <button
-          type="button"
-          className="text-regular20 mb-[96px] h-[36px] w-[136px] rounded-[10px] bg-secondary text-tertiary_dark"
-        >
-          가입하러가기
-        </button>
+    <div className="flex h-screen w-full flex-col justify-between pb-[88px]">
+      <div className="mt-[177px] flex w-full flex-col items-center justify-center gap-[25px]">
+        <Image src="/images/join.gif" alt="post" width={70} height={70} priority />
+        <p className="text-bold20 text-gray1">소속된 동아리가 없어요</p>
       </div>
       {clubList?.length !== 0 && (
-        <div className="flex flex-col gap-[8px]">
-          <div className="text-bold16 ml-[12px]">동아리 추천</div>
-          <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto pl-[5px]">
+        <div className="border-t-background flex flex-col border-t px-[20px]">
+          <div className="text-bold16 mt-[20px]">동아리 추천</div>
+          <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto p-[9px]">
             {clubList?.map((club, index) => (
               <div
                 key={club.id}
-                className="relative mr-[5px] flex h-[230px] min-w-[150px] flex-col items-center gap-[8px] rounded-[3px] border border-gray0 bg-secondary_light pt-[13px]"
+                className="relative mr-[14px] flex h-[180px] min-w-[140px] flex-col items-center rounded-[10px] bg-white py-[16px] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]"
               >
                 <button
                   type="button"
-                  className="absolute right-[7px] top-[7px]"
+                  className="absolute right-[9px] top-[8px]"
                   onClick={() => {
                     handleRemoveClub(index);
                   }}
@@ -55,27 +50,24 @@ function JoinClubPrompt() {
                 <Image
                   src={club.logo}
                   alt="로고"
-                  width={100}
-                  height={100}
+                  width={80}
+                  height={80}
                   style={{
                     objectFit: 'cover',
-                    width: '100px',
-                    height: '100px',
+                    width: '80px',
+                    height: '80px',
+                    minWidth: '80px',
+                    minHeight: '80px',
+                    borderRadius: '50%',
                   }}
                 />
-                <div className="text-bold14 h-[18px] text-gray3">{club.name}</div>
-                <div className="h-[42px] w-[120px]">
+                <div className="text-bold14 mb-[11px] mt-[18px]">{club.name}</div>
+                <div className="flex h-[55px] gap-[8px]">
                   {club.tags.map(
                     (tag: string, idx: number) =>
-                      idx <= 2 && <div className="text-bold12 h-[14px] text-gray3">#{tag}</div>,
+                      idx < 2 && <div className="text-bold10 rounded-[5px] bg-primary p-[5px] text-white">{tag}</div>,
                   )}
                 </div>
-                <button
-                  type="button"
-                  className="text-bold14 h-[24px] w-[120px] rounded-[3px] bg-tertiary text-secondary"
-                >
-                  자세히
-                </button>
               </div>
             ))}
           </div>
