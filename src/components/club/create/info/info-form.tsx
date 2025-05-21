@@ -32,6 +32,12 @@ function InfoForm() {
   } = useForm({
     defaultValues: {
       clubType: clubType as string,
+      campusClubType: clubInfoStore.getState().campusClubType ?? '',
+      name: clubInfoStore.getState().name ?? '',
+      category: clubInfoStore.getState().category ?? '',
+      location: clubInfoStore.getState().location ?? '',
+      description: clubInfoStore.getState().description ?? '',
+      tags: clubInfoStore.getState().tags.length ? clubInfoStore.getState().tags : ['', ''],
     },
     mode: 'onBlur',
     resolver: yupResolver(campusClubInfoSchema),

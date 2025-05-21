@@ -12,6 +12,13 @@ function JoinClubPrompt() {
   });
 
   const [clubList, setClubList] = useState<typeof recommendedClubs>([]);
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (recommendedClubs) {
@@ -24,19 +31,19 @@ function JoinClubPrompt() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col justify-between pb-[88px]">
+    <div className={`${isWebView ? 'pb-[15px]' : 'pb-[75px]'} flex h-screen w-full flex-col justify-between`}>
       <div className="mt-[177px] flex w-full flex-col items-center justify-center gap-[25px]">
         <Image src="/images/join.gif" alt="post" width={70} height={70} priority />
         <p className="text-bold20 text-gray1">소속된 동아리가 없어요</p>
       </div>
       {clubList?.length !== 0 && (
-        <div className="border-t-background flex flex-col border-t px-[20px]">
+        <div className="flex flex-col border-t border-t-background px-[20px]">
           <div className="text-bold16 mt-[20px]">동아리 추천</div>
-          <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto p-[9px]">
+          <div className="scrollbar-hide flex w-full flex-nowrap overflow-x-auto p-[13px]">
             {clubList?.map((club, index) => (
               <div
                 key={club.id}
-                className="relative mr-[14px] flex h-[180px] min-w-[140px] flex-col items-center rounded-[10px] bg-white py-[16px] shadow-[0px_4px_8px_rgba(0,0,0,0.1)]"
+                className="relative mr-[14px] flex h-[180px] min-w-[140px] flex-col items-center rounded-[10px] bg-white py-[16px] shadow-[0px_1px_12px_0px_rgba(0,0,0,0.2)]"
               >
                 <button
                   type="button"

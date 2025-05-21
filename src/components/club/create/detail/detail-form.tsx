@@ -44,7 +44,15 @@ function DetailForm() {
   const { mutate: handleCreateClub, isPending } = useMutation({
     mutationFn: async (body: ClubType) => createClub(body),
     onSuccess: () => {
-      router.replace('/club');
+      clubInfoStore.setState({
+        campusClubType: undefined,
+        name: '',
+        category: '',
+        location: '',
+        description: '',
+        tags: [],
+      });
+      router.push('/club');
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
