@@ -1,59 +1,46 @@
-import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
 import Header from '@/components/layout/header';
 import { fetchMyClubs } from '@/lib/apis/club';
 import ClubCard from '@/components/club/club-card';
-import CreateClubButton from '@/components/club/creat-club-button';
+import PlusIcon2 from '@/icons/plus-icon2';
 
 function Club() {
+  const router = useRouter();
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
   });
 
-  if (!myClubs) {
-    return null;
-  }
-
   return (
-    <div className="pb-[100px] pt-[88px]">
+    <div className={`${myClubs?.length !== 0 && 'bg-background pt-[108px]'} px-[20px]`}>
       <Header>
-        <div className="text-regular24 text-tertiary_light">내 동아리 리스트</div>
+        <div className="text-bold16">내 동아리 리스트</div>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage('create club');
+              return;
+            }
+            router.push('/club/create');
+          }}
+        >
+          <PlusIcon2 />
+        </button>
       </Header>
-      <div className="flex flex-col items-center gap-y-[40px]">
-        {Array.from({ length: Math.ceil(myClubs.length / 2) }).map((_, rowIdx) => {
-          const startIdx = rowIdx * 2;
-          const pair = myClubs.slice(startIdx, startIdx + 2);
-
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={rowIdx} className="w-full">
-              <div className="flex justify-center gap-x-[20px]">
-                {pair.map((club) => (
-                  <ClubCard key={club.id} club={club} />
-                ))}
-                {pair.length === 1 && <CreateClubButton />}
-              </div>
-
-              <div className="relative left-1/2 h-[15px] w-screen -translate-x-1/2">
-                <Image src="/images/floor.png" alt="바닥" fill />
-              </div>
-            </div>
-          );
-        })}
-        {myClubs.length % 2 === 0 && (
-          <div className="w-full">
-            <div className="flex justify-center gap-x-[20px]">
-              <CreateClubButton />
-              <div className="w-[158px]" />
-            </div>
-            <div className="relative left-1/2 h-[15px] w-screen -translate-x-1/2">
-              <Image src="/images/floor.png" alt="바닥" fill />
-            </div>
-          </div>
-        )}
-      </div>
+      {myClubs?.length === 0 ? (
+        <div className="mt-[177px] flex w-full flex-col items-center gap-[25px]">
+          <Image src="/images/join.gif" alt="post" width={70} height={70} priority />
+          <p className="text-bold20 text-gray1">소속된 동아리가 없습니다</p>
+        </div>
+      ) : (
+        <div className="flex min-h-[calc(100vh-108px)] flex-col gap-[16px]">
+          {myClubs?.map((club) => <ClubCard key={club.id} club={club} />)}
+        </div>
+      )}
     </div>
   );
 }

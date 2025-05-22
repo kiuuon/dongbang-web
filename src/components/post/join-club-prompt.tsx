@@ -34,7 +34,7 @@ function JoinClubPrompt() {
     <div className={`${isWebView ? 'pb-[15px]' : 'pb-[75px]'} flex h-screen w-full flex-col justify-between`}>
       <div className="mt-[177px] flex w-full flex-col items-center justify-center gap-[25px]">
         <Image src="/images/join.gif" alt="post" width={70} height={70} priority />
-        <p className="text-bold20 text-gray1">소속된 동아리가 없어요</p>
+        <p className="text-bold20 text-gray1">소속된 동아리가 없습니다</p>
       </div>
       {clubList?.length !== 0 && (
         <div className="flex flex-col border-t border-t-background px-[20px]">

@@ -65,3 +65,10 @@ export async function fetchMyClubs() {
 
   return clubs;
 }
+
+export async function fetchMyRole(clubId: string) {
+  const userId = await fetchUserId();
+  const { data } = await supabase.from('Club_User').select('role').eq('user_id', userId).eq('club_id', clubId).single();
+
+  return data?.role;
+}

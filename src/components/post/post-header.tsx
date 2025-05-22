@@ -34,6 +34,14 @@ function PostHeader({ setIsNavigationOpen }: { setIsNavigationOpen: React.Dispat
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavigationOpen = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('openNavigation');
+    } else {
+      setIsNavigationOpen((prev) => !prev);
+    }
+  };
+
   return (
     <header
       className={`fixed left-0 top-0 flex h-[60px] w-full items-center justify-between bg-white px-[20px] transition-transform duration-300 ${
@@ -41,11 +49,7 @@ function PostHeader({ setIsNavigationOpen }: { setIsNavigationOpen: React.Dispat
       }`}
     >
       <div className="flex items-center gap-[8px]">
-        <button
-          type="button"
-          className="flex cursor-pointer items-center gap-[8px]"
-          onClick={() => setIsNavigationOpen((prev) => !prev)}
-        >
+        <button type="button" className="flex cursor-pointer items-center gap-[8px]" onClick={handleNavigationOpen}>
           <div className="text-bold16">{clubTypeName}</div>
           <BottomArrowIcon />
         </button>
