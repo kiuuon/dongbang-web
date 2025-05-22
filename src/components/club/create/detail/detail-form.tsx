@@ -7,7 +7,7 @@ import { clubDetailSchema } from '@/lib/validationSchema';
 import { upload } from '@/lib/apis/image';
 import { createClub } from '@/lib/apis/club';
 import clubInfoStore from '@/stores/club-info-store';
-import { ClubType } from '@/types/club-type';
+import { NewClubType } from '@/types/club-type';
 import SubmitButton from '@/components/common/submit-button';
 import Loading from '@/components/common/loading';
 import ActivityInput from './ativity-input';
@@ -42,7 +42,7 @@ function DetailForm() {
   });
 
   const { mutate: handleCreateClub, isPending } = useMutation({
-    mutationFn: async (body: ClubType) => createClub(body),
+    mutationFn: async (body: NewClubType) => createClub(body),
     onSuccess: () => {
       clubInfoStore.setState({
         campusClubType: undefined,

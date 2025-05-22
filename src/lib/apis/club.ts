@@ -1,9 +1,9 @@
-import { ClubType } from '@/types/club-type';
+import { NewClubType } from '@/types/club-type';
 import { supabase } from './supabaseClient';
 import { fetchUserId } from './auth';
 import { shuffleArray } from '../utils';
 
-export async function createClub(body: ClubType) {
+export async function createClub(body: NewClubType) {
   const userId = await fetchUserId();
   let universityId: number | null = null;
 
