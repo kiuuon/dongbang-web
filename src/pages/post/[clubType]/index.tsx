@@ -6,12 +6,13 @@ import Image from 'next/image';
 import PostHeader from '@/components/post/post-header';
 import JoinClubPrompt from '@/components/post/join-club-prompt';
 import NotPost from '@/components/post/not-post';
-import NavigationModal from '@/components/post/navigation-modal';
+import BottomSheet from '@/components/common/bottom-sheet';
 import { fetchPostsByClubType } from '@/lib/apis/post';
 
 function Main() {
   const observerElement = useRef(null);
   const router = useRouter();
+  const closeRef = useRef<() => void>(null);
   const { clubType } = router.query;
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
@@ -70,6 +71,11 @@ function Main() {
     );
   };
 
+  const goToSelectedClubType = (selectedClubType: string) => {
+    router.push(`/post/${selectedClubType}`);
+    closeRef.current?.();
+  };
+
   return (
     <div>
       <PostHeader setIsNavigationOpen={setIsNavigationOpen} />
@@ -80,7 +86,42 @@ function Main() {
           Loading...
         </div>
       )}
-      {isNavigationOpen && <NavigationModal setIsNavigationOpen={setIsNavigationOpen} />}
+      {isNavigationOpen && (
+        <BottomSheet
+          setIsBottomSheetOpen={setIsNavigationOpen}
+          onRequestClose={(closeFn) => {
+            closeRef.current = closeFn;
+          }}
+        >
+          {clubType !== 'my' && (
+            <button
+              type="button"
+              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+              onClick={() => goToSelectedClubType('my')}
+            >
+              내 동아리
+            </button>
+          )}
+          {clubType !== 'campus' && (
+            <button
+              type="button"
+              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+              onClick={() => goToSelectedClubType('campus')}
+            >
+              교내 동아리
+            </button>
+          )}
+          {clubType !== 'union' && (
+            <button
+              type="button"
+              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+              onClick={() => goToSelectedClubType('union')}
+            >
+              연합 동아리
+            </button>
+          )}
+        </BottomSheet>
+      )}
     </div>
   );
 }

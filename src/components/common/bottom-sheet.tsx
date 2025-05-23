@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
 
-function NavigationModal({
-  setIsNavigationOpen,
+function BottomSheet({
+  children,
+  setIsBottomSheetOpen,
+  onRequestClose,
 }: {
-  setIsNavigationOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  children: React.ReactNode;
+  setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onRequestClose?: (close: () => void) => void;
 }) {
-  const router = useRouter();
-  const { clubType } = router.query;
   const modalRef = useRef<HTMLDivElement>(null);
   const y = useMotionValue(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -21,10 +22,10 @@ function NavigationModal({
     };
   }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsVisible(false);
-    setTimeout(() => setIsNavigationOpen(false), 300);
-  };
+    setTimeout(() => setIsBottomSheetOpen(false), 300);
+  }, [setIsBottomSheetOpen]);
 
   const handleDragEnd = (_: any, info: { offset: { y: number } }) => {
     if (info.offset.y > 150) {
@@ -40,10 +41,11 @@ function NavigationModal({
     }
   };
 
-  const goToSelectedClubType = (selectedClubType: string) => {
-    router.push(`/post/${selectedClubType}`);
-    closeModal();
-  };
+  useEffect(() => {
+    if (onRequestClose) {
+      onRequestClose(() => closeModal());
+    }
+  }, [onRequestClose, closeModal]);
 
   return (
     <div
@@ -66,36 +68,14 @@ function NavigationModal({
         onDragEnd={handleDragEnd}
       >
         <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
-        {clubType !== 'my' && (
-          <button
-            type="button"
-            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-            onClick={() => goToSelectedClubType('my')}
-          >
-            내 동아리
-          </button>
-        )}
-        {clubType !== 'campus' && (
-          <button
-            type="button"
-            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-            onClick={() => goToSelectedClubType('campus')}
-          >
-            교내 동아리
-          </button>
-        )}
-        {clubType !== 'union' && (
-          <button
-            type="button"
-            className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-            onClick={() => goToSelectedClubType('union')}
-          >
-            연합 동아리
-          </button>
-        )}
+        {children}
       </motion.div>
     </div>
   );
 }
 
-export default NavigationModal;
+BottomSheet.defaultProps = {
+  onRequestClose: undefined,
+};
+
+export default BottomSheet;
