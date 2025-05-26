@@ -1,7 +1,17 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 function BoardSummary() {
+  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<'feed' | 'board'>('feed');
+
+  const goToCommingSoon = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('comingSoon');
+      return;
+    }
+    router.push('/coming-soon');
+  };
 
   return (
     <div>
@@ -26,7 +36,11 @@ function BoardSummary() {
             게시판
           </button>
         </div>
-        <button type="button" className="text-bold12 h-[32px] w-[47px] rounded-[8px] bg-gray0">
+        <button
+          type="button"
+          className="text-bold12 h-[32px] w-[47px] rounded-[8px] bg-gray0"
+          onClick={goToCommingSoon}
+        >
           더보기
         </button>
       </div>

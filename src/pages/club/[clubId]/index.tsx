@@ -43,6 +43,14 @@ function Club() {
     bottomSheetCloseRef.current?.();
   };
 
+  const goToCommingSoon = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('comingSoon');
+      return;
+    }
+    router.push('/coming-soon');
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background px-[20px] pt-[75px]">
       <Header>
@@ -56,10 +64,10 @@ function Club() {
           {(myClubs?.length as number) > 1 && <BottomArrowIcon />}
         </button>
         <div className="flex items-center gap-[20px]">
-          <button type="button">
+          <button type="button" onClick={goToCommingSoon}>
             <MonitorIcon />
           </button>
-          <button type="button">
+          <button type="button" onClick={goToCommingSoon}>
             <MessageIcon />
           </button>
         </div>

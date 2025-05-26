@@ -27,6 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
     '/club/create/[clubType]/info',
     '/club/create/[clubType]/detail',
     '/club/[clubId]',
+    '/coming-soon',
   ];
 
   useEffect(() => {
