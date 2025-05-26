@@ -3,13 +3,18 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-import BackButton from '@/components/common/back-button';
-import Header from '@/components/layout/header';
+import { fetchClubInfo, fetchMyClubs } from '@/lib/apis/club';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import MonitorIcon from '@/icons/monitor-icon';
 import MessageIcon from '@/icons/message-icon';
-import { fetchClubInfo, fetchMyClubs } from '@/lib/apis/club';
+import Header from '@/components/layout/header';
+import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
+import ClubProfile from '@/components/club/[clubId]/club-profile';
+import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
+import Contents from '@/components/club/[clubId]/contetns';
+import Schedule from '@/components/club/[clubId]/schedule';
+import BoardSummary from '@/components/club/[clubId]/board-summary';
 
 function Club() {
   const router = useRouter();
@@ -39,7 +44,7 @@ function Club() {
   };
 
   return (
-    <div>
+    <div className="flex min-h-screen flex-col bg-background px-[20px] pt-[75px]">
       <Header>
         <BackButton />
         <button
@@ -59,6 +64,13 @@ function Club() {
           </button>
         </div>
       </Header>
+
+      <ClubProfile />
+      <AnnouncementButton />
+      <Contents />
+      <Schedule />
+      <BoardSummary />
+
       {isBottomSheetOpen && (
         <BottomSheet
           setIsBottomSheetOpen={setIsBottomSheetOpen}

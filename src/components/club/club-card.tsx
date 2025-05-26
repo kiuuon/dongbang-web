@@ -8,7 +8,7 @@ import { fetchMyRole } from '@/lib/apis/club';
 function ClubCard({ club }: { club: ClubType }) {
   const router = useRouter();
   const { data: role } = useQuery({
-    queryKey: ['club', club.id],
+    queryKey: ['myRole', club.id],
     queryFn: () => fetchMyRole(club.id),
   });
 
