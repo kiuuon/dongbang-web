@@ -72,3 +72,9 @@ export async function fetchMyRole(clubId: string) {
 
   return data?.role;
 }
+
+export async function fetchClubInfo(clubId: string) {
+  const { data } = await supabase.from('Club').select('*').eq('id', clubId).single();
+
+  return data;
+}

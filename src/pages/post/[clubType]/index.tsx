@@ -12,9 +12,9 @@ import { fetchPostsByClubType } from '@/lib/apis/post';
 function Main() {
   const observerElement = useRef(null);
   const router = useRouter();
-  const closeRef = useRef<() => void>(null);
   const { clubType } = router.query;
-  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+  const bottomSheetCloseRef = useRef<() => void>(null);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
@@ -73,12 +73,12 @@ function Main() {
 
   const goToSelectedClubType = (selectedClubType: string) => {
     router.push(`/post/${selectedClubType}`);
-    closeRef.current?.();
+    bottomSheetCloseRef.current?.();
   };
 
   return (
     <div>
-      <PostHeader setIsNavigationOpen={setIsNavigationOpen} />
+      <PostHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
 
       {hasNextPage && (
@@ -86,11 +86,11 @@ function Main() {
           Loading...
         </div>
       )}
-      {isNavigationOpen && (
+      {isBottomSheetOpen && (
         <BottomSheet
-          setIsBottomSheetOpen={setIsNavigationOpen}
+          setIsBottomSheetOpen={setIsBottomSheetOpen}
           onRequestClose={(closeFn) => {
-            closeRef.current = closeFn;
+            bottomSheetCloseRef.current = closeFn;
           }}
         >
           {clubType !== 'my' && (

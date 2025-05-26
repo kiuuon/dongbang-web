@@ -7,7 +7,7 @@ import { fetchMyClubs } from '@/lib/apis/club';
 import ClubCard from '@/components/club/club-card';
 import PlusIcon2 from '@/icons/plus-icon2';
 
-function Club() {
+function ClubList() {
   const router = useRouter();
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
@@ -45,4 +45,4 @@ function Club() {
   );
 }
 
-export default Club;
+export default ClubList;

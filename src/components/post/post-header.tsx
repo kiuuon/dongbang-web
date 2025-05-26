@@ -5,7 +5,7 @@ import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 
-function PostHeader({ setIsNavigationOpen }: { setIsNavigationOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function PostHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   const router = useRouter();
   const { clubType } = router.query;
   const clubTypeName = {
@@ -38,7 +38,7 @@ function PostHeader({ setIsNavigationOpen }: { setIsNavigationOpen: React.Dispat
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage('openNavigation');
     } else {
-      setIsNavigationOpen((prev) => !prev);
+      setIsBottomSheetOpen((prev) => !prev);
     }
   };
 

@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 
 import { ClubType } from '@/types/club-type';
 import { fetchMyRole } from '@/lib/apis/club';
 
 function ClubCard({ club }: { club: ClubType }) {
+  const router = useRouter();
   const { data: role } = useQuery({
     queryKey: ['club', club.id],
     queryFn: () => fetchMyRole(club.id),
@@ -20,8 +22,22 @@ function ClubCard({ club }: { club: ClubType }) {
     return '';
   };
 
+  const goToClub = () => {
+    router.push(`/club/${club.id}`);
+  };
+
   return (
-    <div className="flex h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]">
+    <button
+      type="button"
+      className="flex h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
+      onClick={() => {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(`go to club ${club.id}`);
+          return;
+        }
+        goToClub();
+      }}
+    >
       <Image
         src={club.logo}
         alt="로고"
@@ -34,9 +50,9 @@ function ClubCard({ club }: { club: ClubType }) {
           borderRadius: '16px',
         }}
       />
-      <div className="ml-[20px] flex flex-col justify-center gap-[5px]">
-        <div className="text-bold16">{club.name}</div>
-        <div className="text-bold12 h-[18px] text-gray2">{getRole()}</div>
+      <div className="ml-[20px] flex flex-col justify-center">
+        <div className="text-bold16 text-start">{club.name}</div>
+        <div className="text-bold12 mb-[6px] mt-[4px] h-[18px] text-start text-gray2">{getRole()}</div>
         <div className="flex flex-row gap-[8px]">
           {club.tags.map(
             (tag, idx: number) =>
@@ -48,7 +64,7 @@ function ClubCard({ club }: { club: ClubType }) {
           )}
         </div>
       </div>
-    </div>
+    </button>
   );
 }
 
