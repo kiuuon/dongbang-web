@@ -23,6 +23,10 @@ function ClubCard({ club }: { club: ClubType }) {
   };
 
   const goToClub = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(`${club.id}`);
+      return;
+    }
     router.push(`/club/${club.id}`);
   };
 
@@ -32,7 +36,7 @@ function ClubCard({ club }: { club: ClubType }) {
       className="flex h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
       onClick={() => {
         if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(`go to club ${club.id}`);
+          window.ReactNativeWebView.postMessage(`${club.id}`);
           return;
         }
         goToClub();
@@ -48,6 +52,7 @@ function ClubCard({ club }: { club: ClubType }) {
           width: '60px',
           height: '60px',
           borderRadius: '16px',
+          border: '1px solid #F9F9F9',
         }}
       />
       <div className="ml-[20px] flex flex-col justify-center">

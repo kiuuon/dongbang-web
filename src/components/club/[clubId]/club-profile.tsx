@@ -84,10 +84,11 @@ function ClubProfile() {
             width: '70px',
             height: '70px',
             borderRadius: '16px',
+            border: '1px solid #F9F9F9',
           }}
         />
       ) : (
-        <div className="absolute left-[22px] top-0 h-[70px] w-[70px] rounded-[16px] bg-gray0" />
+        <div className="absolute left-[22px] top-0 h-[70px] w-[70px] rounded-[16px] border border-background bg-gray0" />
       )}
     </div>
   );
