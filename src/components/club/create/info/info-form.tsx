@@ -20,8 +20,8 @@ function InfoForm() {
   const setLocation = clubInfoStore((state) => state.setLocation);
   const setDescription = clubInfoStore((state) => state.setDescription);
   const setTags = clubInfoStore((state) => state.setTags);
-  const [defaultCampusClubType, setDefaultCampusClubType] = useState('');
-  const [defaultCategory, setDefaultCategory] = useState('');
+  const [defaultCampusClubType, setDefaultCampusClubType] = useState(clubInfoStore.getState().campusClubType ?? '');
+  const [defaultCategory, setDefaultCategory] = useState(clubInfoStore.getState().category ?? '');
 
   const {
     control,
@@ -44,7 +44,7 @@ function InfoForm() {
   });
 
   useEffect(() => {
-    if (clubType === 'union') {
+    if (clubType === 'union' && clubInfoStore.getState().tags.length === 0) {
       setValue('tags', ['연합 동아리', ''], {
         shouldValidate: true,
         shouldDirty: true,

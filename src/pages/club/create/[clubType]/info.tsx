@@ -4,6 +4,7 @@ import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import ProgressBar from '@/components/club/create/progress-bar';
 import InfoForm from '@/components/club/create/info/info-form';
+import clubInfoStore from '@/stores/club-info-store';
 
 function Info() {
   useEffect(() => {
@@ -11,10 +12,23 @@ function Info() {
       event.preventDefault();
     };
 
+    const handlePopState = () => {
+      clubInfoStore.setState({
+        campusClubType: undefined,
+        name: '',
+        category: '',
+        location: '',
+        description: '',
+        tags: [],
+      });
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, []);
 
