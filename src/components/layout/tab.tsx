@@ -11,10 +11,10 @@ function Tab() {
   const router = useRouter();
 
   return (
-    <nav className="border-t-background fixed bottom-0 left-0 right-0 z-40 flex h-[60px] items-center justify-between border-t-[0.5px] bg-white px-[34px]">
-      <Link href="/" className="flex flex-col items-center gap-[3px]">
-        <HomeIcon color={router.pathname.startsWith('/post') ? '#F9A825' : '#989898'} />
-        <div className={`text-regular10 ${router.pathname.startsWith('/post') ? 'text-primary' : 'text-gray2'}`}>
+    <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-[60px] items-center justify-between border-t-[0.5px] border-t-background bg-white px-[34px]">
+      <Link href="/feed/my" className="flex flex-col items-center gap-[3px]">
+        <HomeIcon color={router.pathname.startsWith('/feed') ? '#F9A825' : '#989898'} />
+        <div className={`text-regular10 ${router.pathname.startsWith('/feed') ? 'text-primary' : 'text-gray2'}`}>
           홈
         </div>
       </Link>

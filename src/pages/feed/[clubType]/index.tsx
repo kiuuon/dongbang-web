@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import PostHeader from '@/components/post/post-header';
-import JoinClubPrompt from '@/components/post/join-club-prompt';
-import NotPost from '@/components/post/not-post';
+import FeedHeader from '@/components/feed/feed-header';
+import JoinClubPrompt from '@/components/feed/join-club-prompt';
+import NotFeed from '@/components/feed/not-feed';
 import BottomSheet from '@/components/common/bottom-sheet';
 import { fetchPostsByClubType } from '@/lib/apis/post';
 
-function Main() {
+function Feed() {
   const observerElement = useRef(null);
   const router = useRouter();
   const { clubType } = router.query;
@@ -55,7 +55,7 @@ function Main() {
     if (data?.pages[0].length === 0) {
       return (
         <div>
-          <NotPost />
+          <NotFeed />
         </div>
       );
     }
@@ -72,13 +72,13 @@ function Main() {
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
-    router.push(`/post/${selectedClubType}`);
+    router.push(`/feed/${selectedClubType}`);
     bottomSheetCloseRef.current?.();
   };
 
   return (
     <div>
-      <PostHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
+      <FeedHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
 
       {hasNextPage && (
@@ -126,4 +126,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default Feed;

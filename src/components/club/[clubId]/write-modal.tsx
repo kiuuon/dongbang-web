@@ -37,6 +37,14 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     router.push('/coming-soon');
   };
 
+  const writeFeed = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage('writeFeed');
+      return;
+    }
+    router.push('/feed/write');
+  };
+
   return (
     <div
       role="button"
@@ -56,11 +64,11 @@ function WriteModal({ onClose }: { onClose: () => void }) {
             부원 모집하기
           </button>
         )}
-        <button type="button" className="text-regular16 flex items-center gap-[8px]">
+        <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
           <PencilIcon2 />
           게시글 작성
         </button>
-        <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
+        <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={writeFeed}>
           <FeedIcon />
           피드 작성
         </button>

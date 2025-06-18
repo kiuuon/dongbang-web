@@ -5,7 +5,7 @@ import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 
-function PostHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   const router = useRouter();
   const { clubType } = router.query;
   const clubTypeName = {
@@ -67,4 +67,4 @@ function PostHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
   );
 }
 
-export default PostHeader;
+export default FeedHeader;
