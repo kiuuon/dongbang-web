@@ -20,6 +20,14 @@ li::marker {
   color: black;
 }
 
+.chosen {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0.95;
+  transition:
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
+}
+
 @font-face {
   font-family: 'Pretendard Variable';
   src: url('/fonts/PretendardVariable.ttf') format('truetype');

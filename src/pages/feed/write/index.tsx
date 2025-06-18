@@ -1,12 +1,14 @@
 import { useState } from 'react';
 
-import Header from '@/components/layout/header';
-import BackButton from '@/components/common/back-button';
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
 import RightArrowIcon5 from '@/icons/right-arrow-icon5';
+import Header from '@/components/layout/header';
+import BackButton from '@/components/common/back-button';
+import PhotoSection from '@/components/feed/write/photo-section';
 
 function WriteFeed() {
+  const [photos, setPhotos] = useState<string[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isNicknameVisible, setIsNicknameVisible] = useState(false);
@@ -19,8 +21,12 @@ function WriteFeed() {
       </Header>
       <div className="flex flex-col gap-[24px]">
         <div className="flex flex-col gap-[16px]">
+          <div className="flex flex-col gap-[12px]">
+            <div className="text-bold12 select-none">사진</div>
+            <PhotoSection photos={photos} setPhotos={setPhotos} />
+          </div>
           <div className="flex flex-col gap-[10px]">
-            <div className="text-bold12">제목</div>
+            <div className="text-bold12 select-none">제목</div>
             <input
               type="text"
               value={title}
@@ -29,11 +35,8 @@ function WriteFeed() {
               className="text-regular14 h-[48px] w-full rounded-[8px] border border-gray0 px-[16px] placeholder:text-gray2"
             />
           </div>
-          <div>
-            <div className="text-bold12">사진</div>
-          </div>
           <div className="flex flex-col gap-[10px]">
-            <div className="text-bold12">내용</div>
+            <div className="text-bold12 select-none">내용</div>
             <textarea
               value={content}
               onChange={(event) => setContent(event.target.value)}
