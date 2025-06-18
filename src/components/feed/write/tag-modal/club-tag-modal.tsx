@@ -34,7 +34,14 @@ function ClubTagModal({
         placeholder="검색"
         className="text-regular16 mb-[20px] mt-[28px] h-[40px] w-full rounded-[10px] bg-gray0 px-[13px] placeholder:text-gray2"
       />
-      <div className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll">
+      <div
+        className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll"
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
         {filteredClubs?.map((club) => (
           <div key={club.id} className="flex h-[40px] min-h-[40px] w-full items-center justify-between">
             <div className="flex items-center gap-[29px]">
