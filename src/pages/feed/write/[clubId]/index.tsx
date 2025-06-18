@@ -1,14 +1,22 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useMutation } from '@tanstack/react-query';
 
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
 import RightArrowIcon5 from '@/icons/right-arrow-icon5';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import Loading from '@/components/common/loading';
 import PhotoSection from '@/components/feed/write/photo-section';
 import TagModal from '@/components/feed/write/tag-modal/tag-modal';
+import { uploadPrivate } from '@/lib/apis/image';
+import { writeFeed } from '@/lib/apis/feed';
 
 function WriteFeed() {
+  const uuid = crypto.randomUUID();
+  const router = useRouter();
+  const { clubId } = router.query;
   const [photos, setPhotos] = useState<string[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -17,6 +25,51 @@ function WriteFeed() {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
+
+  const { mutateAsync: uploadPhoto, isPending: isPhotoUploading } = useMutation({
+    mutationFn: ({ file, fileName }: { file: string; fileName: string }) => uploadPrivate(file, fileName),
+  });
+
+  const { mutate: handleWriteFeed, isPending } = useMutation({
+    mutationFn: async (photosResults: string[]) =>
+      writeFeed(
+        photosResults,
+        title,
+        content,
+        isNicknameVisible,
+        isPrivate,
+        clubId as string,
+        selectedMembers,
+        selectedClubs,
+      ),
+    onSuccess: () => {
+      router.replace(`/club/${clubId}`);
+    },
+    onError: (error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    },
+  });
+
+  const handleWriteButton = async () => {
+    try {
+      if (photos.length === 0) {
+        alert('사진을 추가해주세요.');
+        return;
+      }
+
+      const photosUploadPromises = photos.map((photo, index) => {
+        const fileName = `feed/${uuid}/${index}.png`;
+        return uploadPhoto({ file: photo, fileName });
+      });
+      const photosResults = await Promise.all(photosUploadPromises);
+
+      handleWriteFeed(photosResults);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Error uploading files:', error);
+    }
+  };
 
   return (
     <div className="flex h-screen flex-col justify-between px-[20px] pt-[68px]">
@@ -82,6 +135,7 @@ function WriteFeed() {
       <button
         type="button"
         className="text-bold16 mb-[20px] flex h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
+        onClick={handleWriteButton}
       >
         게시
       </button>
@@ -94,6 +148,7 @@ function WriteFeed() {
           setSelectedClubs={setSelectedClubs}
         />
       )}
+      {(isPending || isPhotoUploading) && <Loading />}
     </div>
   );
 }

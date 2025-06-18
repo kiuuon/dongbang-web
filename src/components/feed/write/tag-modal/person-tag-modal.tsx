@@ -6,17 +6,14 @@ import { fetchClubMembers } from '@/lib/apis/club';
 import ToggleIcon2 from '@/icons/toggle-icon2';
 
 function PersonTagModal({
-  selectedMembers,
-  setSelectedMembers,
-  bottomSheetCloseRef,
+  selected,
+  setSelected,
 }: {
-  selectedMembers: string[];
-  setSelectedMembers: React.Dispatch<React.SetStateAction<string[]>>;
-  bottomSheetCloseRef: React.MutableRefObject<(() => void) | null>;
+  selected: string[];
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const router = useRouter();
   const { clubId } = router.query;
-  const [selected, setSelected] = useState<string[]>(selectedMembers);
   const [searchText, setSearchText] = useState('');
 
   const { data: members } = useQuery({
@@ -34,11 +31,6 @@ function PersonTagModal({
 
   const selectMember = (userId: string) => {
     setSelected((prev) => (prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]));
-  };
-
-  const handleConfirm = () => {
-    setSelectedMembers(selected);
-    bottomSheetCloseRef.current?.();
   };
 
   const filteredMembers = members?.filter((member) => member.name?.toLowerCase().includes(searchText.toLowerCase()));
@@ -75,13 +67,6 @@ function PersonTagModal({
           </button>
         ))}
       </div>
-      <button
-        type="button"
-        className="text-bold16 my-[20px] h-[56px] w-full rounded-[24px] bg-primary text-white"
-        onClick={handleConfirm}
-      >
-        확인
-      </button>
     </div>
   );
 }

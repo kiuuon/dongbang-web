@@ -7,7 +7,7 @@ import FeedHeader from '@/components/feed/feed-header';
 import JoinClubPrompt from '@/components/feed/join-club-prompt';
 import NotFeed from '@/components/feed/not-feed';
 import BottomSheet from '@/components/common/bottom-sheet';
-import { fetchPostsByClubType } from '@/lib/apis/post';
+import { fetchPostsByClubType } from '@/lib/apis/feed';
 
 function Feed() {
   const observerElement = useRef(null);

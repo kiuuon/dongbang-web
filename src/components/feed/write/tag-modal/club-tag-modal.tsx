@@ -3,18 +3,14 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchAllClubs } from '@/lib/apis/club';
-import ToggleIcon2 from '@/icons/toggle-icon2';
 
 function ClubTagModal({
-  selectedClubs,
-  setSelectedClubs,
-  bottomSheetCloseRef,
+  selected,
+  setSelected,
 }: {
-  selectedClubs: string[];
-  setSelectedClubs: React.Dispatch<React.SetStateAction<string[]>>;
-  bottomSheetCloseRef: React.MutableRefObject<(() => void) | null>;
+  selected: string[];
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
-  const [selected, setSelected] = useState<string[]>(selectedClubs);
   const [searchText, setSearchText] = useState('');
 
   const { data: clubs } = useQuery({
@@ -22,40 +18,21 @@ function ClubTagModal({
     queryFn: () => fetchAllClubs(),
   });
 
-  const selectAllClubs = () => {
-    if (selected.length === clubs?.length) {
-      setSelected([]);
-    } else {
-      setSelected(clubs?.map((club) => club.id) || []);
-    }
-  };
-
   const selectClub = (selectedClubId: string) => {
     setSelected((prev) =>
       prev.includes(selectedClubId) ? prev.filter((id) => id !== selectedClubId) : [...prev, selectedClubId],
     );
   };
 
-  const handleConfirm = () => {
-    setSelectedClubs(selected);
-    bottomSheetCloseRef.current?.();
-  };
-
   const filteredClubs = clubs?.filter((club) => club.name?.toLowerCase().includes(searchText.toLowerCase()));
 
   return (
     <div className="w-full">
-      <div className="mb-[4px] flex w-full items-center justify-end gap-[8px]">
-        <span>전체</span>
-        <button type="button" onClick={selectAllClubs}>
-          <ToggleIcon2 active={selected.length === clubs?.length} />
-        </button>
-      </div>
       <input
         value={searchText}
         onChange={(event) => setSearchText(event.target.value)}
         placeholder="검색"
-        className="text-regular16 mb-[20px] h-[40px] w-full rounded-[10px] bg-gray0 px-[13px] placeholder:text-gray2"
+        className="text-regular16 mb-[20px] mt-[28px] h-[40px] w-full rounded-[10px] bg-gray0 px-[13px] placeholder:text-gray2"
       />
       <div className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll">
         {filteredClubs?.map((club) => (
@@ -85,13 +62,6 @@ function ClubTagModal({
           </div>
         ))}
       </div>
-      <button
-        type="button"
-        className="text-bold16 my-[20px] h-[56px] w-full rounded-[24px] bg-primary text-white"
-        onClick={handleConfirm}
-      >
-        확인
-      </button>
     </div>
   );
 }

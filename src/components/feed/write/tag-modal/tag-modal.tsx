@@ -19,6 +19,14 @@ function TagModal({
 }) {
   const bottomSheetCloseRef = useRef<() => void>(null);
   const [isClub, setIsClub] = useState(false);
+  const [draftSelectedMembers, setDraftSelectedMembers] = useState<string[]>(selectedMembers);
+  const [draftSelectedClubs, setDraftSelectedClubs] = useState<string[]>(selectedClubs);
+
+  const handleConfirm = () => {
+    setSelectedMembers(draftSelectedMembers);
+    setSelectedClubs(draftSelectedClubs);
+    bottomSheetCloseRef.current?.();
+  };
 
   return (
     <BottomSheet
@@ -44,18 +52,17 @@ function TagModal({
         </button>
       </div>
       {isClub ? (
-        <ClubTagModal
-          selectedClubs={selectedClubs}
-          setSelectedClubs={setSelectedClubs}
-          bottomSheetCloseRef={bottomSheetCloseRef}
-        />
+        <ClubTagModal selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
       ) : (
-        <PersonTagModal
-          selectedMembers={selectedMembers}
-          setSelectedMembers={setSelectedMembers}
-          bottomSheetCloseRef={bottomSheetCloseRef}
-        />
+        <PersonTagModal selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
       )}
+      <button
+        type="button"
+        className="text-bold16 my-[20px] h-[56px] w-full rounded-[24px] bg-primary text-white"
+        onClick={handleConfirm}
+      >
+        확인
+      </button>
     </BottomSheet>
   );
 }
