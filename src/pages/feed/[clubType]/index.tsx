@@ -93,33 +93,36 @@ function Feed() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          {clubType !== 'my' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('my')}
-            >
-              내 동아리
-            </button>
-          )}
-          {clubType !== 'campus' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('campus')}
-            >
-              교내 동아리
-            </button>
-          )}
-          {clubType !== 'union' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('union')}
-            >
-              연합 동아리
-            </button>
-          )}
+          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
+          <div className="flex h-[306px] w-full flex-col">
+            {clubType !== 'my' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('my')}
+              >
+                내 동아리
+              </button>
+            )}
+            {clubType !== 'campus' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('campus')}
+              >
+                교내 동아리
+              </button>
+            )}
+            {clubType !== 'union' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('union')}
+              >
+                연합 동아리
+              </button>
+            )}
+          </div>
         </BottomSheet>
       )}
     </div>

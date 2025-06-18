@@ -101,32 +101,35 @@ function Club() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          {myClubs?.map(
-            (club) =>
-              club.id !== clubId && (
-                <button
-                  key={club.id}
-                  type="button"
-                  className="text-bold16 flex h-[76px] w-full flex-row items-center gap-[24px] border-b border-b-gray0"
-                  onClick={() => goToSelectedClub(club.id)}
-                >
-                  <Image
-                    src={club.logo}
-                    alt="로고"
-                    width={50}
-                    height={50}
-                    style={{
-                      objectFit: 'cover',
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '50%',
-                      border: '1px solid #F9F9F9',
-                    }}
-                  />
-                  {club.name}
-                </button>
-              ),
-          )}
+          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
+          <div className="scrollbar-hide flex h-[306px] w-full flex-col overflow-y-scroll">
+            {myClubs?.map(
+              (club) =>
+                club.id !== clubId && (
+                  <button
+                    key={club.id}
+                    type="button"
+                    className="text-bold16 flex h-[76px] min-h-[76px] w-full flex-row items-center gap-[24px] border-b border-b-gray0"
+                    onClick={() => goToSelectedClub(club.id)}
+                  >
+                    <Image
+                      src={club.logo}
+                      alt="로고"
+                      width={50}
+                      height={50}
+                      style={{
+                        objectFit: 'cover',
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        border: '1px solid #F9F9F9',
+                      }}
+                    />
+                    {club.name}
+                  </button>
+                ),
+            )}
+          </div>
         </BottomSheet>
       )}
     </div>

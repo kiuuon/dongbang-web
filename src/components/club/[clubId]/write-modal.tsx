@@ -42,7 +42,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       window.ReactNativeWebView.postMessage('writeFeed');
       return;
     }
-    router.push('/feed/write');
+    router.push(`/feed/write/${clubId}`);
   };
 
   return (

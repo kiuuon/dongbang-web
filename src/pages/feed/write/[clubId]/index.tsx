@@ -6,6 +6,7 @@ import RightArrowIcon5 from '@/icons/right-arrow-icon5';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import PhotoSection from '@/components/feed/write/photo-section';
+import TagModal from '@/components/feed/write/tag-modal/tag-modal';
 
 function WriteFeed() {
   const [photos, setPhotos] = useState<string[]>([]);
@@ -13,6 +14,9 @@ function WriteFeed() {
   const [content, setContent] = useState('');
   const [isNicknameVisible, setIsNicknameVisible] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
 
   return (
     <div className="flex h-screen flex-col justify-between px-[20px] pt-[68px]">
@@ -66,13 +70,13 @@ function WriteFeed() {
               <ToggleIcon active={isPrivate} />
             </button>
           </div>
-          <div className="flex items-center justify-between">
+          <button type="button" className="flex items-center justify-between" onClick={() => setIsTagModalOpen(true)}>
             <div className="text-bold16 flex items-center gap-[4px]">
               <PersonIcon />
               사람 태그
             </div>
             <RightArrowIcon5 />
-          </div>
+          </button>
         </div>
       </div>
       <button
@@ -81,6 +85,15 @@ function WriteFeed() {
       >
         게시
       </button>
+      {isTagModalOpen && (
+        <TagModal
+          setIsBottomSheetOpen={setIsTagModalOpen}
+          selectedMembers={selectedMembers}
+          setSelectedMembers={setSelectedMembers}
+          selectedClubs={selectedClubs}
+          setSelectedClubs={setSelectedClubs}
+        />
+      )}
     </div>
   );
 }

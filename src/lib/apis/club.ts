@@ -31,6 +31,12 @@ export async function createClub(body: NewClubType) {
   ]);
 }
 
+export async function fetchAllClubs() {
+  const { data: clubs } = await supabase.from('Club').select('*');
+
+  return clubs;
+}
+
 export async function fetchRecommendedClubs() {
   const userId = await fetchUserId();
   const { data: userData } = await supabase.from('User').select('university_id').eq('id', userId).single();
@@ -82,18 +88,19 @@ export async function fetchClubInfo(clubId: string) {
 export async function fetchClubMembers(clubId: string) {
   const { data } = (await supabase
     .from('Club_User')
-    .select('user_id, User(name), role')
+    .select('user_id, User(name, avatar), role')
     .eq('club_id', clubId)) as unknown as {
     data: {
       user_id: string;
       role: string;
-      User: { name: string } | null;
+      User: { name: string; avatar: string } | null;
     }[];
   };
 
   return data?.map((member) => ({
     userId: member.user_id,
     name: member.User?.name,
+    avatar: member.User?.avatar,
     role: member.role,
   }));
 }
