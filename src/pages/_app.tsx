@@ -17,18 +17,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isWebView, setIsWebView] = useState(true);
 
-  const NoneTabPage = [
-    '/login',
-    '/login/callback',
-    '/sign-up/terms',
-    '/sign-up/info',
-    '/sign-up/complete',
-    '/club/create',
-    '/club/create/[clubType]/info',
-    '/club/create/[clubType]/detail',
-    '/club/[clubId]',
-    '/coming-soon',
-  ];
+  const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage'];
 
   useEffect(() => {
     if (!window.ReactNativeWebView) {
@@ -93,7 +82,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
-      {!isWebView && !NoneTabPage.includes(pathname) && <Tab />}
+      {!isWebView && tabPage.includes(pathname) && <Tab />}
     </QueryClientProvider>
   );
 }

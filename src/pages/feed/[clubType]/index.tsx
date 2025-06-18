@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
-import PostHeader from '@/components/post/post-header';
-import JoinClubPrompt from '@/components/post/join-club-prompt';
-import NotPost from '@/components/post/not-post';
+import FeedHeader from '@/components/feed/feed-header';
+import JoinClubPrompt from '@/components/feed/join-club-prompt';
+import NotFeed from '@/components/feed/not-feed';
 import BottomSheet from '@/components/common/bottom-sheet';
-import { fetchPostsByClubType } from '@/lib/apis/post';
+import { fetchPostsByClubType } from '@/lib/apis/feed';
 
-function Main() {
+function Feed() {
   const observerElement = useRef(null);
   const router = useRouter();
   const { clubType } = router.query;
@@ -55,7 +55,7 @@ function Main() {
     if (data?.pages[0].length === 0) {
       return (
         <div>
-          <NotPost />
+          <NotFeed />
         </div>
       );
     }
@@ -72,13 +72,13 @@ function Main() {
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
-    router.push(`/post/${selectedClubType}`);
+    router.push(`/feed/${selectedClubType}`);
     bottomSheetCloseRef.current?.();
   };
 
   return (
     <div>
-      <PostHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
+      <FeedHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
 
       {hasNextPage && (
@@ -93,37 +93,40 @@ function Main() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          {clubType !== 'my' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('my')}
-            >
-              내 동아리
-            </button>
-          )}
-          {clubType !== 'campus' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('campus')}
-            >
-              교내 동아리
-            </button>
-          )}
-          {clubType !== 'union' && (
-            <button
-              type="button"
-              className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-              onClick={() => goToSelectedClubType('union')}
-            >
-              연합 동아리
-            </button>
-          )}
+          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
+          <div className="flex h-[306px] w-full flex-col">
+            {clubType !== 'my' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('my')}
+              >
+                내 동아리
+              </button>
+            )}
+            {clubType !== 'campus' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('campus')}
+              >
+                교내 동아리
+              </button>
+            )}
+            {clubType !== 'union' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('union')}
+              >
+                연합 동아리
+              </button>
+            )}
+          </div>
         </BottomSheet>
       )}
     </div>
   );
 }
 
-export default Main;
+export default Feed;

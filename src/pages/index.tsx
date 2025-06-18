@@ -21,7 +21,7 @@ function Home() {
       } else if (user && !userInfo) {
         router.push('/sign-up/terms');
       } else if (user && userInfo) {
-        router.push('/post/my');
+        router.push('/feed/my');
       }
     })();
   }, [router]);

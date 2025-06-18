@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-function NotPost() {
+function NotFeed() {
   return (
     <div className="mt-[177px] flex w-full flex-col items-center justify-center gap-[25px]">
       <Image src="/images/post.gif" alt="post" width={70} height={70} priority />
@@ -9,4 +9,4 @@ function NotPost() {
   );
 }
 
-export default NotPost;
+export default NotFeed;

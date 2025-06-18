@@ -1,9 +1,10 @@
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import Header from '@/components/layout/header';
 import { fetchMyClubs } from '@/lib/apis/club';
+import Header from '@/components/layout/header';
 import ClubCard from '@/components/club/club-card';
 import PlusIcon2 from '@/icons/plus-icon2';
 
@@ -13,6 +14,14 @@ function ClubList() {
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
   });
+
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   return (
     <div className={`${myClubs?.length !== 0 && 'bg-background pt-[108px]'} px-[20px]`}>
@@ -37,7 +46,7 @@ function ClubList() {
           <p className="text-bold20 text-gray1">소속된 동아리가 없습니다</p>
         </div>
       ) : (
-        <div className="flex min-h-[calc(100vh-108px)] flex-col gap-[16px]">
+        <div className={`flex min-h-[calc(100vh-108px)] flex-col gap-[16px] ${isWebView ? 'pb-[15px]' : 'pb-[75px]'}`}>
           {myClubs?.map((club) => <ClubCard key={club.id} club={club} />)}
         </div>
       )}

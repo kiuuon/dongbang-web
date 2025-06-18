@@ -57,7 +57,7 @@ function BottomSheet({
     >
       <motion.div
         ref={modalRef}
-        className="flex h-[337px] w-full flex-col items-center rounded-t-[24px] bg-white px-[20px]"
+        className="flex w-full flex-col items-center rounded-t-[24px] bg-white px-[20px]"
         initial={{ y: 400 }}
         animate={{ y: isVisible ? 0 : 400 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
@@ -67,7 +67,6 @@ function BottomSheet({
         dragElastic={0}
         onDragEnd={handleDragEnd}
       >
-        <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
         {children}
       </motion.div>
     </div>

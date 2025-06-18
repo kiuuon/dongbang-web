@@ -7,9 +7,12 @@ import { fetchClubInfo, fetchMyClubs } from '@/lib/apis/club';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import MonitorIcon from '@/icons/monitor-icon';
 import MessageIcon from '@/icons/message-icon';
+import PencilIcon from '@/icons/pencil-icon';
+import XIcon3 from '@/icons/x-icon3';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
+import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
 import Contents from '@/components/club/[clubId]/contetns';
@@ -21,6 +24,7 @@ function Club() {
   const { clubId } = router.query;
   const bottomSheetCloseRef = useRef<() => void>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
   const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
   const { data: myClubs } = useQuery({
@@ -79,6 +83,17 @@ function Club() {
       <Schedule />
       <BoardSummary />
 
+      <button
+        type="button"
+        className="fixed bottom-[60px] right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"
+        onClick={() => {
+          setIsWriteModalOpen((prev) => !prev);
+        }}
+      >
+        {isWriteModalOpen ? <XIcon3 /> : <PencilIcon />}
+      </button>
+      {isWriteModalOpen && <WriteModal onClose={() => setIsWriteModalOpen(false)} />}
+
       {isBottomSheetOpen && (
         <BottomSheet
           setIsBottomSheetOpen={setIsBottomSheetOpen}
@@ -86,32 +101,35 @@ function Club() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          {myClubs?.map(
-            (club) =>
-              club.id !== clubId && (
-                <button
-                  key={club.id}
-                  type="button"
-                  className="text-bold16 flex h-[76px] w-full flex-row items-center gap-[24px] border-b border-b-gray0"
-                  onClick={() => goToSelectedClub(club.id)}
-                >
-                  <Image
-                    src={club.logo}
-                    alt="로고"
-                    width={50}
-                    height={50}
-                    style={{
-                      objectFit: 'cover',
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '50%',
-                      border: '1px solid #F9F9F9',
-                    }}
-                  />
-                  {club.name}
-                </button>
-              ),
-          )}
+          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
+          <div className="scrollbar-hide flex h-[306px] w-full flex-col overflow-y-scroll">
+            {myClubs?.map(
+              (club) =>
+                club.id !== clubId && (
+                  <button
+                    key={club.id}
+                    type="button"
+                    className="text-bold16 flex h-[76px] min-h-[76px] w-full flex-row items-center gap-[24px] border-b border-b-gray0"
+                    onClick={() => goToSelectedClub(club.id)}
+                  >
+                    <Image
+                      src={club.logo}
+                      alt="로고"
+                      width={50}
+                      height={50}
+                      style={{
+                        objectFit: 'cover',
+                        width: '50px',
+                        height: '50px',
+                        borderRadius: '50%',
+                        border: '1px solid #F9F9F9',
+                      }}
+                    />
+                    {club.name}
+                  </button>
+                ),
+            )}
+          </div>
         </BottomSheet>
       )}
     </div>
