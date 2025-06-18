@@ -5,10 +5,12 @@ function BottomSheet({
   children,
   setIsBottomSheetOpen,
   onRequestClose,
+  dragEnabled = true,
 }: {
   children: React.ReactNode;
   setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onRequestClose?: (close: () => void) => void;
+  dragEnabled?: boolean;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
   const y = useMotionValue(0);
@@ -63,6 +65,7 @@ function BottomSheet({
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         style={{ y }}
         drag="y"
+        dragListener={dragEnabled}
         dragConstraints={{ top: 0 }}
         dragElastic={0}
         onDragEnd={handleDragEnd}

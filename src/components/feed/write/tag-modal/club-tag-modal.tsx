@@ -1,15 +1,32 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchAllClubs } from '@/lib/apis/club';
 
+function useScrollEnd(callback: () => void, delay = 150) {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const onScroll = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      callback();
+    }, delay);
+  };
+
+  return onScroll;
+}
+
 function ClubTagModal({
   selected,
   setSelected,
+  setDragEnabled,
 }: {
   selected: string[];
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
+  setDragEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [searchText, setSearchText] = useState('');
 
@@ -26,6 +43,12 @@ function ClubTagModal({
 
   const filteredClubs = clubs?.filter((club) => club.name?.toLowerCase().includes(searchText.toLowerCase()));
 
+  const handleScrollEnd = () => {
+    setDragEnabled(true);
+  };
+
+  const onScroll = useScrollEnd(handleScrollEnd);
+
   return (
     <div className="w-full">
       <input
@@ -34,14 +57,7 @@ function ClubTagModal({
         placeholder="검색"
         className="text-regular16 mb-[20px] mt-[28px] h-[40px] w-full rounded-[10px] bg-gray0 px-[13px] placeholder:text-gray2"
       />
-      <div
-        className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll"
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchMove={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-        }}
-      >
+      <div className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll" onScroll={onScroll}>
         {filteredClubs?.map((club) => (
           <div key={club.id} className="flex h-[40px] min-h-[40px] w-full items-center justify-between">
             <div className="flex items-center gap-[29px]">
