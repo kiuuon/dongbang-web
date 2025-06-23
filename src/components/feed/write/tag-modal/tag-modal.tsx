@@ -21,7 +21,6 @@ function TagModal({
   const [isClub, setIsClub] = useState(false);
   const [draftSelectedMembers, setDraftSelectedMembers] = useState<string[]>(selectedMembers);
   const [draftSelectedClubs, setDraftSelectedClubs] = useState<string[]>(selectedClubs);
-  const [dragEnabled, setDragEnabled] = useState(true);
 
   const handleConfirm = () => {
     setSelectedMembers(draftSelectedMembers);
@@ -32,7 +31,6 @@ function TagModal({
   return (
     <BottomSheet
       setIsBottomSheetOpen={setIsBottomSheetOpen}
-      dragEnabled={dragEnabled}
       onRequestClose={(closeFn) => {
         bottomSheetCloseRef.current = closeFn;
       }}
@@ -54,17 +52,9 @@ function TagModal({
         </button>
       </div>
       {isClub ? (
-        <ClubTagModal
-          selected={draftSelectedClubs}
-          setSelected={setDraftSelectedClubs}
-          setDragEnabled={setDragEnabled}
-        />
+        <ClubTagModal selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
       ) : (
-        <PersonTagModal
-          selected={draftSelectedMembers}
-          setSelected={setDraftSelectedMembers}
-          setDragEnabled={setDragEnabled}
-        />
+        <PersonTagModal selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
       )}
       <button
         type="button"

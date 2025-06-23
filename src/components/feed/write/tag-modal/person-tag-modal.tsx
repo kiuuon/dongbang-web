@@ -1,33 +1,16 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchClubMembers } from '@/lib/apis/club';
 import ToggleIcon2 from '@/icons/toggle-icon2';
 
-function useScrollEnd(callback: () => void, delay = 150) {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const onScroll = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    timeoutRef.current = setTimeout(() => {
-      callback();
-    }, delay);
-  };
-
-  return onScroll;
-}
-
 function PersonTagModal({
   selected,
   setSelected,
-  setDragEnabled,
 }: {
   selected: string[];
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
-  setDragEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const { clubId } = router.query;
@@ -52,12 +35,6 @@ function PersonTagModal({
 
   const filteredMembers = members?.filter((member) => member.name?.toLowerCase().includes(searchText.toLowerCase()));
 
-  const handleScrollEnd = () => {
-    setDragEnabled(true);
-  };
-
-  const onScroll = useScrollEnd(handleScrollEnd);
-
   return (
     <div className="w-full">
       <div className="mb-[4px] flex w-full items-center justify-end gap-[8px]">
@@ -72,7 +49,7 @@ function PersonTagModal({
         placeholder="검색"
         className="text-regular16 mb-[20px] h-[40px] w-full rounded-[10px] bg-gray0 px-[13px] placeholder:text-gray2"
       />
-      <div className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll" onScroll={onScroll}>
+      <div className="scrollbar-hide flex h-[140px] w-full flex-col gap-[10px] overflow-y-scroll">
         {filteredMembers?.map((member) => (
           <button
             type="button"

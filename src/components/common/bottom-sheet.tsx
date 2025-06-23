@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, useMotionValue, animate } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 
 function BottomSheet({
   children,
   setIsBottomSheetOpen,
   onRequestClose,
-  dragEnabled = true,
 }: {
   children: React.ReactNode;
   setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onRequestClose?: (close: () => void) => void;
-  dragEnabled?: boolean;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
   const y = useMotionValue(0);
@@ -28,14 +26,6 @@ function BottomSheet({
     setIsVisible(false);
     setTimeout(() => setIsBottomSheetOpen(false), 300);
   }, [setIsBottomSheetOpen]);
-
-  const handleDragEnd = (_: any, info: { offset: { y: number } }) => {
-    if (info.offset.y > 150) {
-      closeModal();
-    } else {
-      animate(y, 0, { duration: 0.3, ease: 'easeInOut' });
-    }
-  };
 
   const handleOutsideClick = (event: React.MouseEvent | React.KeyboardEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -64,11 +54,6 @@ function BottomSheet({
         animate={{ y: isVisible ? 0 : 400 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         style={{ y }}
-        drag="y"
-        dragListener={dragEnabled}
-        dragConstraints={{ top: 0 }}
-        dragElastic={0}
-        onDragEnd={handleDragEnd}
       >
         {children}
       </motion.div>
