@@ -9,10 +9,11 @@ import { fetchUser } from '@/lib/apis/user';
 import Tab from '@/components/layout/tab';
 import { supabase } from '@/lib/apis/supabaseClient';
 
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { pathname } = router;
-  const queryClient = new QueryClient();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [isWebView, setIsWebView] = useState(true);

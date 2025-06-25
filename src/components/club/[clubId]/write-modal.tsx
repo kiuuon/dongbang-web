@@ -39,7 +39,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
 
   const writeFeed = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('writeFeed');
+      window.ReactNativeWebView.postMessage('go to write feed page');
       return;
     }
     router.push(`/feed/write/${clubId}`);

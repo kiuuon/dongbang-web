@@ -64,7 +64,19 @@ function WriteFeed() {
       });
       const photosResults = await Promise.all(photosUploadPromises);
 
-      handleWriteFeed(photosResults);
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            photos: photosResults,
+            title,
+            content,
+            isNicknameVisible,
+            isPrivate,
+          }),
+        );
+      } else {
+        handleWriteFeed(photosResults);
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error uploading files:', error);
@@ -72,7 +84,7 @@ function WriteFeed() {
   };
 
   return (
-    <div className="flex h-screen flex-col justify-between px-[20px] pt-[68px]">
+    <div className="flex h-screen min-h-screen flex-col justify-between px-[20px] pt-[68px]">
       <Header>
         <BackButton />
       </Header>
@@ -123,10 +135,20 @@ function WriteFeed() {
               <ToggleIcon active={isPrivate} />
             </button>
           </div>
-          <button type="button" className="flex items-center justify-between" onClick={() => setIsTagModalOpen(true)}>
+          <button
+            type="button"
+            className="flex items-center justify-between"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage('open tag modal');
+                return;
+              }
+              setIsTagModalOpen(true);
+            }}
+          >
             <div className="text-bold16 flex items-center gap-[4px]">
               <PersonIcon />
-              사람 태그
+              태그
             </div>
             <RightArrowIcon5 />
           </button>
@@ -134,7 +156,7 @@ function WriteFeed() {
       </div>
       <button
         type="button"
-        className="text-bold16 mb-[20px] flex h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
+        className="text-bold16 mb-[20px] mt-[20px] flex h-[56px] min-h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
         onClick={handleWriteButton}
       >
         게시
