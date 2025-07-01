@@ -35,7 +35,7 @@ function PhotoSection({
 
       previewRef.current.dataset.initialized = 'true';
     }
-  }, []);
+  }, [photos, setPhotos]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -46,7 +46,7 @@ function PhotoSection({
       return;
     }
 
-    const newPreviews: string[] = [];
+    const newPreviews: string[] = [...(photos || [])];
 
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
@@ -54,9 +54,7 @@ function PhotoSection({
         if (typeof reader.result === 'string') {
           newPreviews.push(reader.result);
 
-          if (newPreviews.length === files.length) {
-            setPhotos([...newPreviews]);
-          }
+          setPhotos([...newPreviews]);
         }
       };
       reader.readAsDataURL(file);
@@ -69,7 +67,7 @@ function PhotoSection({
   };
 
   return (
-    <div className="user-select-none flex w-full gap-[9px]">
+    <div className="user-select-none flex h-[98px] w-full items-center gap-[9px]">
       <label
         htmlFor="file-upload"
         className="relative flex h-[70px] w-[70px] min-w-[70px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-gray0"
@@ -87,7 +85,10 @@ function PhotoSection({
           (<span className="text-primary">{photos ? photos.length : 0}</span>/10)
         </div>
       </label>
-      <div ref={previewRef} className="scrollbar-hide flex w-full flex-nowrap items-center gap-[9px] overflow-x-scroll">
+      <div
+        ref={previewRef}
+        className="scrollbar-hide flex h-full w-full flex-nowrap items-center gap-[9px] overflow-x-scroll"
+      >
         {photos?.map((prev, index) => (
           <div
             key={prev}

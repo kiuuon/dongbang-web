@@ -89,8 +89,8 @@ function WriteFeed() {
         <BackButton />
       </Header>
       <div className="flex flex-col gap-[24px]">
-        <div className="flex flex-col gap-[16px]">
-          <div className="flex flex-col gap-[12px]">
+        <div className="flex flex-col">
+          <div className="flex flex-col">
             <div className="text-bold12 user-select-none">사진</div>
             <PhotoSection photos={photos} setPhotos={setPhotos} />
           </div>
@@ -104,7 +104,7 @@ function WriteFeed() {
               className="text-regular14 h-[48px] w-full rounded-[8px] border border-gray0 px-[16px] placeholder:text-gray2"
             />
           </div>
-          <div className="flex flex-col gap-[10px]">
+          <div className="mt-[16px] flex flex-col gap-[10px]">
             <div className="text-bold12 user-select-none">내용</div>
             <textarea
               value={content}
