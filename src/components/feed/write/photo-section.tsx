@@ -22,7 +22,7 @@ function PhotoSection({
     if (previewRef.current && !previewRef.current.dataset.initialized) {
       Sortable.create(previewRef.current, {
         animation: 150,
-        delay: 1000,
+        delay: 500,
         chosenClass: 'chosen',
         onEnd: (event) => {
           if (!photos) return;
@@ -69,7 +69,7 @@ function PhotoSection({
   };
 
   return (
-    <div className="flex w-full gap-[9px]">
+    <div className="user-select-none flex w-full gap-[9px]">
       <label
         htmlFor="file-upload"
         className="relative flex h-[70px] w-[70px] min-w-[70px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-gray0"
