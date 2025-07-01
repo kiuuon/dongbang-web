@@ -22,7 +22,7 @@ function PhotoSection({
     if (previewRef.current && !previewRef.current.dataset.initialized) {
       Sortable.create(previewRef.current, {
         animation: 150,
-        delay: 500,
+        delay: 1000,
         chosenClass: 'chosen',
         onEnd: (event) => {
           if (!photos) return;

@@ -91,11 +91,11 @@ function WriteFeed() {
       <div className="flex flex-col gap-[24px]">
         <div className="flex flex-col gap-[16px]">
           <div className="flex flex-col gap-[12px]">
-            <div className="text-bold12 select-none">사진</div>
+            <div className="text-bold12 user-select-none">사진</div>
             <PhotoSection photos={photos} setPhotos={setPhotos} />
           </div>
           <div className="flex flex-col gap-[10px]">
-            <div className="text-bold12 select-none">제목</div>
+            <div className="text-bold12 user-select-none">제목</div>
             <input
               type="text"
               value={title}
@@ -105,7 +105,7 @@ function WriteFeed() {
             />
           </div>
           <div className="flex flex-col gap-[10px]">
-            <div className="text-bold12 select-none">내용</div>
+            <div className="text-bold12 user-select-none">내용</div>
             <textarea
               value={content}
               onChange={(event) => setContent(event.target.value)}

@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss';
+import type { Config, PluginAPI } from 'tailwindcss/types/config';
 
 export default {
   content: [
@@ -31,5 +31,13 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    ({ addUtilities }: PluginAPI) => {
+      addUtilities({
+        '.user-select-none': {
+          '-webkit-user-select': 'none',
+        },
+      });
+    },
+  ],
 } satisfies Config;
