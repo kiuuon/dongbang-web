@@ -24,15 +24,12 @@ function FeedCard({ feed }: { feed: FeedType }) {
   const variants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 300 : -300,
-      opacity: 0,
     }),
     center: {
       x: 0,
-      opacity: 1,
     },
     exit: (dir: number) => ({
       x: dir > 0 ? -300 : 300,
-      opacity: 0,
     }),
   };
 
@@ -92,7 +89,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
             exit="exit"
             transition={{
               x: { type: 'easing' },
-              opacity: { duration: 0.2 },
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
@@ -103,9 +99,9 @@ function FeedCard({ feed }: { feed: FeedType }) {
               document.body.style.overflow = '';
             }}
             onDragEnd={(_, { offset }) => {
-              if (offset.x < -50) {
+              if (offset.x < -10) {
                 goToPage(page + 1, 1);
-              } else if (offset.x > 50) {
+              } else if (offset.x > 10) {
                 goToPage(page - 1, -1);
               }
             }}
