@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Sortable from 'sortablejs';
 
 import CameraIcon from '@/icons/camera-icon';
@@ -8,11 +8,12 @@ function PhotoSection({
   photos,
   setPhotos,
 }: {
-  photos: string[];
-  setPhotos: React.Dispatch<React.SetStateAction<string[]>>;
+  photos: File[];
+  setPhotos: React.Dispatch<React.SetStateAction<File[]>>;
 }) {
+  const [preview, setPreview] = useState<string[]>([]);
   const previewRef = useRef<HTMLDivElement>(null);
-  const photosLatestRef = useRef<string[]>([]);
+  const photosLatestRef = useRef<File[]>([]);
 
   useEffect(() => {
     photosLatestRef.current = photos;
@@ -46,7 +47,9 @@ function PhotoSection({
       return;
     }
 
-    const newPreviews: string[] = [...(photos || [])];
+    setPhotos(Array.from(files || []));
+
+    const newPreviews: string[] = [...(preview || [])];
 
     Array.from(files).forEach((file) => {
       const reader = new FileReader();
@@ -54,7 +57,7 @@ function PhotoSection({
         if (typeof reader.result === 'string') {
           newPreviews.push(reader.result);
 
-          setPhotos([...newPreviews]);
+          setPreview([...newPreviews]);
         }
       };
       reader.readAsDataURL(file);
@@ -67,7 +70,7 @@ function PhotoSection({
   };
 
   return (
-    <div className="user-select-none flex h-[98px] w-full items-center gap-[9px]">
+    <div className="flex h-[98px] w-full items-center gap-[9px] user-select-none">
       <label
         htmlFor="file-upload"
         className="relative flex h-[70px] w-[70px] min-w-[70px] cursor-pointer flex-col items-center justify-center rounded-[8px] border border-gray0"
@@ -89,7 +92,7 @@ function PhotoSection({
         ref={previewRef}
         className="scrollbar-hide flex h-full w-full flex-nowrap items-center gap-[9px] overflow-x-scroll"
       >
-        {photos?.map((prev, index) => (
+        {preview?.map((prev, index) => (
           <div
             key={prev}
             className="relative h-[70px] w-[70px] min-w-[70px] rounded-[8px]"

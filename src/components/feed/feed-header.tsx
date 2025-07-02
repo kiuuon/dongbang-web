@@ -5,7 +5,13 @@ import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 
-function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+function FeedHeader({
+  scrollRef,
+  setIsBottomSheetOpen,
+}: {
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+  setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const router = useRouter();
   const { clubType } = router.query;
   const clubTypeName = {
@@ -17,8 +23,11 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
   const lastScrollY = useRef(0);
 
   useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return undefined;
+
     const handleScroll = () => {
-      const currentY = window.scrollY;
+      const currentY = container.scrollTop;
 
       if (currentY > lastScrollY.current && currentY > 50) {
         setShow(false);
@@ -29,10 +38,10 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
       lastScrollY.current = currentY;
     };
 
-    window.addEventListener('scroll', handleScroll);
+    container.addEventListener('scroll', handleScroll);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [scrollRef]);
 
   const handleNavigationOpen = () => {
     if (window.ReactNativeWebView) {
@@ -44,7 +53,7 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
 
   return (
     <header
-      className={`fixed left-0 top-0 flex h-[60px] w-full items-center justify-between bg-white px-[20px] transition-transform duration-300 ${
+      className={`fixed left-0 top-0 z-10 flex h-[60px] w-full items-center justify-between bg-white px-[20px] transition-transform duration-300 ${
         show ? 'translate-y-0' : '-translate-y-full'
       }`}
     >

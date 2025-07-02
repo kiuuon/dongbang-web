@@ -8,6 +8,7 @@ export async function writeFeed(
   isNicknameVisible: boolean,
   isPrivate: boolean,
   clubId: string,
+  clubType: 'campus' | 'union',
   selectedMembers: string[],
   selectedClubs: string[],
 ) {
@@ -22,6 +23,7 @@ export async function writeFeed(
       is_nickname_visible: isNicknameVisible,
       is_private: isPrivate,
       club_id: clubId,
+      club_type: clubType,
       author_id: userId,
     })
     .select('id')
@@ -46,7 +48,7 @@ export async function writeFeed(
   );
 }
 
-export async function fetchPostsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
+export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
   const PAGE_SIZE = 5;
   const start = page * PAGE_SIZE;
   const end = start + PAGE_SIZE - 1;
@@ -61,42 +63,73 @@ export async function fetchPostsByClubType(clubType: 'my' | 'campus' | 'union', 
 
     const clubIds = clubData.map((club) => club.club_id);
 
-    const { data } = await supabase
-      .from('Post')
-      .select('*, author:User(name)')
+    const { data: feeds } = await supabase
+      .from('Feed')
+      .select(
+        '*, author:User(name, avatar), club:Club(name, logo), tagedUsers:Feed_User(User(name, avatar)), tagedClubs:Feed_Club(Club(name, logo))',
+      )
       .in('club_id', clubIds)
       .order('created_at', { ascending: false })
       .range(start, end);
 
-    return data;
+    if (!feeds) {
+      return [];
+    }
+
+    const feedsWithRole = await Promise.all(
+      feeds.map(async (feed) => {
+        const { data: clubUser } = await supabase
+          .from('Club_User')
+          .select('role')
+          .eq('user_id', feed.author_id)
+          .eq('club_id', feed.club_id)
+          .single();
+
+        return {
+          ...feed,
+          author: {
+            ...feed.author,
+            role: clubUser?.role ?? null,
+          },
+        };
+      }),
+    );
+
+    return feedsWithRole;
   }
 
-  if (clubType === 'campus') {
-    const userId = await fetchUserId();
-    const { data: userData } = await supabase.from('User').select('university_id').eq('id', userId).single();
-
-    const userUniversityId = userData?.university_id;
-
-    const { data } = await supabase
-      .from('Post')
-      .select('*, author:User(name), club:Club(university_id)')
-      .not('club', 'is', null)
-      .eq('club.university_id', userUniversityId)
-      .order('created_at', { ascending: false })
-      .range(start, end);
-
-    return data;
-  }
-
-  if (clubType === 'union') {
-    const { data } = await supabase
-      .from('Post')
-      .select('*, author:User(name)')
+  if (clubType === 'union' || clubType === 'campus') {
+    const { data: feeds } = await supabase
+      .from('Feed')
+      .select('*, author:User(name, avatar), club:Club(name, logo)')
       .eq('club_type', clubType)
       .order('created_at', { ascending: false })
       .range(start, end);
 
-    return data;
+    if (!feeds) {
+      return [];
+    }
+
+    const feedsWithRole = await Promise.all(
+      feeds.map(async (feed) => {
+        const { data: clubUser } = await supabase
+          .from('Club_User')
+          .select('role')
+          .eq('user_id', feed.author_id)
+          .eq('club_id', feed.club_id)
+          .single();
+
+        return {
+          ...feed,
+          author: {
+            ...feed.author,
+            role: clubUser?.role ?? null,
+          },
+        };
+      }),
+    );
+
+    return feedsWithRole;
   }
 
   return [];

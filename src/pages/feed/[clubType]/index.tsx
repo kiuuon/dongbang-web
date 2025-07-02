@@ -1,15 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import Image from 'next/image';
+import { ClipLoader } from 'react-spinners';
 
+import { fetchFeedsByClubType } from '@/lib/apis/feed';
+import BottomSheet from '@/components/common/bottom-sheet';
 import FeedHeader from '@/components/feed/feed-header';
 import JoinClubPrompt from '@/components/feed/join-club-prompt';
 import NotFeed from '@/components/feed/not-feed';
-import BottomSheet from '@/components/common/bottom-sheet';
-import { fetchPostsByClubType } from '@/lib/apis/feed';
+import FeedCard from '@/components/feed/feed-card/feed-card';
 
 function Feed() {
+  const scrollRef = useRef<HTMLDivElement>(null);
   const observerElement = useRef(null);
   const router = useRouter();
   const { clubType } = router.query;
@@ -18,8 +20,8 @@ function Feed() {
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
-    queryKey: ['posts', clubType],
-    queryFn: ({ pageParam }) => fetchPostsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
+    queryKey: ['feeds', clubType],
+    queryFn: ({ pageParam }) => fetchFeedsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
   });
 
@@ -60,15 +62,7 @@ function Feed() {
       );
     }
 
-    return data?.pages.map((page) =>
-      page?.map((post) => (
-        <div key={post.id} className="my-16">
-          <h1>{post.author.name}</h1>
-          <Image src={post.image_url} alt="post-image" width={500} height={500} />
-          <p>{post.content}</p>
-        </div>
-      )),
-    );
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard feed={feed} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
@@ -77,13 +71,16 @@ function Feed() {
   };
 
   return (
-    <div>
-      <FeedHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
+    <div
+      ref={scrollRef}
+      className="scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] pb-[90px] pt-[76px]"
+    >
+      <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
 
       {hasNextPage && (
         <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
-          Loading...
+          <ClipLoader size={30} color="#F9A825" />
         </div>
       )}
       {isBottomSheetOpen && (

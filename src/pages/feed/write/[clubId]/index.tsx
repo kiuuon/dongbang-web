@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
@@ -10,14 +10,15 @@ import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
 import PhotoSection from '@/components/feed/write/photo-section';
 import TagModal from '@/components/feed/write/tag-modal/tag-modal';
-import { uploadPrivate } from '@/lib/apis/image';
+import { upload } from '@/lib/apis/image';
 import { writeFeed } from '@/lib/apis/feed';
+import { fetchClubInfo } from '@/lib/apis/club';
 
 function WriteFeed() {
   const uuid = crypto.randomUUID();
   const router = useRouter();
   const { clubId } = router.query;
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<File[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isNicknameVisible, setIsNicknameVisible] = useState(false);
@@ -26,19 +27,22 @@ function WriteFeed() {
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
 
+  const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
+
   const { mutateAsync: uploadPhoto, isPending: isPhotoUploading } = useMutation({
-    mutationFn: ({ file, fileName }: { file: string; fileName: string }) => uploadPrivate(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
   const { mutate: handleWriteFeed, isPending } = useMutation({
-    mutationFn: async (photosResults: string[]) =>
+    mutationFn: async (photoUrls: string[]) =>
       writeFeed(
-        photosResults,
+        photoUrls,
         title,
         content,
         isNicknameVisible,
         isPrivate,
         clubId as string,
+        clubInfo?.type,
         selectedMembers,
         selectedClubs,
       ),
@@ -63,6 +67,7 @@ function WriteFeed() {
         return uploadPhoto({ file: photo, fileName });
       });
       const photosResults = await Promise.all(photosUploadPromises);
+      const photoUrls = photosResults.map((result) => result.publicUrl);
 
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
@@ -75,7 +80,7 @@ function WriteFeed() {
           }),
         );
       } else {
-        handleWriteFeed(photosResults);
+        handleWriteFeed(photoUrls);
       }
     } catch (error) {
       // eslint-disable-next-line no-console
