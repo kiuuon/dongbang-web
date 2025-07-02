@@ -96,11 +96,13 @@ function FeedCard({ feed }: { feed: FeedType }) {
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            onDragStart={() => {
+            onTouchStart={() => {
               document.body.style.overflow = 'hidden';
             }}
-            onDragEnd={(_, { offset }) => {
+            onTouchEnd={() => {
               document.body.style.overflow = '';
+            }}
+            onDragEnd={(_, { offset }) => {
               if (offset.x < -50) {
                 goToPage(page + 1, 1);
               } else if (offset.x > 50) {
