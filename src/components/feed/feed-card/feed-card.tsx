@@ -96,10 +96,14 @@ function FeedCard({ feed }: { feed: FeedType }) {
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
+            onDragStart={() => {
+              document.body.style.overflow = 'hidden';
+            }}
             onDragEnd={(_, { offset }) => {
-              if (offset.x < -100) {
+              document.body.style.overflow = '';
+              if (offset.x < -50) {
                 goToPage(page + 1, 1);
-              } else if (offset.x > 100) {
+              } else if (offset.x > 50) {
                 goToPage(page - 1, -1);
               }
             }}
