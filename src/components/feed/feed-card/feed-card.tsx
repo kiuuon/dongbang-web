@@ -14,6 +14,7 @@ import FeedContent from './feed-content';
 import TaggedClubModal from './tagged-club-modal';
 import TaggedUserModal from './tagged-user-modal';
 import InteractModal from './interact-modal';
+import SettingModal from './setting-modal';
 
 function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const date = new Date(feed.created_at);
@@ -25,6 +26,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
+  const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
@@ -135,7 +137,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             </div>
           </div>
         </button>
-        <button type="button">
+        <button type="button" onClick={() => setIsSettingModalOpen(true)}>
           <MoreVertIcon />
         </button>
       </div>
@@ -271,6 +273,11 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       {isInteractModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsInteractModalOpen}>
           <InteractModal />
+        </BottomSheet>
+      )}
+      {isSettingModalOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsSettingModalOpen}>
+          <SettingModal authorId={feed.author_id} />
         </BottomSheet>
       )}
     </div>
