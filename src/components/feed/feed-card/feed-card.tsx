@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,7 +10,7 @@ import InteractIcon from '@/icons/interact-icon';
 import TwinkleIcon from '@/icons/twinkle-icon';
 import FeedContent from './feed-content';
 
-function FeedCard({ feed }: { feed: FeedType }) {
+function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const date = new Date(feed.created_at);
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
@@ -47,6 +47,9 @@ function FeedCard({ feed }: { feed: FeedType }) {
     }
     return '';
   };
+
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const directionLockedRef = useRef<'horizontal' | 'vertical' | null>(null);
 
   return (
     <div key={feed.id} className="flex flex-col border-b border-gray0 pb-[30px]">
@@ -92,16 +95,41 @@ function FeedCard({ feed }: { feed: FeedType }) {
             }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            onTouchStart={() => {
-              document.body.style.overflow = 'hidden';
+            onPointerDown={(event) => {
+              dragStartRef.current = { x: event.clientX, y: event.clientY };
+              directionLockedRef.current = null;
             }}
-            onTouchEnd={() => {
-              document.body.style.overflow = '';
+            onPointerMove={(e) => {
+              if (!dragStartRef.current || directionLockedRef.current) return;
+
+              const dx = e.clientX - dragStartRef.current.x;
+              const dy = e.clientY - dragStartRef.current.y;
+
+              if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                directionLockedRef.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+
+                if (directionLockedRef.current === 'horizontal') {
+                  // eslint-disable-next-line no-param-reassign
+                  scrollRef.current!.style.overflow = 'hidden';
+                }
+              }
+            }}
+            onPointerUp={() => {
+              if (scrollRef.current) {
+                // eslint-disable-next-line no-param-reassign
+                scrollRef.current.style.overflow = 'auto';
+              }
+              dragStartRef.current = null;
+              directionLockedRef.current = null;
             }}
             onDragEnd={(_, { offset }) => {
-              if (offset.x < -10) {
+              if (scrollRef.current) {
+                // eslint-disable-next-line no-param-reassign
+                scrollRef.current.style.overflow = 'auto';
+              }
+              if (offset.x < -30) {
                 goToPage(page + 1, 1);
-              } else if (offset.x > 10) {
+              } else if (offset.x > 30) {
                 goToPage(page - 1, -1);
               }
             }}

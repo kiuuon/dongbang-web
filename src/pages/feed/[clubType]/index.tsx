@@ -26,6 +26,11 @@ function Feed() {
   });
 
   useEffect(() => {
+    // 피드 부분만 스크롤이 가능하도록 전체 스크롤은 막기
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  useEffect(() => {
     const target = observerElement.current;
     if (!target) return undefined;
 
@@ -62,7 +67,7 @@ function Feed() {
       );
     }
 
-    return data?.pages.map((page) => page?.map((feed) => <FeedCard feed={feed} />));
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard feed={feed} scrollRef={scrollRef} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
