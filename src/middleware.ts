@@ -35,5 +35,26 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  if (pathname === '/club/create/union/detail') {
+    if (!referer || !referer.includes(`${req.nextUrl.origin}/club/create/union/info`)) {
+      return NextResponse.redirect(new URL('/club/create/union/info', req.url));
+    }
+  }
+
+  const pathnameRegex = /^\/feed\/write\/([^/]+)$/;
+  const refererRegex = new RegExp(`${req.nextUrl.origin}/club/([^/]+)$`);
+
+  const pathnameMatch = pathnameRegex.exec(pathname);
+  const refererMatch = referer ? refererRegex.exec(referer) : null;
+
+  if (pathnameMatch) {
+    const clubIdInPath = pathnameMatch[1];
+    const clubIdInReferer = refererMatch?.[1];
+
+    if (clubIdInPath !== clubIdInReferer) {
+      return NextResponse.redirect(new URL('/club', req.url));
+    }
+  }
+
   return NextResponse.next();
 }
