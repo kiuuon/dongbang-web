@@ -102,7 +102,7 @@ function Club() {
           }}
         >
           <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
-          <div className="scrollbar-hide flex h-[306px] w-full flex-col overflow-y-scroll">
+          <div className="scrollbar-hide mb-[20px] flex max-h-[228px] w-full flex-col overflow-y-scroll">
             {myClubs?.map(
               (club) =>
                 club.id !== clubId && (

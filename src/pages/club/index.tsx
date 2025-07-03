@@ -30,7 +30,7 @@ function ClubList() {
 
   return (
     <div
-      className={`${myClubs?.length !== 0 && 'bg-background pt-[108px]'} flex h-screen flex-col gap-[16px] px-[20px] ${isWebView ? 'pb-[25px]' : 'pb-[175px]'} scrollbar-hide overflow-y-scroll`}
+      className={`${myClubs?.length !== 0 && 'bg-background pt-[100px]'} flex h-screen flex-col gap-[16px] px-[20px] ${isWebView ? 'pb-[25px]' : 'pb-[175px]'} scrollbar-hide overflow-y-scroll`}
     >
       <Header>
         <div className="text-bold16">내 동아리 리스트</div>

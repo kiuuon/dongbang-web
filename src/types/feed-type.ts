@@ -17,5 +17,17 @@ export interface FeedType {
   content: string;
   is_nickname_visible: boolean;
   is_private: boolean;
+  taggedUsers: {
+    user: {
+      name: string;
+      avatar: string;
+    };
+  }[];
+  taggedClubs: {
+    club: {
+      name: string;
+      logo: string;
+    };
+  }[];
   created_at: string;
 }

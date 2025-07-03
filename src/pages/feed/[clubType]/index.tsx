@@ -78,7 +78,7 @@ function Feed() {
   return (
     <div
       ref={scrollRef}
-      className="scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] pb-[90px] pt-[76px]"
+      className="scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] pb-[200px] pt-[76px]"
     >
       <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
@@ -96,7 +96,7 @@ function Feed() {
           }}
         >
           <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
-          <div className="flex h-[306px] w-full flex-col">
+          <div className="flex w-full flex-col">
             {clubType !== 'my' && (
               <button
                 type="button"

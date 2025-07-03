@@ -65,7 +65,9 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
 
     const { data: feeds } = await supabase
       .from('Feed')
-      .select('*, author:User(name, avatar), club:Club(name, logo)')
+      .select(
+        '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+      )
       .in('club_id', clubIds)
       .order('created_at', { ascending: false })
       .range(start, end);
