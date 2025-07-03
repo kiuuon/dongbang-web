@@ -71,7 +71,7 @@ function Feed() {
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
-    router.push(`/feed/${selectedClubType}`);
+    router.replace(`/feed/${selectedClubType}`);
     bottomSheetCloseRef.current?.();
   };
 

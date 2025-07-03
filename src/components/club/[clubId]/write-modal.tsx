@@ -34,6 +34,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       window.ReactNativeWebView.postMessage('comingSoon');
       return;
     }
+    onClose();
     router.push('/coming-soon');
   };
 
@@ -42,6 +43,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       window.ReactNativeWebView.postMessage('go to write feed page');
       return;
     }
+    onClose();
     router.push(`/feed/write/${clubId}`);
   };
 

@@ -33,7 +33,7 @@ function ClubCard({ club }: { club: ClubType }) {
   return (
     <button
       type="button"
-      className="flex h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
+      className="flex h-[124px] min-h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
       onClick={() => {
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(`${club.id}`);

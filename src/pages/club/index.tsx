@@ -18,13 +18,20 @@ function ClubList() {
   const [isWebView, setIsWebView] = useState(true);
 
   useEffect(() => {
+    // 리스트 부분만 스크롤이 가능하도록 전체 스크롤은 막기
+    document.body.style.overflow = 'hidden';
+  }, []);
+
+  useEffect(() => {
     if (!window.ReactNativeWebView) {
       setIsWebView(false);
     }
   }, []);
 
   return (
-    <div className={`${myClubs?.length !== 0 && 'bg-background pt-[108px]'} px-[20px]`}>
+    <div
+      className={`${myClubs?.length !== 0 && 'bg-background pt-[108px]'} flex h-screen flex-col gap-[16px] px-[20px] ${isWebView ? 'pb-[15px]' : 'pb-[175px]'} scrollbar-hide overflow-y-scroll`}
+    >
       <Header>
         <div className="text-bold16">내 동아리 리스트</div>
         <button
@@ -46,9 +53,7 @@ function ClubList() {
           <p className="text-bold20 text-gray1">소속된 동아리가 없습니다</p>
         </div>
       ) : (
-        <div className={`flex min-h-[calc(100vh-108px)] flex-col gap-[16px] ${isWebView ? 'pb-[15px]' : 'pb-[75px]'}`}>
-          {myClubs?.map((club) => <ClubCard key={club.id} club={club} />)}
-        </div>
+        myClubs?.map((club) => <ClubCard key={club.id} club={club} />)
       )}
     </div>
   );
