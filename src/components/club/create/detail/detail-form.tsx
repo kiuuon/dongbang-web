@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
@@ -22,6 +23,7 @@ function DetailForm() {
   const location = clubInfoStore((state) => state.location);
   const description = clubInfoStore((state) => state.description);
   const tags = clubInfoStore((state) => state.tags);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -33,15 +35,15 @@ function DetailForm() {
     resolver: yupResolver(clubDetailSchema),
   });
 
-  const { mutateAsync: uploadLogo, isPending: isLogoUploading } = useMutation({
+  const { mutateAsync: uploadLogo } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
-  const { mutateAsync: uploadActivityPhoto, isPending: isActivityPhotoUploading } = useMutation({
+  const { mutateAsync: uploadActivityPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
-  const { mutate: handleCreateClub, isPending } = useMutation({
+  const { mutate: handleCreateClub } = useMutation({
     mutationFn: async (body: NewClubType) => createClub(body),
     onSuccess: () => {
       clubInfoStore.setState({
@@ -62,6 +64,7 @@ function DetailForm() {
 
   const onSubmit = async (data: { logo: File; activity: File[]; description: string }) => {
     try {
+      setIsLoading(true);
       const logoFileName = `logo/${uuid}.png`;
       const { publicUrl: logo } = await uploadLogo({ file: data.logo, fileName: logoFileName });
 
@@ -139,7 +142,7 @@ function DetailForm() {
         </div>
       </div>
       <SubmitButton disabled={!isValid || isSubmitting}>개설하기</SubmitButton>
-      {(isPending || isLogoUploading || isActivityPhotoUploading) && <Loading />}
+      {isLoading && <Loading />}
     </form>
   );
 }

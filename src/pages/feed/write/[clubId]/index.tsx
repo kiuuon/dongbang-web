@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -26,14 +26,15 @@ function WriteFeed() {
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
 
-  const { mutateAsync: uploadPhoto, isPending: isPhotoUploading } = useMutation({
+  const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
   });
 
-  const { mutate: handleWriteFeed, isPending } = useMutation({
+  const { mutate: handleWriteFeed } = useMutation({
     mutationFn: async (photoUrls: string[]) =>
       writeFeed(
         photoUrls,
@@ -47,7 +48,7 @@ function WriteFeed() {
         selectedClubs,
       ),
     onSuccess: () => {
-      router.replace(`/club/${clubId}`);
+      router.back();
     },
     onError: (error) => {
       // eslint-disable-next-line no-console
@@ -62,6 +63,7 @@ function WriteFeed() {
         return;
       }
 
+      setIsLoading(true);
       const photosUploadPromises = photos.map((photo, index) => {
         const fileName = `feed/${uuid}/${index}.png`;
         return uploadPhoto({ file: photo, fileName });
@@ -87,6 +89,18 @@ function WriteFeed() {
       console.error('Error uploading files:', error);
     }
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div className="flex h-screen min-h-screen flex-col justify-between px-[20px] pt-[68px]">
@@ -175,7 +189,7 @@ function WriteFeed() {
           setSelectedClubs={setSelectedClubs}
         />
       )}
-      {(isPending || isPhotoUploading) && <Loading />}
+      {isLoading && <Loading />}
     </div>
   );
 }
