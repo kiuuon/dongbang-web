@@ -13,6 +13,7 @@ import BottomSheet from '@/components/common/bottom-sheet';
 import FeedContent from './feed-content';
 import TaggedClubModal from './tagged-club-modal';
 import TaggedUserModal from './tagged-user-modal';
+import InteractModal from './interact-modal';
 
 function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const date = new Date(feed.created_at);
@@ -23,6 +24,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   const [[page, direction], setPage] = useState([0, 0]);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
+  const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
@@ -137,6 +139,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
           <MoreVertIcon />
         </button>
       </div>
+
       <div className="relative mb-[12px] mt-[16px] aspect-square w-full">
         <AnimatePresence initial={false} custom={direction}>
           <motion.img
@@ -212,8 +215,10 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
           </div>
         )}
       </div>
+
       {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
       {feed.content && <FeedContent content={feed.content} />}
+
       <div className="flex flex-col items-center gap-[16px]">
         {(feed.is_nickname_visible || feed.taggedUsers.length > 0) && (
           <div className="flex w-full items-center gap-[4px]">
@@ -235,6 +240,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             )}
           </div>
         )}
+
         <div className="flex w-full items-center gap-[10px]">
           <div className="flex items-center gap-[4px]">
             <button type="button">
@@ -246,7 +252,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             <CommentsIcon />
             <span>5</span>
           </button>
-          <button type="button" className="flex items-center">
+          <button type="button" className="flex items-center" onClick={() => setIsInteractModalOpen(true)}>
             <InteractIcon color="#000" />
           </button>
         </div>
@@ -260,6 +266,11 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       {isTaggedUserModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedUserModalOpen}>
           <TaggedUserModal tagedUsers={feed.taggedUsers} />
+        </BottomSheet>
+      )}
+      {isInteractModalOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsInteractModalOpen}>
+          <InteractModal />
         </BottomSheet>
       )}
     </div>
