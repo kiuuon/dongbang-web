@@ -31,19 +31,19 @@ function WriteModal({ onClose }: { onClose: () => void }) {
 
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {
+      onClose();
       window.ReactNativeWebView.postMessage('comingSoon');
       return;
     }
-    onClose();
     router.push('/coming-soon');
   };
 
   const writeFeed = () => {
     if (window.ReactNativeWebView) {
+      onClose();
       window.ReactNativeWebView.postMessage('go to write feed page');
       return;
     }
-    onClose();
     router.push(`/feed/write/${clubId}`);
   };
 

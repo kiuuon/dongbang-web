@@ -1,11 +1,20 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function FeedContent({ content }: { content: string }) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollWidth > el.clientWidth);
+  }, [content]);
 
   const handleToggle = () => {
-    setIsExpanded((prev) => !prev);
+    if (isOverflowing) {
+      setIsExpanded((prev) => !prev);
+    }
   };
 
   return (
@@ -21,7 +30,7 @@ function FeedContent({ content }: { content: string }) {
         }
       }}
     >
-      {isExpanded ? (
+      {isExpanded || !isOverflowing ? (
         <div className="whitespace-pre-line">{content}</div>
       ) : (
         <div className="flex items-center">
