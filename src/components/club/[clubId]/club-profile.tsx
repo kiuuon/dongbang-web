@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetchUser } from '@/lib/apis/user';
 import { fetchClubInfo, fetchClubMembers, fetchMyRole } from '@/lib/apis/club';
-import CrownIcon from '@/icons/crown-icon';
+// import CrownIcon from '@/icons/crown-icon';
 import CheckIcon3 from '@/icons/check-icon3';
 import PeopleIcon from '@/icons/people-icon';
 
@@ -45,8 +45,9 @@ function ClubProfile() {
       </div>
       <div className="flex h-[124px] w-full flex-col gap-[32px] rounded-[12px] bg-white px-[20px] py-[12px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]">
         <div className="ml-[85px] flex h-[16px] flex-row items-center gap-[8px]">
-          <CrownIcon />
-          <div className="text-bold12 h-[16px]">동아리 최대 참석자</div>
+          {/* TODO: 동아리 칭호
+          <CrownIcon /> 
+          <div className="text-bold12 h-[16px]">동아리 최대 참석자</div> */}
         </div>
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-col gap-[8px]">
