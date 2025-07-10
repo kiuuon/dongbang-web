@@ -63,6 +63,10 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
 
   const handleClubClick = () => {
     if (feed.taggedClubs.length > 0) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'tagged club click', payload: feed.taggedClubs }));
+        return;
+      }
       setIsTaggedClubModalOpen(true);
     } else {
       // TODO: 클럽 소개 페이지로 이동하는 로직
@@ -137,7 +141,18 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             </div>
           </div>
         </button>
-        <button type="button" onClick={() => setIsSettingModalOpen(true)}>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'setting click', payload: { feedId: feed.id, authorId: feed.author_id } }),
+              );
+              return;
+            }
+            setIsSettingModalOpen(true);
+          }}
+        >
           <MoreVertIcon />
         </button>
       </div>
@@ -228,7 +243,15 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
               <button
                 type="button"
                 className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2"
-                onClick={() => setIsTaggedUserModalOpen(true)}
+                onClick={() => {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({ type: 'tagged user click', payload: feed.taggedUsers }),
+                    );
+                    return;
+                  }
+                  setIsTaggedUserModalOpen(true);
+                }}
               >
                 <ProfileIcon2 />
                 {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
@@ -254,7 +277,17 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             <CommentsIcon />
             <span>5</span>
           </button>
-          <button type="button" className="flex items-center" onClick={() => setIsInteractModalOpen(true)}>
+          <button
+            type="button"
+            className="flex items-center"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'interact click', payload: feed.id }));
+                return;
+              }
+              setIsInteractModalOpen(true);
+            }}
+          >
             <InteractIcon color="#000" />
           </button>
         </div>

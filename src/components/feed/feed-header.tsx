@@ -45,7 +45,7 @@ function FeedHeader({
 
   const handleNavigationOpen = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('openNavigation');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'open navigation' }));
     } else {
       setIsBottomSheetOpen((prev) => !prev);
     }

@@ -74,11 +74,12 @@ function WriteFeed() {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
-            photos: photosResults,
+            photos: photoUrls,
             title,
             content,
             isNicknameVisible,
             isPrivate,
+            clubType: clubInfo?.type,
           }),
         );
       } else {

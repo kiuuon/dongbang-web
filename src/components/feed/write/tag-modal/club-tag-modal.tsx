@@ -46,6 +46,8 @@ function ClubTagModal({
                 objectFit: 'cover',
                 width: '40px',
                 height: '40px',
+                minWidth: '40px',
+                minHeight: '40px',
                 borderRadius: '5px',
                 border: '1px solid #F9F9F9',
               }}

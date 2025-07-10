@@ -7,7 +7,7 @@ function TaggedClubModal({ taggedClubs }: { taggedClubs: { club: { name: string;
       <div className="text-bold14 mb-[28px]">피드에 태그된 동아리</div>
       <div className="scrollbar-hide mb-[20px] flex max-h-[190px] w-full flex-col gap-[10px] overflow-y-scroll">
         {taggedClubs.map(({ club }) => (
-          <button key={club.name} type="button" className="flex w-full items-center gap-[29px]">
+          <button key={club.logo} type="button" className="flex w-full items-center gap-[29px]">
             <Image
               src={club.logo}
               alt="로고"
