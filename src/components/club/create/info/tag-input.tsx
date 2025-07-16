@@ -8,11 +8,13 @@ function TagInput({
   onChange,
   defaultCampusClubType,
   defaultCategory,
+  defaultLocation,
 }: {
   value: string[];
   onChange: (value: string[]) => void;
   defaultCampusClubType: string;
   defaultCategory: string;
+  defaultLocation: string;
 }) {
   const router = useRouter();
   const { clubType } = router.query;
@@ -21,13 +23,15 @@ function TagInput({
   useEffect(() => {
     const newTag = [...value];
     if (clubType !== 'union') {
-      newTag[0] = defaultCampusClubType || '';
+      newTag[1] = defaultCampusClubType;
+    } else {
+      newTag[1] = defaultLocation;
     }
-    newTag[1] = defaultCategory;
+    newTag[2] = defaultCategory;
 
     onChange(newTag);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultCampusClubType, defaultCategory]);
+  }, [defaultCampusClubType, defaultCategory, defaultLocation]);
 
   const handleAddTag = () => {
     if (inputValue === '') {
@@ -39,7 +43,7 @@ function TagInput({
       return;
     }
 
-    const maxTagCount = clubType === 'campus' ? 5 : 6;
+    const maxTagCount = 5;
     if (value.length >= maxTagCount) {
       alert('최대 태그 수를 초과했습니다.');
       return;
@@ -82,7 +86,7 @@ function TagInput({
               className="text-bold12 flex gap-[8px] rounded-[24px] border border-primary px-[14px] py-[9px] text-primary"
             >
               {tag}
-              {index !== 0 && index !== 1 && (
+              {index > 2 && (
                 <button type="button" onClick={() => handleRemoveTag(index)}>
                   <XIcon2 />
                 </button>

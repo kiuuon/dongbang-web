@@ -1,8 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import BottomArrowIcon2 from '@/icons/bottom-arrow-icon2';
 
-function LocationInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+function LocationInput({
+  value,
+  onChange,
+  setDefaultLocation,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  setDefaultLocation: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const loactionInputRef = useRef<HTMLDivElement>(null);
   const location = [
@@ -56,13 +64,14 @@ function LocationInput({ value, onChange }: { value: string; onChange: (value: s
         </div>
       </div>
       {isOpen && (
-        <div className="text-regular14 absolute z-10 mt-[4px] w-full rounded-[8px] border border-gray0 bg-white">
+        <div className="text-regular14 scrollbar-hide absolute z-10 mt-[4px] max-h-[224px] w-full overflow-y-scroll rounded-[8px] border border-gray0 bg-white">
           {location.map((item) => (
             <button
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
                 onChange(item);
+                setDefaultLocation(item);
                 setIsOpen(false);
               }}
             >

@@ -3,7 +3,9 @@ import { useRouter } from 'next/router';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { campusClubInfoSchema } from '@/lib/validationSchema';
+import { useQuery } from '@tanstack/react-query';
 
+import { fetchUser } from '@/lib/apis/user';
 import SubmitButton from '@/components/common/submit-button';
 import clubInfoStore from '@/stores/club-info-store';
 import CampusClubTypeInput from './campus-club-type-input';
@@ -22,6 +24,11 @@ function InfoForm() {
   const setTags = clubInfoStore((state) => state.setTags);
   const [defaultCampusClubType, setDefaultCampusClubType] = useState(clubInfoStore.getState().campusClubType ?? '');
   const [defaultCategory, setDefaultCategory] = useState(clubInfoStore.getState().category ?? '');
+  const [defaultLocation, setDefaultLocation] = useState(clubInfoStore.getState().location ?? '');
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: fetchUser,
+  });
 
   const {
     control,
@@ -49,8 +56,13 @@ function InfoForm() {
         shouldValidate: true,
         shouldDirty: true,
       });
+    } else if (clubType !== 'union' && clubInfoStore.getState().tags.length === 0) {
+      setValue('tags', [user?.University.name, ''], {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
-  }, [clubType, setValue]);
+  }, [clubType, setValue, user]);
 
   const onSubmit = (data: {
     campusClubType?: string | undefined;
@@ -147,7 +159,13 @@ function InfoForm() {
               name="location"
               control={control}
               defaultValue=""
-              render={({ field }) => <LocationInput value={field.value as string} onChange={field.onChange} />}
+              render={({ field }) => (
+                <LocationInput
+                  value={field.value as string}
+                  onChange={field.onChange}
+                  setDefaultLocation={setDefaultLocation}
+                />
+              )}
             />
           )}
           {errors.location && <p className="text-regular10 mt-[8px] text-error">{errors.location.message}</p>}
@@ -169,14 +187,14 @@ function InfoForm() {
         <Controller
           name="tags"
           control={control}
-          // defaultValue={clubType === 'union' ? ['연합 동아리', ''] : ['', '']}
-          defaultValue={['', '']}
+          defaultValue={['', '', '']}
           render={({ field }) => (
             <TagInput
               value={field.value}
               onChange={field.onChange}
               defaultCampusClubType={defaultCampusClubType}
               defaultCategory={defaultCategory}
+              defaultLocation={defaultLocation}
             />
           )}
         />
