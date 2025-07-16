@@ -37,6 +37,7 @@ function ClubList() {
         <button
           type="button"
           onClick={() => {
+            document.body.style.overflow = 'auto';
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage('create club');
               return;

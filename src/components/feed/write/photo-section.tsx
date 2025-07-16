@@ -47,7 +47,7 @@ function PhotoSection({
       return;
     }
 
-    setPhotos(Array.from(files || []));
+    setPhotos([...photos, ...Array.from(files || [])]);
 
     const newPreviews: string[] = [...(preview || [])];
 
@@ -85,7 +85,7 @@ function PhotoSection({
         />
         <CameraIcon />
         <div className="text-regular12 text-gray0">
-          (<span className="text-primary">{photos ? photos.length : 0}</span>/10)
+          (<span className={`${photos.length > 0 && 'text-primary'}`}>{photos ? photos.length : 0}</span>/10)
         </div>
       </label>
       <div
