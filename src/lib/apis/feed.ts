@@ -63,21 +63,51 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
 
     const clubIds = clubData.map((club) => club.club_id);
 
-    const { data: feeds } = await supabase
-      .from('Feed')
-      .select(
-        '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
-      )
-      .in('club_id', clubIds)
-      .order('created_at', { ascending: false })
-      .range(start, end);
+    const [feedByClub, feedByUserTag, feedByClubTag] = await Promise.all([
+      // 1. 내가 속한 클럽의 글
+      supabase
+        .from('Feed')
+        .select(
+          '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+        )
+        .in('club_id', clubIds)
+        .order('created_at', { ascending: false }),
 
-    if (!feeds) {
-      return [];
-    }
+      // 2. 내가 태그된 글
+      supabase
+        .from('Feed_User')
+        .select(
+          'feed:Feed(*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo)))',
+        )
+        .eq('user_id', userId),
+
+      // 3. 내 클럽이 태그된 글
+      supabase
+        .from('Feed_Club')
+        .select(
+          'feed:Feed(*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo)))',
+        )
+        .in('club_id', clubIds),
+    ]);
+
+    // 2, 3번은 관계 테이블에서 가져오므로 feed만 추출
+    const feedsFromUserTag = feedByUserTag.data?.map((f) => f.feed) ?? [];
+    const feedsFromClubTag = feedByClubTag.data?.map((f) => f.feed) ?? [];
+    const feedsFromClub = feedByClub.data ?? [];
+
+    // 모두 합쳐서 중복 제거
+    const feedMap = new Map();
+    [...feedsFromUserTag, ...feedsFromClubTag, ...feedsFromClub].forEach((feed) => {
+      if (!feedMap.has(feed.id)) {
+        feedMap.set(feed.id, feed);
+      }
+    });
+    const mergedFeeds = Array.from(feedMap.values()).sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
 
     const feedsWithRole = await Promise.all(
-      feeds.map(async (feed) => {
+      mergedFeeds.map(async (feed) => {
         const { data: clubUser } = await supabase
           .from('Club_User')
           .select('role')

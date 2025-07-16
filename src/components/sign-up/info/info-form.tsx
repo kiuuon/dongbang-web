@@ -8,7 +8,6 @@ import { getSignUpInfoSchema } from '@/lib/validationSchema';
 import SubmitButton from '@/components/common/submit-button';
 import { fetchUniversityList, signUp } from '@/lib/apis/sign-up';
 import { fetchSession } from '@/lib/apis/auth';
-import { queryKey } from '@/lib/constants';
 import { UserType } from '@/types/user-type';
 import termsStore from '@/stores/terms-store';
 import GenderInput from './gender-input';
@@ -37,9 +36,9 @@ function InfoForm() {
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
   const marketing = termsStore((state) => state.marketing);
 
-  const { data: session } = useQuery({ queryKey: [queryKey.session], queryFn: fetchSession });
+  const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
   const { data: universityList } = useQuery({
-    queryKey: [queryKey.universityList],
+    queryKey: ['universityList'],
     queryFn: fetchUniversityList,
   });
 

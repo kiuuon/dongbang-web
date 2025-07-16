@@ -1,9 +1,3 @@
-const queryKey = {
-  session: ['session'],
-  userInfo: ['userInfo'],
-  universityList: ['universityList'],
-};
-
 const sportsCategories = [
   '축구',
   '농구',
@@ -81,4 +75,4 @@ const academicCategories = [
   '기타학술',
 ];
 
-export { queryKey, sportsCategories, artCategories, hobbyCategories, societyCategories, academicCategories };
+export { sportsCategories, artCategories, hobbyCategories, societyCategories, academicCategories };

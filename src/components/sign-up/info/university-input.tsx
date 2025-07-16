@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchUniversityList } from '@/lib/apis/sign-up';
-import { queryKey } from '@/lib/constants';
 
 function UniversityInput({
   value,
@@ -15,7 +14,7 @@ function UniversityInput({
 }) {
   const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
-  const { data: universityList } = useQuery({ queryKey: [queryKey.universityList], queryFn: fetchUniversityList });
+  const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
 
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
