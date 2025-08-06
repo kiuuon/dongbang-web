@@ -2,17 +2,29 @@ import { UserType } from '@/types/user-type';
 import { supabase } from './supabaseClient';
 
 export async function isNicknameExists(nickname: string) {
-  const { data } = await supabase.from('User').select('id').eq('nickname', nickname);
+  const { data, error } = await supabase.from('User').select('id').eq('nickname', nickname);
+
+  if (error) {
+    throw error;
+  }
 
   return (data?.length as number) > 0;
 }
 
 export async function fetchUniversityList() {
-  const { data } = await supabase.from('University').select('*');
+  const { data, error } = await supabase.from('University').select('*');
+
+  if (error) {
+    throw error;
+  }
 
   return data;
 }
 
 export async function signUp(body: UserType) {
-  await supabase.from('User').insert([body]);
+  const { error } = await supabase.from('User').insert([body]);
+
+  if (error) {
+    throw error;
+  }
 }

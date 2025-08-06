@@ -36,10 +36,21 @@ function InfoForm() {
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
   const marketing = termsStore((state) => state.marketing);
 
-  const { data: session } = useQuery({ queryKey: ['session'], queryFn: fetchSession });
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
   const { data: universityList } = useQuery({
     queryKey: ['universityList'],
     queryFn: fetchUniversityList,
+    throwOnError: (error) => {
+      alert(`대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   const { mutate: handleSignup } = useMutation({
@@ -48,8 +59,7 @@ function InfoForm() {
       router.push('/sign-up/complete');
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      alert(`회원가입에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
     },
   });
 

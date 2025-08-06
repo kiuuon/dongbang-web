@@ -23,6 +23,10 @@ function Feed() {
     queryKey: ['feeds', clubType],
     queryFn: ({ pageParam }) => fetchFeedsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
+    throwOnError: (error) => {
+      alert(`피드를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   useEffect(() => {
@@ -67,7 +71,7 @@ function Feed() {
       );
     }
 
-    return data?.pages.map((page) => page?.map((feed) => <FeedCard feed={feed} scrollRef={scrollRef} />));
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
@@ -78,7 +82,7 @@ function Feed() {
   return (
     <div
       ref={scrollRef}
-      className="scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] pb-[200px] pt-[76px]"
+      className={`scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
     >
       <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}

@@ -14,7 +14,14 @@ function UniversityInput({
 }) {
   const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
-  const { data: universityList } = useQuery({ queryKey: ['universityList'], queryFn: fetchUniversityList });
+  const { data: universityList } = useQuery({
+    queryKey: ['universityList'],
+    queryFn: fetchUniversityList,
+    throwOnError: (error) => {
+      alert(`대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);

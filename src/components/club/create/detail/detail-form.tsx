@@ -37,10 +37,18 @@ function DetailForm() {
 
   const { mutateAsync: uploadLogo } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    onError: (error) => {
+      alert(`로고 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      setIsLoading(false);
+    },
   });
 
   const { mutateAsync: uploadActivityPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    onError: (error) => {
+      alert(`활동 사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      setIsLoading(false);
+    },
   });
 
   const { mutate: handleCreateClub } = useMutation({
@@ -57,8 +65,8 @@ function DetailForm() {
       router.push('/club');
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      alert(`동아리 개설에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      setIsLoading(false);
     },
   });
 

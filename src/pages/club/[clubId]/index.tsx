@@ -26,10 +26,21 @@ function Club() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
-  const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
+  const { data: clubInfo } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    throwOnError: (error) => {
+      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
+    throwOnError: (error) => {
+      alert(`동아리 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   const handleNavigationOpen = () => {

@@ -13,6 +13,10 @@ function WriteModal({ onClose }: { onClose: () => void }) {
   const { data: role } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    throwOnError: (error) => {
+      alert(`내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   useEffect(() => {

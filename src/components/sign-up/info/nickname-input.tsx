@@ -33,8 +33,9 @@ function NicknameInput({
       }
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      alert(`닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      setIsDuplicate(false);
+      setIsSameCheck(false);
     },
   });
 

@@ -28,10 +28,21 @@ function WriteFeed() {
   const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
+  const { data: clubInfo } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    throwOnError: (error) => {
+      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    onError: (error) => {
+      alert(`사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      setIsLoading(false);
+    },
   });
 
   const { mutate: handleWriteFeed } = useMutation({
@@ -51,8 +62,8 @@ function WriteFeed() {
       router.back();
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      alert(`'피드를 작성하는데 실패했습니다. 다시 시도해주세요.'\n${error.message}`);
+      setIsLoading(false);
     },
   });
 

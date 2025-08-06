@@ -28,13 +28,20 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const handler = async (event: MessageEvent) => {
-      const { data } = await supabase.auth.getSession();
-      const { accessToken, refreshToken } = event.data;
-      if (!data.session) {
-        await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
+      try {
+        const { data } = await supabase.auth.getSession();
+        const { accessToken, refreshToken } = event.data;
+        if (!data.session) {
+          const { error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (error) {
+            throw error;
+          }
+        }
+      } catch (error) {
+        alert(`세션 정보를 설정하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
       }
     };
 
@@ -47,31 +54,33 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     (async () => {
-      const { user } = await fetchSession();
-      const userInfo = await fetchUser();
+      try {
+        const { user } = await fetchSession(); // 이 함수도 throw 가능하면 같이 try 안에 둠
+        const userInfo = await fetchUser(); // 여기서 에러 나면 catch로 감
 
-      if (window.ReactNativeWebView) {
-        return;
-      }
+        if (window.ReactNativeWebView) return;
 
-      if (!user && router.pathname !== '/login') {
-        router.push('/login');
-      } else if (user && router.pathname === '/login') {
-        setIsAuthenticated(true);
-        router.push('/');
-      } else {
-        setIsAuthenticated(true);
-      }
-
-      if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
-        router.push('/sign-up/terms');
-      } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
-        if (router.pathname !== '/sign-up/complete') {
-          setIsRegistered(true);
+        if (!user && router.pathname !== '/login') {
+          router.push('/login');
+        } else if (user && router.pathname === '/login') {
+          setIsAuthenticated(true);
           router.push('/');
+        } else {
+          setIsAuthenticated(true);
         }
-      } else {
-        setIsRegistered(true);
+
+        if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
+          router.push('/sign-up/terms');
+        } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
+          if (router.pathname !== '/sign-up/complete') {
+            setIsRegistered(true);
+            router.push('/');
+          }
+        } else {
+          setIsRegistered(true);
+        }
+      } catch (error) {
+        alert(`로그인 상태를 확인하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
       }
     })();
   }, [router]);

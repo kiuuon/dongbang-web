@@ -14,38 +14,22 @@ export async function writeFeed(
 ) {
   const userId = await fetchUserId();
 
-  const { data: feedData } = await supabase
-    .from('Feed')
-    .insert({
-      photos,
-      title,
-      content,
-      is_nickname_visible: isNicknameVisible,
-      is_private: isPrivate,
-      club_id: clubId,
-      club_type: clubType,
-      author_id: userId,
-    })
-    .select('id')
-    .single();
+  const { error } = await supabase.rpc('write_feed_transaction', {
+    photos,
+    title,
+    content,
+    is_nickname_visible: isNicknameVisible,
+    is_private: isPrivate,
+    club_id: clubId,
+    club_type: clubType,
+    author_id: userId,
+    selected_members: selectedMembers,
+    selected_clubs: selectedClubs,
+  });
 
-  if (!feedData) {
-    throw new Error('Failed to create feed');
+  if (error) {
+    throw error;
   }
-
-  await supabase.from('Feed_User').insert(
-    selectedMembers.map((memberId) => ({
-      feed_id: feedData.id,
-      user_id: memberId,
-    })),
-  );
-
-  await supabase.from('Feed_Club').insert(
-    selectedClubs.map((selectedClubId) => ({
-      feed_id: feedData.id,
-      club_id: selectedClubId,
-    })),
-  );
 }
 
 export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
@@ -55,7 +39,14 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
 
   if (clubType === 'my') {
     const userId = await fetchUserId();
-    const { data: clubData } = await supabase.from('Club_User').select('club_id').eq('user_id', userId);
+    const { data: clubData, error: fetchClubError } = await supabase
+      .from('Club_User')
+      .select('club_id')
+      .eq('user_id', userId);
+
+    if (fetchClubError) {
+      throw fetchClubError;
+    }
 
     if (!clubData || clubData.length === 0) {
       return null;
@@ -90,6 +81,18 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
         .in('club_id', clubIds),
     ]);
 
+    if (feedByClub.error) {
+      throw feedByClub.error;
+    }
+
+    if (feedByUserTag.error) {
+      throw feedByUserTag.error;
+    }
+
+    if (feedByClubTag.error) {
+      throw feedByClubTag.error;
+    }
+
     // 2, 3번은 관계 테이블에서 가져오므로 feed만 추출
     const feedsFromUserTag = feedByUserTag.data?.map((f) => f.feed) ?? [];
     const feedsFromClubTag = feedByClubTag.data?.map((f) => f.feed) ?? [];
@@ -108,12 +111,16 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
 
     const feedsWithRole = await Promise.all(
       mergedFeeds.map(async (feed) => {
-        const { data: clubUser } = await supabase
+        const { data: clubUser, error: fetchRoleError } = await supabase
           .from('Club_User')
           .select('role')
           .eq('user_id', feed.author_id)
           .eq('club_id', feed.club_id)
-          .single();
+          .maybeSingle();
+
+        if (fetchRoleError) {
+          throw fetchRoleError;
+        }
 
         return {
           ...feed,
@@ -129,7 +136,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
   }
 
   if (clubType === 'union' || clubType === 'campus') {
-    const { data: feeds } = await supabase
+    const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
         '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
@@ -138,18 +145,26 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
       .order('created_at', { ascending: false })
       .range(start, end);
 
+    if (fetchFeedError) {
+      throw fetchFeedError;
+    }
+
     if (!feeds) {
       return [];
     }
 
     const feedsWithRole = await Promise.all(
       feeds.map(async (feed) => {
-        const { data: clubUser } = await supabase
+        const { data: clubUser, error: fetchRoleError } = await supabase
           .from('Club_User')
           .select('role')
           .eq('user_id', feed.author_id)
           .eq('club_id', feed.club_id)
-          .single();
+          .maybeSingle();
+
+        if (fetchRoleError) {
+          throw fetchRoleError;
+        }
 
         return {
           ...feed,

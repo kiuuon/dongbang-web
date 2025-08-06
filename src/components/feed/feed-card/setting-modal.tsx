@@ -11,6 +11,10 @@ function SettingModal({ authorId }: { authorId: string }) {
   const { data: userId } = useQuery({
     queryKey: ['userId'],
     queryFn: fetchUserId,
+    throwOnError: (error) => {
+      alert(`사용자 ID를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   return (

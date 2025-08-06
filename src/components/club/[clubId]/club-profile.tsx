@@ -14,15 +14,34 @@ function ClubProfile() {
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUser,
+    throwOnError: (error) => {
+      alert(`사용자 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
   const { data: role } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    throwOnError: (error) => {
+      alert(`내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
-  const { data: clubInfo } = useQuery({ queryKey: ['club', clubId], queryFn: () => fetchClubInfo(clubId as string) });
+  const { data: clubInfo } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    throwOnError: (error) => {
+      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
   const { data: members } = useQuery({
     queryKey: ['clubMembers', clubId],
     queryFn: () => fetchClubMembers(clubId as string),
+    throwOnError: (error) => {
+      alert(`동아리 멤버 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   const getRole = () => {

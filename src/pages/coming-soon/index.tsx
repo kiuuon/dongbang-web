@@ -21,8 +21,7 @@ function ComingSoon() {
       router.back();
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      alert(`피드백 전송에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
     },
   });
 

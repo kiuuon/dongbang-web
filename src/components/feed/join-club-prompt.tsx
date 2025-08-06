@@ -9,6 +9,10 @@ function JoinClubPrompt() {
   const { data: recommendedClubs } = useQuery({
     queryKey: ['recommendedClubs'],
     queryFn: fetchRecommendedClubs,
+    throwOnError: (error) => {
+      alert(`동아리 추천을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
   });
 
   const [clubList, setClubList] = useState<typeof recommendedClubs>([]);

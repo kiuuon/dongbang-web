@@ -10,13 +10,21 @@ export async function login(provider: 'kakao' | 'google') {
 }
 
 export async function fetchSession() {
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    throw error;
+  }
 
   return data;
 }
 
 export async function fetchUserId() {
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    throw error;
+  }
 
   return data?.user?.id;
 }
