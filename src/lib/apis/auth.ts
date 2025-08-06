@@ -12,7 +12,7 @@ export async function login(provider: 'kakao' | 'google') {
 export async function fetchSession() {
   const { data, error } = await supabase.auth.getUser();
 
-  if (error) {
+  if (error && error.status !== 400) {
     throw error;
   }
 
@@ -22,7 +22,7 @@ export async function fetchSession() {
 export async function fetchUserId() {
   const { data, error } = await supabase.auth.getUser();
 
-  if (error) {
+  if (error && error.status !== 400) {
     throw error;
   }
 

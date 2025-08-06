@@ -41,7 +41,9 @@ export default function App({ Component, pageProps }: AppProps) {
           }
         }
       } catch (error) {
-        alert(`세션 정보를 설정하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
+        if ((error as any).status !== 400) {
+          alert(`세션 정보를 설정하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
+        }
       }
     };
 
@@ -55,8 +57,8 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     (async () => {
       try {
-        const { user } = await fetchSession(); // 이 함수도 throw 가능하면 같이 try 안에 둠
-        const userInfo = await fetchUser(); // 여기서 에러 나면 catch로 감
+        const { user } = await fetchSession();
+        const userInfo = await fetchUser();
 
         if (window.ReactNativeWebView) return;
 
