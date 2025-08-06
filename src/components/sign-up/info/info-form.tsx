@@ -40,6 +40,16 @@ function InfoForm() {
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
       alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
@@ -48,6 +58,16 @@ function InfoForm() {
     queryKey: ['universityList'],
     queryFn: fetchUniversityList,
     throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
       alert(`대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
@@ -59,6 +79,16 @@ function InfoForm() {
       router.push('/sign-up/complete');
     },
     onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '회원가입에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
       alert(`회원가입에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
     },
   });

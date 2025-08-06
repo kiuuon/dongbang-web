@@ -33,6 +33,18 @@ function NicknameInput({
       }
     },
     onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        setIsDuplicate(false);
+        setIsSameCheck(false);
+        return;
+      }
       alert(`닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       setIsDuplicate(false);
       setIsSameCheck(false);

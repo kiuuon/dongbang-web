@@ -21,6 +21,16 @@ function ComingSoon() {
       router.back();
     },
     onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '피드백 전송에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
       alert(`피드백 전송에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
     },
   });

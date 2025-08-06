@@ -32,6 +32,16 @@ function WriteFeed() {
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
     throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
       alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
@@ -40,6 +50,16 @@ function WriteFeed() {
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
     onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '사진 업로드에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
       alert(`사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       setIsLoading(false);
     },
@@ -62,6 +82,16 @@ function WriteFeed() {
       router.back();
     },
     onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '피드를 작성하는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
       alert(`'피드를 작성하는데 실패했습니다. 다시 시도해주세요.'\n${error.message}`);
       setIsLoading(false);
     },

@@ -14,6 +14,16 @@ function ClubList() {
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
     throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '동아리 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
       alert(`동아리 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
