@@ -49,7 +49,7 @@ export const campusClubInfoSchema = yup.object().shape({
     then: (schema) => schema.required('동아리 위치를 입력하세요'),
     otherwise: (schema) => schema.required('동아리 활동 지역을 선택하세요'),
   }),
-  description: yup.string().max(50, '최대 50자까지 입력 가능합니다').required('한 줄 소개를 입력하세요'),
+  description: yup.string().max(30, '최대 30자까지 입력 가능합니다').required('한 줄 소개를 입력하세요'),
   tags: yup.array().required('태그를 추가하세요'),
 });
 

@@ -10,6 +10,10 @@ export interface ClubType {
   activity_photos: string[];
   detail_description: string;
   detail_type: string | null;
+  recruitment?: {
+    recruitment_status: string;
+    end_date: string | null;
+  }[];
 }
 
 export interface NewClubType {

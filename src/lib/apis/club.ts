@@ -4,42 +4,30 @@ import { fetchUserId } from './auth';
 import { shuffleArray } from '../utils';
 
 export async function createClub(body: NewClubType) {
-  const userId = await fetchUserId();
-  let universityId: number | null = null;
+  const { error } = await supabase.rpc('create_club_with_recruitment_transaction', {
+    club: body,
+  });
 
-  if (body.type === 'campus') {
-    const { data, error } = await supabase.from('User').select('university_id').eq('id', userId).single();
-    if (error) {
-      throw error;
-    }
-    universityId = data?.university_id;
-  }
+  if (error) throw error;
+}
 
-  const newBody = {
-    ...body,
-    university_id: universityId,
-    creator_id: userId,
-  };
+export async function fetchClubs(page: number) {
+  const PAGE_SIZE = 10;
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
 
-  const { data, error } = await supabase.from('Club').insert([newBody]).select();
+  const { data, error } = await supabase
+    .from('Club')
+    .select('*, recruitment:Recruitment(recruitment_status, end_date)')
+    .order('created_at', { ascending: false })
+    .range(start, end);
 
-  if (error) {
-    throw error;
-  }
-
-  const clubId = data?.[0]?.id;
-
-  await supabase.from('Club_User').insert([
-    {
-      user_id: userId,
-      club_id: clubId,
-      role: 'president',
-    },
-  ]);
+  if (error) throw error;
+  return data;
 }
 
 export async function fetchAllClubs() {
-  const { data: clubs, error } = await supabase.from('Club').select('*');
+  const { data: clubs, error } = await supabase.from('Club').select('*, Recruitment(recruitment_status, end_date)');
 
   if (error) {
     throw error;
