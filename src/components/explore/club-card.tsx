@@ -61,7 +61,7 @@ function ClubCard({ club }: { club: ClubType }) {
           />
         </div>
         <div className="flex w-full flex-col items-start">
-          <div className="flex">
+          <div className="flex w-full justify-between">
             <div className="mr-[10px] flex flex-col">
               <div className="text-bold16 mb-[6px] text-start">{club.name}</div>
               <div className="text-regular12 mb-[15px] text-start">{club.description}</div>
