@@ -60,23 +60,31 @@ function ClubCard({ club }: { club: ClubType }) {
             }}
           />
         </div>
-        <div className="mr-[10px] flex w-full flex-col items-start">
-          <div className="text-bold16 mb-[6px]">{club.name}</div>
-          <div className="text-regular12 mb-[15px] text-start">{club.description}</div>
+        <div className="flex w-full flex-col items-start">
+          <div className="flex">
+            <div className="mr-[10px] flex flex-col">
+              <div className="text-bold16 mb-[6px] text-start">{club.name}</div>
+              <div className="text-regular12 mb-[15px] text-start">{club.description}</div>
+            </div>
+            <div
+              className={`whitespace-nowrap ${statusClasses[club.recruitment?.[0].recruitment_status as RecruitmentStatus]}`}
+            >
+              {text}
+            </div>
+          </div>
           <div className="flex gap-[4px]">
-            {club.tags.map((tag) => (
-              <div key={tag} className="text-regular12 rounded-[8px] bg-gray0 px-[5px] py-[2px] text-gray2">
-                {tag}
-              </div>
-            ))}
+            {club.tags.map(
+              (tag, index: number) =>
+                index < 3 && (
+                  <div key={tag} className="text-regular12 rounded-[8px] bg-gray0 px-[5px] py-[2px] text-gray2">
+                    {tag}
+                  </div>
+                ),
+            )}
           </div>
         </div>
-        <div
-          className={`whitespace-nowrap ${statusClasses[club.recruitment?.[0].recruitment_status as RecruitmentStatus]}`}
-        >
-          {text}
-        </div>
       </button>
+
       <div className="text-regular12 absolute right-0 flex w-[72px] flex-col gap-[7px] text-primary">
         <button
           type="button"
