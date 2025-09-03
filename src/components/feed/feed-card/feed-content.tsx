@@ -9,7 +9,7 @@ function FeedContent({ content }: { content: string }) {
   const cleanedContent = content.replace(/[\s\n]+$/, '');
 
   const renderContentWithHashtags = (text: string) => {
-    const parts = text.split(/(?=#)/g);
+    const parts = text.split(/(?=#)|(\n)/g).filter(Boolean);
 
     return parts.map((part, index) => {
       if (part.startsWith('#') && part.length > 1) {

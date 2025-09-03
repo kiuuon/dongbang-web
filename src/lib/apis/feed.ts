@@ -135,6 +135,45 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
   return [];
 }
 
+export async function fetchFeedDetail(feedId: string) {
+  const { data: feed, error } = await supabase
+    .from('Feed')
+    .select(
+      `
+      *,
+      author:User(name, avatar),
+      club:Club(name, logo),
+      taggedUsers:Feed_User(user:User(name, avatar)),
+      taggedClubs:Feed_Club(club:Club(name, logo))
+    `,
+    )
+    .eq('id', feedId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  const { data: clubUser, error: fetchRoleError } = await supabase
+    .from('Club_User')
+    .select('role')
+    .eq('user_id', feed.author_id)
+    .eq('club_id', feed.club_id)
+    .maybeSingle();
+
+  if (fetchRoleError) {
+    throw fetchRoleError;
+  }
+
+  return {
+    ...feed,
+    author: {
+      ...feed.author,
+      role: clubUser?.role ?? null,
+    },
+  };
+}
+
 export async function searchFeeds(keyword: string, page: number) {
   const PAGE_SIZE = 10;
 

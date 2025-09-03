@@ -1,28 +1,111 @@
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ClipLoader } from 'react-spinners';
 
+import { fetchFeedDetail } from '@/lib/apis/feed';
 import { formatKoreanDate } from '@/lib/utils';
-import { FeedType } from '@/types/feed-type';
 import MoreVertIcon from '@/icons/more-vert-icon';
-import LikesIcon from '@/icons/likes-icon';
-import CommentsIcon from '@/icons/comments-icon';
-import InteractIcon from '@/icons/interact-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import TwinkleIcon from '@/icons/twinkle-icon';
+import LikesIcon from '@/icons/likes-icon';
+import InteractIcon from '@/icons/interact-icon';
+import Header from '@/components/layout/header';
+import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
-import FeedContent from './feed-content';
-import TaggedClubModal from './tagged-club-modal';
-import TaggedUserModal from './tagged-user-modal';
-import InteractModal from './interact-modal';
-import SettingModal from './setting-modal';
+import TaggedClubModal from '@/components/feed/feed-card/tagged-club-modal';
+import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
+import InteractModal from '@/components/feed/feed-card/interact-modal';
+import SettingModal from '@/components/feed/feed-card/setting-modal';
 
-function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function FeedDetail() {
+  const router = useRouter();
+  const { feedId } = router.query;
   const [[page, direction], setPage] = useState([0, 0]);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+  const directionLockedRef = useRef<'horizontal' | 'vertical' | null>(null);
+
+  const { data: feed, isPending } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  if (isPending) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <ClipLoader size={30} color="#F9A825" />
+      </div>
+    );
+  }
+
+  const renderContentWithHashtags = (text: string) => {
+    const parts = text.split(/(?=#)|(\n)/g).filter(Boolean);
+
+    return parts.map((part, index) => {
+      if (part.startsWith('#') && part.length > 1) {
+        const tag = part.slice(1);
+        return (
+          <span
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            role="button"
+            tabIndex={0}
+            className="cursor-pointer text-green"
+            onClick={(event) => {
+              event.stopPropagation();
+              // TODO: Implement hashtag click handling
+              // eslint-disable-next-line no-console
+              console.log(tag);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.stopPropagation();
+                // TODO: Implement hashtag click handling
+                // eslint-disable-next-line no-console
+                console.log(tag);
+              }
+            }}
+          >
+            {part}
+          </span>
+        );
+      }
+      // 해시태그 아닌 부분은 그대로 출력
+      return part;
+    });
+  };
+
+  const getRole = (role: string | null) => {
+    if (role === 'president') {
+      return '회장';
+    }
+    if (role === 'member') {
+      return '부원';
+    }
+    return '';
+  };
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
@@ -44,19 +127,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
     setPage([newPage, dir]);
   };
 
-  const getRole = (role: string | null) => {
-    if (role === 'president') {
-      return '회장';
-    }
-    if (role === 'member') {
-      return '부원';
-    }
-    return '';
-  };
-
-  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
-  const directionLockedRef = useRef<'horizontal' | 'vertical' | null>(null);
-
   const handleClubClick = () => {
     if (feed.taggedClubs.length > 0) {
       if (window.ReactNativeWebView) {
@@ -70,7 +140,25 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   };
 
   return (
-    <div key={feed.id} className="flex flex-col border-b border-gray0 pb-[18px]">
+    <div ref={scrollRef} className="scrollbar-hide h-screen overflow-y-scroll px-[20px] pb-[47px] pt-[75px]">
+      <Header>
+        <BackButton />
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'setting click', payload: { feedId: feed.id, authorId: feed.author_id } }),
+              );
+              return;
+            }
+            setIsSettingModalOpen(true);
+          }}
+        >
+          <MoreVertIcon />
+        </button>
+      </Header>
+
       <div className="flex h-[40px] items-center justify-between">
         <button type="button" className="flex h-full items-center gap-[12px]" onClick={handleClubClick}>
           {feed.taggedClubs.length > 0 ? (
@@ -87,8 +175,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
                   objectFit: 'cover',
                   width: '25px',
                   height: '25px',
-                  minWidth: '25px',
-                  minHeight: '25px',
                   borderRadius: '5px',
                   border: '1px solid #F9F9F9',
                   zIndex: 1,
@@ -107,8 +193,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
                   objectFit: 'cover',
                   width: '25px',
                   height: '25px',
-                  minWidth: '25px',
-                  minHeight: '25px',
                   borderRadius: '5px',
                   border: '1px solid #F9F9F9',
                   transform: 'rotate(15deg)',
@@ -125,8 +209,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
                 objectFit: 'cover',
                 width: '40px',
                 height: '40px',
-                minWidth: '40px',
-                minHeight: '40px',
                 borderRadius: '5px',
                 border: '1px solid #F9F9F9',
               }}
@@ -142,20 +224,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
               {formatKoreanDate(feed.created_at)}
             </div>
           </div>
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(
-                JSON.stringify({ type: 'setting click', payload: { feedId: feed.id, authorId: feed.author_id } }),
-              );
-              return;
-            }
-            setIsSettingModalOpen(true);
-          }}
-        >
-          <MoreVertIcon />
         </button>
       </div>
 
@@ -224,7 +292,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
               className="flex transition-transform duration-300"
               style={{ transform: `translateX(-${currentIndicatorShiftX}px)` }}
             >
-              {feed.photos.map((photo, index) => (
+              {feed.photos.map((photo: string, index: number) => (
                 <div
                   key={photo}
                   className={`mx-[3px] h-[7px] w-[7px] rounded-full transition-colors duration-200 ${index === page ? 'bg-primary' : 'bg-gray0'}`}
@@ -236,7 +304,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       </div>
 
       {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
-      {feed.content && <FeedContent content={feed.content} />}
+      {feed.content && <div className="mb-[10px] whitespace-pre-line">{renderContentWithHashtags(feed.content)}</div>}
 
       <div className="flex flex-col items-center gap-[16px]">
         {(feed.is_nickname_visible || feed.taggedUsers.length > 0) && (
@@ -275,10 +343,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
             </button>
             <button type="button">3</button>
           </div>
-          <button type="button" className="flex items-center gap-[4px]">
-            <CommentsIcon />
-            <span>5</span>
-          </button>
           <button
             type="button"
             className="flex items-center"
@@ -294,6 +358,10 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
           </button>
         </div>
       </div>
+
+      <div className="-mx-[20px] mb-[10px] mt-[12px] h-[3px] w-[calc(100%+40px)] bg-background" />
+
+      <div className="text-regular12">댓글</div>
 
       {isTaggedClubModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedClubModalOpen}>
@@ -319,4 +387,4 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   );
 }
 
-export default FeedCard;
+export default FeedDetail;
