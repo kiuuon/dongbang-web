@@ -134,3 +134,25 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
 
   return [];
 }
+
+export async function searchFeeds(keyword: string, page: number) {
+  const PAGE_SIZE = 10;
+
+  const { data, error } = await supabase.rpc('search_feeds_by_keyword', {
+    p_keyword: keyword ?? '',
+    p_limit: PAGE_SIZE,
+    p_offset: page * PAGE_SIZE,
+  }).select(`
+      *,
+      author:User(name, avatar),
+      club:Club(name, logo),
+      taggedUsers:Feed_User(user:User(name, avatar)),
+      taggedClubs:Feed_Club(club:Club(name, logo))
+    `);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

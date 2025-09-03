@@ -1,0 +1,74 @@
+import { useEffect, useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { ClipLoader } from 'react-spinners';
+
+import { FeedType } from '@/types/feed-type';
+import { searchFeeds } from '@/lib/apis/feed';
+import FeedCard from './feed-card';
+
+function FeedSection({ keyword }: { keyword: string }) {
+  const observerElement = useRef(null);
+
+  const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
+    initialPageParam: 0,
+    queryKey: ['feeds', keyword],
+    queryFn: ({ pageParam }) => searchFeeds(keyword, pageParam),
+    getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
+    placeholderData: (prev) => prev,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '피드를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`피드를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  useEffect(() => {
+    const target = observerElement.current;
+    if (!target) return undefined;
+
+    const observerInstance = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasNextPage) {
+            fetchNextPage();
+          }
+        });
+      },
+      { threshold: 1 },
+    );
+
+    observerInstance.observe(target);
+
+    return () => observerInstance.unobserve(target);
+  }, [fetchNextPage, hasNextPage]);
+
+  if (isPending) {
+    return (
+      <div className="flex w-full justify-center">
+        <ClipLoader size={30} color="#F9A825" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="scrollbar-hide mx-auto grid w-full max-w-[393px] grid-cols-2 gap-[13px] overflow-y-scroll px-[20px] pb-[80px] pt-[10px]">
+      {data?.pages.map((page) => page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} />))}
+      {hasNextPage && (
+        <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
+          <ClipLoader size={30} color="#F9A825" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default FeedSection;

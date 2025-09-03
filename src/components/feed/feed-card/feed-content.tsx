@@ -9,7 +9,7 @@ function FeedContent({ content }: { content: string }) {
   const cleanedContent = content.replace(/[\s\n]+$/, '');
 
   const renderContentWithHashtags = (text: string) => {
-    const parts = text.split(/(\s+)/);
+    const parts = text.split(/(?=#)/g);
 
     return parts.map((part, index) => {
       if (part.startsWith('#') && part.length > 1) {
@@ -20,16 +20,16 @@ function FeedContent({ content }: { content: string }) {
             key={index}
             role="button"
             tabIndex={0}
-            className="text-green cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
+            className="cursor-pointer text-green"
+            onClick={(event) => {
+              event.stopPropagation();
               // TODO: Implement hashtag click handling
               // eslint-disable-next-line no-console
               console.log(tag);
             }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.stopPropagation();
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.stopPropagation();
                 // TODO: Implement hashtag click handling
                 // eslint-disable-next-line no-console
                 console.log(tag);
@@ -40,6 +40,7 @@ function FeedContent({ content }: { content: string }) {
           </span>
         );
       }
+      // 해시태그 아닌 부분은 그대로 출력
       return part;
     });
   };
