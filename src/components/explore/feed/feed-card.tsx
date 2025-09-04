@@ -5,7 +5,7 @@ import { FeedType } from '@/types/feed-type';
 import { formatKoreanDate } from '@/lib/utils';
 import LikesIcon2 from '@/icons/likes-icon2';
 
-function FeedCard({ feed }: { feed: FeedType }) {
+function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
 
   return (
@@ -13,7 +13,12 @@ function FeedCard({ feed }: { feed: FeedType }) {
       type="button"
       className="flex max-w-[170px] flex-col"
       onClick={() => {
-        router.push(`/feed/detail/${feed.id}`);
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(JSON.stringify({ message: 'go to feed detail page', feedId: feed.id }));
+          return;
+        }
+
+        router.push({ pathname: `/feed/detail/${feed.id}`, query: { scroll: scrollRef.current?.scrollTop || 0 } });
       }}
     >
       <div className="flex items-center gap-[4px]">
@@ -46,9 +51,9 @@ function FeedCard({ feed }: { feed: FeedType }) {
           }}
         />
       </div>
-      <div>
+      <div className="w-full">
         <div className="text-bold14 mb-[3px] w-full truncate text-start">{feed.title ? feed.title : feed.content}</div>
-        <div className="flex justify-between">
+        <div className="flex w-full justify-between pr-[4px]">
           <div className="text-regular12">{formatKoreanDate(feed.created_at)}</div>
           <div className="flex items-center gap-[4px]">
             <LikesIcon2 />

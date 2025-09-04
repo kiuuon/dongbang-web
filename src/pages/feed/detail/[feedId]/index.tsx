@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
@@ -32,6 +32,10 @@ function FeedDetail() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
   const directionLockedRef = useRef<'horizontal' | 'vertical' | null>(null);
+
+  useEffect(() => {
+    sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
+  }, [router]);
 
   const { data: feed, isPending } = useQuery({
     queryKey: ['feedDetail', feedId],

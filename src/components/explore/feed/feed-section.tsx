@@ -8,6 +8,15 @@ import FeedCard from './feed-card';
 
 function FeedSection({ keyword }: { keyword: string }) {
   const observerElement = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollRef.current && savedPosition) {
+      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem('scrollPosition');
+    }
+  }, []);
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
@@ -60,8 +69,13 @@ function FeedSection({ keyword }: { keyword: string }) {
   }
 
   return (
-    <div className="scrollbar-hide mx-auto grid w-full max-w-[393px] grid-cols-2 gap-[13px] overflow-y-scroll px-[20px] pb-[80px] pt-[10px]">
-      {data?.pages.map((page) => page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} />))}
+    <div
+      ref={scrollRef}
+      className="scrollbar-hide mx-auto grid w-full max-w-[393px] grid-cols-2 gap-[13px] overflow-y-scroll px-[20px] pb-[80px] pt-[10px]"
+    >
+      {data?.pages.map((page) =>
+        page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />),
+      )}
       {hasNextPage && (
         <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
           <ClipLoader size={30} color="#F9A825" />
