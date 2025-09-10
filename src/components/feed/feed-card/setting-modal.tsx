@@ -28,7 +28,7 @@ function SettingModal({ authorId }: { authorId: string }) {
   });
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="flex w-full flex-col items-center px-[20px]">
       <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
       {authorId === userId ? (
         <div className="mb-[30px] w-full rounded-[8px] bg-background">

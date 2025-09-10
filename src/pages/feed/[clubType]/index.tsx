@@ -109,8 +109,8 @@ function Feed() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1" />
-          <div className="flex w-full flex-col">
+          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
+          <div className="flex w-full flex-col px-[20px]">
             {clubType !== 'my' && (
               <button
                 type="button"

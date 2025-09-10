@@ -42,9 +42,9 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
     const userId = await fetchUserId();
 
     const { data: feeds, error } = await supabase.rpc('fetch_my_feeds_transaction', {
-      p_user_id: userId,
-      p_limit: PAGE_SIZE,
-      p_offset: page * PAGE_SIZE,
+      user_id: userId,
+      limit_count: PAGE_SIZE,
+      offset_count: page * PAGE_SIZE,
     }).select(`
       *,
       author:User(name, avatar),
@@ -178,9 +178,9 @@ export async function searchFeeds(keyword: string, page: number) {
   const PAGE_SIZE = 10;
 
   const { data, error } = await supabase.rpc('search_feeds_by_keyword', {
-    p_keyword: keyword ?? '',
-    p_limit: PAGE_SIZE,
-    p_offset: page * PAGE_SIZE,
+    keyword: keyword ?? '',
+    limit_count: PAGE_SIZE,
+    offset_count: page * PAGE_SIZE,
   }).select(`
       *,
       author:User(name, avatar),

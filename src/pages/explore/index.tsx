@@ -1,4 +1,3 @@
-import AdjustmentsIcon from '@/icons/adjustments-icon';
 import useDebounce from '@/hooks/useDebounce';
 import exploreStore from '@/stores/explore-store';
 import ClubSection from '@/components/explore/club/club-section';
@@ -63,18 +62,10 @@ function Explore() {
             해시태그
           </button>
         </div>
-        {searchTarget === 'club' && (
-          <div className="flex flex-row items-center justify-between">
-            <div />
-            <button type="button">
-              <AdjustmentsIcon />
-            </button>
-          </div>
-        )}
       </div>
-      {searchTarget === 'club' && <div className="-mx-[20px] mt-[7px] h-[6px] w-[calc(100%+20px)] bg-background" />}
+
       {searchTarget === 'feed' && <FeedSection keyword={debouncedKeyword} />}
-      {searchTarget === 'club' && <ClubSection />}
+      {searchTarget === 'club' && <ClubSection keyword={debouncedKeyword} />}
       {searchTarget === 'hashtag' && <HashtagSection keyword={debouncedKeyword} />}
     </div>
   );

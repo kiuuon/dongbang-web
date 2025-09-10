@@ -35,34 +35,36 @@ function TagModal({
         bottomSheetCloseRef.current = closeFn;
       }}
     >
-      <div className="mb-[2px] mt-[40px] flex w-full gap-[12px]">
+      <div className="flex w-full flex-col px-[20px]">
+        <div className="mb-[2px] mt-[40px] flex w-full gap-[12px]">
+          <button
+            type="button"
+            className={`h-[36px] w-[79px] rounded-[8px] ${isClub ? 'text-regular16 bg-gray0 text-black' : 'text-bold16 bg-primary text-white'}`}
+            onClick={() => setIsClub(false)}
+          >
+            개인
+          </button>
+          <button
+            type="button"
+            className={`h-[36px] w-[79px] rounded-[8px] ${isClub ? 'text-bold16 bg-primary text-white' : 'text-regular16 bg-gray0 text-black'}`}
+            onClick={() => setIsClub(true)}
+          >
+            동아리
+          </button>
+        </div>
+        {isClub ? (
+          <ClubTagModal selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
+        ) : (
+          <PersonTagModal selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
+        )}
         <button
           type="button"
-          className={`h-[36px] w-[79px] rounded-[8px] ${isClub ? 'text-regular16 bg-gray0 text-black' : 'text-bold16 bg-primary text-white'}`}
-          onClick={() => setIsClub(false)}
+          className="text-bold16 my-[20px] h-[56px] w-full rounded-[24px] bg-primary text-white"
+          onClick={handleConfirm}
         >
-          개인
-        </button>
-        <button
-          type="button"
-          className={`h-[36px] w-[79px] rounded-[8px] ${isClub ? 'text-bold16 bg-primary text-white' : 'text-regular16 bg-gray0 text-black'}`}
-          onClick={() => setIsClub(true)}
-        >
-          동아리
+          확인
         </button>
       </div>
-      {isClub ? (
-        <ClubTagModal selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
-      ) : (
-        <PersonTagModal selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
-      )}
-      <button
-        type="button"
-        className="text-bold16 my-[20px] h-[56px] w-full rounded-[24px] bg-primary text-white"
-        onClick={handleConfirm}
-      >
-        확인
-      </button>
     </BottomSheet>
   );
 }

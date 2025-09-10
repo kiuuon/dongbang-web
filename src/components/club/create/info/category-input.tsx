@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import {
-  sportsCategories,
-  artCategories,
-  hobbyCategories,
-  societyCategories,
-  academicCategories,
+  SPORTS_CATEGORIES,
+  ART_CATEGORIES,
+  HOBBY_CATEGORIES,
+  SOCIETY_CATEGORIES,
+  ACADEMIC_CATEGORIES,
 } from '@/lib/constants';
 import BottomArrowIcon2 from '@/icons/bottom-arrow-icon2';
 
@@ -41,7 +41,7 @@ function CategoryInput({
   const renderCategoryOptions = () => {
     switch (selectedTopCategory) {
       case '운동':
-        return sportsCategories.map((item) => (
+        return SPORTS_CATEGORIES.map((item) => (
           <button
             type="button"
             tabIndex={-1}
@@ -57,7 +57,7 @@ function CategoryInput({
           </button>
         ));
       case '예술':
-        return artCategories.map((item) => (
+        return ART_CATEGORIES.map((item) => (
           <button
             type="button"
             tabIndex={-1}
@@ -73,7 +73,7 @@ function CategoryInput({
           </button>
         ));
       case '취미':
-        return hobbyCategories.map((item) => (
+        return HOBBY_CATEGORIES.map((item) => (
           <button
             type="button"
             tabIndex={-1}
@@ -89,7 +89,7 @@ function CategoryInput({
           </button>
         ));
       case '사회':
-        return societyCategories.map((item) => (
+        return SOCIETY_CATEGORIES.map((item) => (
           <button
             type="button"
             tabIndex={-1}
@@ -105,7 +105,7 @@ function CategoryInput({
           </button>
         ));
       case '학술':
-        return academicCategories.map((item) => (
+        return ACADEMIC_CATEGORIES.map((item) => (
           <button
             type="button"
             tabIndex={-1}

@@ -1,4 +1,5 @@
 import { NewClubType } from '@/types/club-type';
+import { Filters } from '@/stores/filter-store';
 import { supabase } from './supabaseClient';
 import { fetchUserId } from './auth';
 import { shuffleArray } from '../utils';
@@ -11,19 +12,45 @@ export async function createClub(body: NewClubType) {
   if (error) throw error;
 }
 
-export async function fetchClubs(page: number) {
+export async function fetchClubs(keyword: string, filters: Filters, page: number) {
   const PAGE_SIZE = 10;
-  const start = page * PAGE_SIZE;
-  const end = start + PAGE_SIZE - 1;
 
-  const { data, error } = await supabase
-    .from('Club')
-    .select('*, recruitment:Recruitment(recruitment_status, end_date)')
-    .order('created_at', { ascending: false })
-    .range(start, end);
+  const { data, error } = await supabase.rpc('search_clubs_detailed', {
+    keyword: keyword ?? '',
+    club_type: filters.clubType ?? null,
+    university_name: filters.universityName ?? null,
+    detail_types: filters.detailTypes ?? [],
+    location: filters.location ?? null,
+    categories: filters.categories ?? [],
+    recruitment_statuses: filters.recruitmentStatuses ?? [],
+    end_date_option: filters.endDateOption ?? null,
+    dues_option: filters.duesOption ?? null,
+    meeting: filters.meeting ?? null,
+    limit_count: PAGE_SIZE,
+    offset_count: page * PAGE_SIZE,
+  });
 
   if (error) throw error;
-  return data;
+
+  return data ?? [];
+}
+
+export async function fetchClubsCount(keyword: string, filters: Filters) {
+  const { data, error } = await supabase.rpc('count_clubs_detailed', {
+    keyword: keyword ?? '',
+    club_type: filters.clubType ?? null,
+    university_name: filters.universityName ?? null,
+    detail_types: filters.detailTypes ?? [],
+    location: filters.location ?? null,
+    categories: filters.categories ?? [],
+    recruitment_statuses: filters.recruitmentStatuses ?? [],
+    end_date_option: filters.endDateOption ?? null,
+    dues_option: filters.duesOption ?? null,
+    meeting: filters.meeting ?? null,
+  });
+  if (error) throw error;
+
+  return data ?? 0;
 }
 
 export async function fetchAllClubs() {

@@ -49,7 +49,7 @@ function BottomSheet({
     >
       <motion.div
         ref={modalRef}
-        className="flex w-full flex-col items-center rounded-t-[24px] bg-white px-[20px]"
+        className="flex w-full flex-col items-center rounded-t-[24px] bg-white"
         initial={{ y: 400 }}
         animate={{ y: isVisible ? 0 : 400 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}

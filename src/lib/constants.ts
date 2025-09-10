@@ -1,4 +1,4 @@
-const sportsCategories = [
+const SPORTS_CATEGORIES = [
   '축구',
   '농구',
   '야구',
@@ -22,7 +22,7 @@ const sportsCategories = [
   '기타운동',
 ];
 
-const artCategories = [
+const ART_CATEGORIES = [
   '밴드',
   '댄스',
   '연극',
@@ -40,7 +40,7 @@ const artCategories = [
   '기타예술',
 ];
 
-const hobbyCategories = [
+const HOBBY_CATEGORIES = [
   '게임',
   '독서',
   '영화',
@@ -55,9 +55,9 @@ const hobbyCategories = [
   '기타취미',
 ];
 
-const societyCategories = ['봉사', '종교', '기타사회'];
+const SOCIETY_CATEGORIES = ['봉사', '종교', '기타사회'];
 
-const academicCategories = [
+const ACADEMIC_CATEGORIES = [
   '인문',
   '경제',
   '금융',
@@ -75,4 +75,4 @@ const academicCategories = [
   '기타학술',
 ];
 
-export { sportsCategories, artCategories, hobbyCategories, societyCategories, academicCategories };
+export { SPORTS_CATEGORIES, ART_CATEGORIES, HOBBY_CATEGORIES, SOCIETY_CATEGORIES, ACADEMIC_CATEGORIES };
