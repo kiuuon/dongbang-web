@@ -20,7 +20,7 @@ function DetailSearchModal({
   return (
     <div className="flex w-full flex-col rounded-t-[24px] bg-background">
       <div className="text-bold16 mb-[23px] mt-[38px] flex w-full items-center justify-center">상세 설정</div>
-      <div className="flex h-[550px] w-full flex-row">
+      <div className="flex h-[550px] max-h-[calc(100vh-280px)] w-full flex-row">
         <div className="flex h-full w-[118px] min-w-[118px] flex-col bg-background">
           <button
             type="button"
@@ -44,7 +44,7 @@ function DetailSearchModal({
             모집 설정
           </button>
         </div>
-        <div className="h-full w-full bg-white">
+        <div className="h-full w-full overflow-y-auto bg-white">
           {tab === '소속' && <AffiliationSection />}
           {tab === '분야' && <CategorySection />}
           {tab === '모집 설정' && <RecruitmentSection />}
