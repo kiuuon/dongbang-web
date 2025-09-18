@@ -20,7 +20,7 @@ function DetailSearchModal({
   return (
     <div className="flex w-full flex-col rounded-t-[24px] bg-background">
       <div className="text-bold16 mb-[23px] mt-[38px] flex w-full items-center justify-center">상세 설정</div>
-      <div className="flex h-[550px] max-h-[calc(100vh-280px)] w-full flex-row">
+      <div className="flex h-[550px] max-h-[calc(100dvh-280px)] w-full flex-row">
         <div className="flex h-full w-[118px] min-w-[118px] flex-col bg-background">
           <button
             type="button"
