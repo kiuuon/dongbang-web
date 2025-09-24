@@ -4,15 +4,22 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchClubs, fetchClubsCount } from '@/lib/apis/club';
 import { ClubType } from '@/types/club-type';
-import AdjustmentsIcon from '@/icons/adjustments-icon';
 import filtersStore from '@/stores/filter-store';
 import BottomSheet from '@/components/common/bottom-sheet';
 import ClubCard from './club-card';
 import DetailSearchModal from './detail-search-modal.tsx/detail.search-modal';
 
-function ClubSection({ keyword }: { keyword: string }) {
-  const [isDetailSearchModalOpen, setIsDetailSearchModalOpen] = useState(false);
+function ClubSection({
+  keyword,
+  isDetailSearchModalOpen,
+  setIsDetailSearchModalOpen,
+}: {
+  keyword: string;
+  isDetailSearchModalOpen: boolean;
+  setIsDetailSearchModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { filters } = filtersStore();
+  const [openClubCardId, setOpenClubCardId] = useState<string | null>(null);
 
   const observerElement = useRef(null);
   const { data: clubCount } = useQuery({
@@ -76,29 +83,31 @@ function ClubSection({ keyword }: { keyword: string }) {
 
   return (
     <div>
-      <div className="flex flex-row items-center justify-between px-[20px]">
-        <div />
-        <button type="button" onClick={() => setIsDetailSearchModalOpen(true)}>
-          <AdjustmentsIcon />
-        </button>
-      </div>
-
-      <div className="-mx-[20px] mt-[7px] h-[6px] w-[calc(100%+20px)] bg-background" />
-
-      <div className="scrollbar-hide flex min-h-0 flex-1 flex-col gap-[10px] overflow-y-scroll px-[10px] pb-[80px] pt-[10px]">
-        <div className="text-regular10 ml-[10px]">총 {clubCount}건</div>
-        {isPending ? (
-          <div className="flex w-full justify-center">
-            <ClipLoader size={30} color="#F9A825" />
-          </div>
-        ) : (
-          data?.pages.map((page) => page?.map((club: ClubType) => <ClubCard key={club.id} club={club} />))
-        )}
-        {hasNextPage && (
-          <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
-            <ClipLoader size={30} color="#F9A825" />
-          </div>
-        )}
+      <div className="scrollbar-hide flex h-[calc(100vh-200px)] flex-col overflow-y-scroll pb-[40px] pt-[15px]">
+        {!isPending && <div className="text-regular12 ml-[20px]">총 {clubCount}건</div>}
+        <div className="flex flex-col gap-[8px] px-[10px] pt-[12px]">
+          {isPending ? (
+            <div className="flex w-full justify-center">
+              <ClipLoader size={30} color="#F9A825" />
+            </div>
+          ) : (
+            data?.pages.map((page) =>
+              page?.map((club: ClubType) => (
+                <ClubCard
+                  key={club.id}
+                  club={club}
+                  openClubCardId={openClubCardId}
+                  setOpenClubCardId={setOpenClubCardId}
+                />
+              )),
+            )
+          )}
+          {hasNextPage && (
+            <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
+              <ClipLoader size={30} color="#F9A825" />
+            </div>
+          )}
+        </div>
       </div>
 
       {isDetailSearchModalOpen && (

@@ -11,7 +11,7 @@ import filtersStore from '@/stores/filter-store';
 
 function CategorySection() {
   const [selectedTopCategory, setSelectedTopCategory] = useState('');
-  const { draftFilters, toggle } = filtersStore();
+  const { draftFilters, draftToggle } = filtersStore();
 
   return (
     <div className="pl-[30px] pt-[30px]">
@@ -71,7 +71,7 @@ function CategorySection() {
                       type="button"
                       key={category}
                       className={`${draftFilters.categories?.includes(category) ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-white text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-                      onClick={() => toggle('categories', category)}
+                      onClick={() => draftToggle('categories', category)}
                     >
                       {category}
                     </button>
@@ -93,7 +93,7 @@ function CategorySection() {
                       type="button"
                       key={category}
                       className={`${draftFilters.categories?.includes(category) ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-white text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-                      onClick={() => toggle('categories', category)}
+                      onClick={() => draftToggle('categories', category)}
                     >
                       {category}
                     </button>
@@ -115,7 +115,7 @@ function CategorySection() {
                       type="button"
                       key={category}
                       className={`${draftFilters.categories?.includes(category) ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-white text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-                      onClick={() => toggle('categories', category)}
+                      onClick={() => draftToggle('categories', category)}
                     >
                       {category}
                     </button>
@@ -156,7 +156,7 @@ function CategorySection() {
         <button
           type="button"
           className={`${draftFilters.categories?.includes('기타') ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-gray0 text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-          onClick={() => toggle('categories', '기타')}
+          onClick={() => draftToggle('categories', '기타')}
         >
           기타
         </button>
@@ -174,7 +174,7 @@ function CategorySection() {
                       type="button"
                       key={category}
                       className={`${draftFilters.categories?.includes(category) ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-white text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-                      onClick={() => toggle('categories', category)}
+                      onClick={() => draftToggle('categories', category)}
                     >
                       {category}
                     </button>
@@ -196,7 +196,7 @@ function CategorySection() {
                       type="button"
                       key={category}
                       className={`${draftFilters.categories?.includes(category) ? 'text-bold14 bg-primary text-white' : 'text-regular14 bg-white text-gray2'} flex h-[31px] w-[63px] items-center justify-center rounded-[5px]`}
-                      onClick={() => toggle('categories', category)}
+                      onClick={() => draftToggle('categories', category)}
                     >
                       {category}
                     </button>

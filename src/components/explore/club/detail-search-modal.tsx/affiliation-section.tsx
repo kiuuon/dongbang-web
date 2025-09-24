@@ -29,7 +29,7 @@ const LOCATIONS = [
 function AffiliationSection() {
   const [searchedUniversityList, setSearchedUniversityList] = useState<Array<{ id: number; name: string }>>([]);
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
-  const { draftFilters, patch, toggle } = filtersStore();
+  const { draftFilters, draftPatch, draftToggle } = filtersStore();
 
   const { data: universityList } = useQuery({
     queryKey: ['universityList'],
@@ -51,7 +51,7 @@ function AffiliationSection() {
   });
 
   const handleUniversity = (event: React.ChangeEvent<HTMLInputElement>) => {
-    patch('universityName', event.target.value);
+    draftPatch('universityName', event.target.value);
 
     if (!universityList) return;
 
@@ -73,14 +73,14 @@ function AffiliationSection() {
             className={`${draftFilters.clubType === 'campus' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[47px] items-center justify-center rounded-[16px]`}
             onClick={() => {
               if (draftFilters.clubType === 'campus') {
-                patch('clubType', null);
-                patch('universityName', null);
+                draftPatch('clubType', null);
+                draftPatch('universityName', null);
                 setSearchedUniversityList([]);
-                toggle('detailTypes', '__CLEAR__');
+                draftToggle('detailTypes', '__CLEAR__');
                 return;
               }
-              patch('clubType', 'campus');
-              patch('location', null);
+              draftPatch('clubType', 'campus');
+              draftPatch('location', null);
             }}
           >
             교내
@@ -90,14 +90,14 @@ function AffiliationSection() {
             className={`${draftFilters.clubType === 'union' ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[47px] items-center justify-center rounded-[16px]`}
             onClick={() => {
               if (draftFilters.clubType === 'union') {
-                patch('clubType', null);
-                patch('location', null);
+                draftPatch('clubType', null);
+                draftPatch('location', null);
                 return;
               }
-              patch('clubType', 'union');
-              patch('universityName', null);
+              draftPatch('clubType', 'union');
+              draftPatch('universityName', null);
               setSearchedUniversityList([]);
-              toggle('detailTypes', '__CLEAR__');
+              draftToggle('detailTypes', '__CLEAR__');
             }}
           >
             연합
@@ -121,7 +121,7 @@ function AffiliationSection() {
                   type="button"
                   className="w-full p-[8px] text-start"
                   onClick={() => {
-                    patch('universityName', university.name);
+                    draftPatch('universityName', university.name);
                     setSearchedUniversityList([]);
                   }}
                 >
@@ -140,14 +140,14 @@ function AffiliationSection() {
             <button
               type="button"
               className={`${draftFilters.detailTypes?.includes('총 동아리') ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[71px] items-center justify-center rounded-[24px]`}
-              onClick={() => toggle('detailTypes', '총 동아리')}
+              onClick={() => draftToggle('detailTypes', '총 동아리')}
             >
               총 동아리
             </button>
             <button
               type="button"
               className={`${draftFilters.detailTypes?.includes('중앙 동아리') ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[81px] items-center justify-center rounded-[24px]`}
-              onClick={() => toggle('detailTypes', '중앙 동아리')}
+              onClick={() => draftToggle('detailTypes', '중앙 동아리')}
             >
               중앙 동아리
             </button>
@@ -156,14 +156,14 @@ function AffiliationSection() {
             <button
               type="button"
               className={`${draftFilters.detailTypes?.includes('단과대 동아리') ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[92px] items-center justify-center rounded-[24px]`}
-              onClick={() => toggle('detailTypes', '단과대 동아리')}
+              onClick={() => draftToggle('detailTypes', '단과대 동아리')}
             >
               단과대 동아리
             </button>
             <button
               type="button"
               className={`${draftFilters.detailTypes?.includes('과 동아리') ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[71px] items-center justify-center rounded-[24px]`}
-              onClick={() => toggle('detailTypes', '과 동아리')}
+              onClick={() => draftToggle('detailTypes', '과 동아리')}
             >
               과 동아리
             </button>
@@ -172,7 +172,7 @@ function AffiliationSection() {
             <button
               type="button"
               className={`${draftFilters.detailTypes?.includes('소모임') ? 'text-bold12 bg-primary text-white' : 'text-regular12 bg-gray0 text-black'} flex h-[32px] w-[58px] items-center justify-center rounded-[24px]`}
-              onClick={() => toggle('detailTypes', '소모임')}
+              onClick={() => draftToggle('detailTypes', '소모임')}
             >
               소모임
             </button>
@@ -197,7 +197,7 @@ function AffiliationSection() {
                 type="button"
                 className="w-full p-[8px] text-start"
                 onClick={() => {
-                  patch('location', null);
+                  draftPatch('location', null);
                   setIsLocationDropdownOpen(false);
                 }}
               >
@@ -209,7 +209,7 @@ function AffiliationSection() {
                   type="button"
                   className="w-full p-[8px] text-start"
                   onClick={() => {
-                    patch('location', item);
+                    draftPatch('location', item);
                     setIsLocationDropdownOpen(false);
                   }}
                 >

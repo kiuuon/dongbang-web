@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Image from 'next/image';
 
 import { ClubType } from '@/types/club-type';
@@ -6,9 +5,15 @@ import LockIcon from '@/icons/lock-icon';
 
 type RecruitmentStatus = 'open' | 'always' | 'closed';
 
-function ClubCard({ club }: { club: ClubType }) {
-  const [isOpen, setIsOpen] = useState(false);
-
+function ClubCard({
+  club,
+  openClubCardId,
+  setOpenClubCardId,
+}: {
+  club: ClubType;
+  openClubCardId: string | null;
+  setOpenClubCardId: React.Dispatch<React.SetStateAction<string | null>>;
+}) {
   const statusClasses: Record<RecruitmentStatus, string> = {
     open: 'text-bold12 text-primary',
     always: 'text-regular12',
@@ -42,8 +47,8 @@ function ClubCard({ club }: { club: ClubType }) {
     <div className="relative flex items-center">
       <button
         type="button"
-        className={`relative z-10 bg-white transition-all ${isOpen ? 'w-[calc(100%-56px)]' : 'w-full'} flex rounded-[8px] border-b-gray0 px-[10px] pb-[9px] pt-[20px] shadow-[0_1px_24px_0_rgba(0,0,0,0.08)]`}
-        onClick={() => setIsOpen(!isOpen)}
+        className={`relative z-10 bg-white transition-all ${openClubCardId === club.id ? 'w-[calc(100%-56px)]' : 'w-full'} flex rounded-[8px] border-b-gray0 px-[10px] pb-[9px] pt-[20px] shadow-[0_0_12px_0_rgba(0,0,0,0.08)]`}
+        onClick={() => setOpenClubCardId(openClubCardId === club.id ? null : club.id)}
       >
         <div className="mr-[20px] min-w-[60px]">
           <Image
@@ -88,13 +93,13 @@ function ClubCard({ club }: { club: ClubType }) {
       <div className="text-regular12 absolute right-0 flex w-[72px] flex-col gap-[7px] text-primary">
         <button
           type="button"
-          className={`flex h-[44px] items-center justify-center bg-white pl-[16px] ${isOpen && 'shadow-[0_1px_4px_0_rgba(0,0,0,0.18)]'}`}
+          className={`flex h-[44px] items-center justify-center bg-white pl-[16px] ${openClubCardId === club.id && 'shadow-[0_1px_4px_0_rgba(0,0,0,0.18)]'}`}
         >
           소개
         </button>
         <button
           type="button"
-          className={`flex h-[44px] items-center justify-center bg-white pl-[16px] ${isOpen && 'shadow-[0_1px_4px_0_rgba(0,0,0,0.18)]'}`}
+          className={`flex h-[44px] items-center justify-center bg-white pl-[16px] ${openClubCardId === club.id && 'shadow-[0_1px_4px_0_rgba(0,0,0,0.18)]'}`}
         >
           {club.recruitment?.[0].recruitment_status === 'closed' ? <LockIcon /> : '모집 공고'}
         </button>

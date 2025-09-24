@@ -14,7 +14,7 @@ function RecruitmentSection() {
   const [isMeetingDropdownOpen, setIsMeetingDropdownOpen] = useState(false);
 
   const [meetingUnit, setMeetingUnit] = useState<'주' | '달' | '학기' | null>(null);
-  const { draftFilters, patch, toggle } = filtersStore();
+  const { draftFilters, draftPatch, draftToggle } = filtersStore();
 
   return (
     <div className="flex w-full flex-col gap-[16px] pl-[30px] pt-[30px]">
@@ -41,8 +41,8 @@ function RecruitmentSection() {
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
-                toggle('recruitmentStatuses', '__CLEAR__');
-                patch('endDateOption', null);
+                draftToggle('recruitmentStatuses', '__CLEAR__');
+                draftPatch('endDateOption', null);
                 setIsStateDropdownOpen(false);
               }}
             >
@@ -53,15 +53,15 @@ function RecruitmentSection() {
               className="w-full p-[8px] text-start"
               onClick={() => {
                 if (!draftFilters.recruitmentStatuses?.includes('open')) {
-                  toggle('recruitmentStatuses', 'open');
+                  draftToggle('recruitmentStatuses', 'open');
                 }
                 if (!draftFilters.recruitmentStatuses?.includes('always')) {
-                  toggle('recruitmentStatuses', 'always');
+                  draftToggle('recruitmentStatuses', 'always');
                 }
                 if (draftFilters.recruitmentStatuses?.includes('closed')) {
-                  toggle('recruitmentStatuses', 'closed');
+                  draftToggle('recruitmentStatuses', 'closed');
                 }
-                patch('endDateOption', null);
+                draftPatch('endDateOption', null);
                 setIsStateDropdownOpen(false);
               }}
             >
@@ -72,15 +72,15 @@ function RecruitmentSection() {
               className="w-full p-[8px] text-start"
               onClick={() => {
                 if (draftFilters.recruitmentStatuses?.includes('open')) {
-                  toggle('recruitmentStatuses', 'open');
+                  draftToggle('recruitmentStatuses', 'open');
                 }
                 if (draftFilters.recruitmentStatuses?.includes('always')) {
-                  toggle('recruitmentStatuses', 'always');
+                  draftToggle('recruitmentStatuses', 'always');
                 }
                 if (!draftFilters.recruitmentStatuses?.includes('closed')) {
-                  toggle('recruitmentStatuses', 'closed');
+                  draftToggle('recruitmentStatuses', 'closed');
                 }
-                patch('endDateOption', null);
+                draftPatch('endDateOption', null);
                 setIsStateDropdownOpen(false);
               }}
             >
@@ -119,10 +119,10 @@ function RecruitmentSection() {
                   className="w-full p-[8px] text-start"
                   onClick={() => {
                     if (!draftFilters.recruitmentStatuses?.includes('open')) {
-                      toggle('recruitmentStatuses', 'open');
+                      draftToggle('recruitmentStatuses', 'open');
                     }
                     if (!draftFilters.recruitmentStatuses?.includes('always')) {
-                      toggle('recruitmentStatuses', 'always');
+                      draftToggle('recruitmentStatuses', 'always');
                     }
                     setIsEndDateDropdownOpen(false);
                   }}
@@ -136,12 +136,12 @@ function RecruitmentSection() {
                     className="w-full p-[8px] text-start"
                     onClick={() => {
                       if (!draftFilters.recruitmentStatuses?.includes('open')) {
-                        toggle('recruitmentStatuses', 'open');
+                        draftToggle('recruitmentStatuses', 'open');
                       }
                       if (draftFilters.recruitmentStatuses?.includes('always')) {
-                        toggle('recruitmentStatuses', 'always');
+                        draftToggle('recruitmentStatuses', 'always');
                       }
-                      patch('endDateOption', endDate);
+                      draftPatch('endDateOption', endDate);
                       setIsEndDateDropdownOpen(false);
                     }}
                   >
@@ -153,10 +153,10 @@ function RecruitmentSection() {
                   className="w-full p-[8px] text-start"
                   onClick={() => {
                     if (draftFilters.recruitmentStatuses?.includes('open')) {
-                      toggle('recruitmentStatuses', 'open');
+                      draftToggle('recruitmentStatuses', 'open');
                     }
                     if (!draftFilters.recruitmentStatuses?.includes('always')) {
-                      toggle('recruitmentStatuses', 'always');
+                      draftToggle('recruitmentStatuses', 'always');
                     }
                     setIsEndDateDropdownOpen(false);
                   }}
@@ -184,7 +184,7 @@ function RecruitmentSection() {
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
-                patch('duesOption', null);
+                draftPatch('duesOption', null);
                 setIsDuesDropdownOpen(false);
               }}
             >
@@ -194,7 +194,7 @@ function RecruitmentSection() {
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
-                patch('duesOption', '0원 ~ 5만원');
+                draftPatch('duesOption', '0원 ~ 5만원');
                 setIsDuesDropdownOpen(false);
               }}
             >
@@ -204,7 +204,7 @@ function RecruitmentSection() {
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
-                patch('duesOption', '5만원 ~ 10만원');
+                draftPatch('duesOption', '5만원 ~ 10만원');
                 setIsDuesDropdownOpen(false);
               }}
             >
@@ -214,7 +214,7 @@ function RecruitmentSection() {
               type="button"
               className="w-full p-[8px] text-start"
               onClick={() => {
-                patch('duesOption', '10만원 이상');
+                draftPatch('duesOption', '10만원 이상');
                 setIsDuesDropdownOpen(false);
               }}
             >
@@ -243,7 +243,7 @@ function RecruitmentSection() {
                     type="button"
                     className="w-full p-[8px] text-start"
                     onClick={() => {
-                      patch('meeting', null);
+                      draftPatch('meeting', null);
                       setIsMeetingDropdownOpen(false);
                     }}
                   >
@@ -288,7 +288,7 @@ function RecruitmentSection() {
                     type="button"
                     className="w-full p-[8px] text-start"
                     onClick={() => {
-                      patch('meeting', `${meetingUnit} 1회`);
+                      draftPatch('meeting', `${meetingUnit} 1회`);
                       setMeetingUnit(null);
                       setIsMeetingDropdownOpen(false);
                     }}
@@ -299,7 +299,7 @@ function RecruitmentSection() {
                     type="button"
                     className="w-full p-[8px] text-start"
                     onClick={() => {
-                      patch('meeting', `${meetingUnit} 2회`);
+                      draftPatch('meeting', `${meetingUnit} 2회`);
                       setMeetingUnit(null);
                       setIsMeetingDropdownOpen(false);
                     }}
@@ -310,7 +310,7 @@ function RecruitmentSection() {
                     type="button"
                     className="w-full p-[8px] text-start"
                     onClick={() => {
-                      patch('meeting', `${meetingUnit} 3회 이상`);
+                      draftPatch('meeting', `${meetingUnit} 3회 이상`);
                       setMeetingUnit(null);
                       setIsMeetingDropdownOpen(false);
                     }}

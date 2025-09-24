@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
+import { fetchUniversityList } from '@/lib/apis/sign-up';
 import filtersStore from '@/stores/filter-store';
 import AffiliationSection from './affiliation-section';
 import CategorySection from './category-section';
@@ -11,7 +13,26 @@ function DetailSearchModal({
   setIsDetailSearchModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [tab, setTab] = useState('소속');
-  const { reset, apply, discard } = filtersStore();
+  const { reset, apply, discard, draftFilters } = filtersStore();
+
+  const { data: universityList } = useQuery({
+    queryKey: ['universityList'],
+    queryFn: fetchUniversityList,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   useEffect(() => {
     discard();
@@ -63,6 +84,9 @@ function DetailSearchModal({
           type="button"
           className="text-bold16 flex h-[45px] w-[173px] items-center justify-center rounded-[15px] bg-primary text-white"
           onClick={() => {
+            if (!universityList?.some((u) => u.name === draftFilters.universityName)) {
+              draftFilters.universityName = null;
+            }
             apply();
             setIsDetailSearchModalOpen(false);
           }}
