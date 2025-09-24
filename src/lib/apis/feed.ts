@@ -42,9 +42,9 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
     const userId = await fetchUserId();
 
     const { data: feeds, error } = await supabase.rpc('fetch_my_feeds_transaction', {
-      user_id: userId,
-      limit_count: PAGE_SIZE,
-      offset_count: page * PAGE_SIZE,
+      p_user_id: userId,
+      p_limit_count: PAGE_SIZE,
+      p_offset_count: page * PAGE_SIZE,
     }).select(`
       *,
       author:User(name, avatar),
