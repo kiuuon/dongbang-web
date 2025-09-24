@@ -5,7 +5,7 @@ function FilterList() {
   const { filters, patch, toggle } = filtersStore();
 
   return (
-    <div className="scrollbar-hide mr-[8px] flex w-full flex-row gap-[8px] overflow-x-scroll">
+    <div className="scrollbar-hide mr-[8px] flex w-full flex-row gap-[16px] overflow-x-scroll py-[8px]">
       {filters.clubType && (
         <FilterItem
           label={filters.clubType === 'campus' ? '교내' : '연합'}
