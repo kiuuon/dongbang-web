@@ -114,15 +114,18 @@ function Club() {
       <Schedule />
       <BoardSummary />
 
-      <button
-        type="button"
-        className="fixed bottom-[60px] right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"
-        onClick={() => {
-          setIsWriteModalOpen((prev) => !prev);
-        }}
-      >
-        {isWriteModalOpen ? <XIcon3 /> : <PencilIcon />}
-      </button>
+      <div className="fixed bottom-[60px] left-0 right-0 m-auto flex w-full max-w-[400px] items-end px-[20px]">
+        <button
+          type="button"
+          className="absolute right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"
+          onClick={() => {
+            setIsWriteModalOpen((prev) => !prev);
+          }}
+        >
+          {isWriteModalOpen ? <XIcon3 /> : <PencilIcon />}
+        </button>
+      </div>
+
       {isWriteModalOpen && <WriteModal onClose={() => setIsWriteModalOpen(false)} />}
 
       {isBottomSheetOpen && (

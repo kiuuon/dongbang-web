@@ -65,7 +65,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     <div
       role="button"
       tabIndex={0}
-      className="fixed bottom-0 left-0 z-40 h-screen w-screen bg-black bg-opacity-60"
+      className="fixed bottom-0 left-0 right-0 z-40 m-auto h-screen w-screen max-w-[400px] bg-black bg-opacity-60"
       onClick={handleOutSideClick}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {

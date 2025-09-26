@@ -95,9 +95,7 @@ function Feed() {
       <Head>
         {data?.pages.map((page) =>
           page?.map((feed) =>
-            feed.photos.map((photo: string) => (
-              <link key={photo} rel="preload" as="image" href={`${photo}?width=360&quality=80&format=webp`} />
-            )),
+            feed.photos.map((photo: string) => <link key={photo} rel="preload" as="image" href={photo} />),
           ),
         )}
       </Head>

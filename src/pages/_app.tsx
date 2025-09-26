@@ -102,8 +102,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-      {!isWebView && tabPage.includes(pathname) && <Tab />}
+      <div className="m-auto max-w-[400px] overflow-hidden shadow-lg">
+        <Component {...pageProps} />
+        {!isWebView && tabPage.includes(pathname) && <Tab />}
+      </div>
     </QueryClientProvider>
   );
 }
