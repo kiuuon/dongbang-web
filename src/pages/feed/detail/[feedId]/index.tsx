@@ -220,7 +220,7 @@ function FeedDetail() {
       </div>
 
       <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
-        {feed.photos.map((photo) => (
+        {feed.photos.map((photo: string) => (
           <div key={photo} className="keen-slider__slide">
             <Image
               src={photo}
