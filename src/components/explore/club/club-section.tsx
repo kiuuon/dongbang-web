@@ -40,6 +40,7 @@ function ClubSection({
       return false;
     },
   });
+
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
     queryKey: ['clubs', keyword, filters],
