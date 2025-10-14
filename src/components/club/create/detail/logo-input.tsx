@@ -39,7 +39,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="absolute h-[70px] w-[70px] opacity-0"
+            className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
           />
           <CameraIcon />
           <div className="text-regular12 text-gray0">

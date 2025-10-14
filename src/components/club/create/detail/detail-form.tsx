@@ -36,7 +36,7 @@ function DetailForm() {
   });
 
   const { mutateAsync: uploadLogo } = useMutation({
-    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'club-image'),
     onError: (error) => {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
@@ -54,7 +54,7 @@ function DetailForm() {
   });
 
   const { mutateAsync: uploadActivityPhoto } = useMutation({
-    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'club-image'),
     onError: (error) => {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(

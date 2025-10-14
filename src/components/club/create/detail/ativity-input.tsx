@@ -32,7 +32,7 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
     }
   }, [preview]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (!files) return;
 
@@ -41,20 +41,20 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
       return;
     }
 
-    onChange([...value, ...Array.from(files || [])]);
-    const newPreviews: string[] = [...(preview || [])];
+    onChange([...value, ...Array.from(files)]);
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          newPreviews.push(reader.result);
+    const results = await Promise.all(
+      Array.from(files).map(
+        (file) =>
+          new Promise<string>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.readAsDataURL(file);
+          }),
+      ),
+    );
 
-          setPreview([...newPreviews]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    setPreview([...(preview || []), ...results]);
   };
 
   const handleRemove = (index: number) => {
@@ -81,7 +81,7 @@ function ActivityInput({ value, onChange }: { value: File[]; onChange: (value: F
             accept="image/*"
             multiple
             onChange={handleImageChange}
-            className="absolute h-[70px] w-[70px] opacity-0"
+            className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
           />
           <CameraIcon />
           <div className="text-regular12 text-gray0">

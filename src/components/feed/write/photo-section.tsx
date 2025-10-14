@@ -47,21 +47,23 @@ function PhotoSection({
       return;
     }
 
-    setPhotos([...photos, ...Array.from(files || [])]);
+    setPhotos([...photos, ...Array.from(files)]);
 
-    const newPreviews: string[] = [...(preview || [])];
+    const readFiles = async () => {
+      const results = await Promise.all(
+        Array.from(files).map(
+          (file) =>
+            new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.readAsDataURL(file);
+            }),
+        ),
+      );
+      setPreview((prev) => [...prev, ...results]);
+    };
 
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          newPreviews.push(reader.result);
-
-          setPreview([...newPreviews]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    readFiles();
   };
 
   const handleRemove = (index: number) => {

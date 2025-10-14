@@ -48,7 +48,7 @@ function WriteFeed() {
   });
 
   const { mutateAsync: uploadPhoto } = useMutation({
-    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'feed-image'),
     onError: (error) => {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
