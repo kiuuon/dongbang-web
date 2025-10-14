@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+import 'keen-slider/keen-slider.min.css';
+import { useKeenSlider } from 'keen-slider/react';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchFeedDetail } from '@/lib/apis/feed';
@@ -23,15 +24,19 @@ import SettingModal from '@/components/feed/feed-card/setting-modal';
 function FeedDetail() {
   const router = useRouter();
   const { feedId } = router.query;
-  const [[page, direction], setPage] = useState([0, 0]);
+  const [page, setPage] = useState(0);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
 
+  const [sliderRef] = useKeenSlider({
+    slideChanged(slider) {
+      setPage(slider.track.details.rel);
+    },
+  });
+
   const scrollRef = useRef<HTMLDivElement>(null);
-  const dragStartRef = useRef<{ x: number; y: number } | null>(null);
-  const directionLockedRef = useRef<'horizontal' | 'vertical' | null>(null);
 
   useEffect(() => {
     sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
@@ -113,23 +118,6 @@ function FeedDetail() {
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
-
-  const variants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 300 : -300,
-    }),
-    center: {
-      x: 0,
-    },
-    exit: (dir: number) => ({
-      x: dir > 0 ? -300 : 300,
-    }),
-  };
-
-  const goToPage = (newPage: number, dir: number) => {
-    if (newPage < 0 || newPage >= feed.photos.length) return;
-    setPage([newPage, dir]);
-  };
 
   const handleClubClick = () => {
     if (feed.taggedClubs.length > 0) {
@@ -231,62 +219,21 @@ function FeedDetail() {
         </button>
       </div>
 
-      <div className="relative mb-[12px] mt-[16px] aspect-square w-full">
-        <AnimatePresence initial={false} custom={direction}>
-          <motion.img
-            key={page}
-            src={feed.photos[page]}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: 'easing' },
-            }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            onPointerDown={(event) => {
-              dragStartRef.current = { x: event.clientX, y: event.clientY };
-              directionLockedRef.current = null;
-            }}
-            onPointerMove={(e) => {
-              if (!dragStartRef.current || directionLockedRef.current) return;
-
-              const dx = e.clientX - dragStartRef.current.x;
-              const dy = e.clientY - dragStartRef.current.y;
-
-              if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-                directionLockedRef.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
-
-                if (directionLockedRef.current === 'horizontal') {
-                  // eslint-disable-next-line no-param-reassign
-                  scrollRef.current!.style.overflow = 'hidden';
-                }
-              }
-            }}
-            onPointerUp={() => {
-              if (scrollRef.current) {
-                // eslint-disable-next-line no-param-reassign
-                scrollRef.current.style.overflow = 'auto';
-              }
-              dragStartRef.current = null;
-              directionLockedRef.current = null;
-            }}
-            onDragEnd={(_, { offset }) => {
-              if (scrollRef.current) {
-                // eslint-disable-next-line no-param-reassign
-                scrollRef.current.style.overflow = 'auto';
-              }
-              if (offset.x < -30) {
-                goToPage(page + 1, 1);
-              } else if (offset.x > 30) {
-                goToPage(page - 1, -1);
-              }
-            }}
-            className="absolute left-0 top-0 aspect-square w-full cursor-pointer select-none rounded-[8px] object-cover"
-          />
-        </AnimatePresence>
+      <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
+        {feed.photos.map((photo) => (
+          <div key={photo} className="keen-slider__slide">
+            <Image
+              src={photo}
+              alt="피드 이미지"
+              fill
+              style={{
+                objectFit: 'cover',
+                borderRadius: '8px',
+                border: '1px solid #F9F9F9',
+              }}
+            />
+          </div>
+        ))}
       </div>
 
       <div className="mb-[12px] flex h-[7px] w-full items-center justify-center">

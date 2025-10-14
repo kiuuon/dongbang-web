@@ -82,7 +82,7 @@ function Feed() {
       );
     }
 
-    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />));
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
