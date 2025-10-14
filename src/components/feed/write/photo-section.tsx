@@ -65,8 +65,10 @@ function PhotoSection({
   };
 
   const handleRemove = (index: number) => {
-    const newPreviews = photos?.filter((_, idx) => idx !== index);
-    setPhotos(newPreviews || []);
+    const newPhotos = photos?.filter((_, idx) => idx !== index);
+    const newPreviews = preview?.filter((_, idx) => idx !== index);
+    setPhotos(newPhotos || []);
+    setPreview(newPreviews || []);
   };
 
   return (
@@ -81,7 +83,7 @@ function PhotoSection({
           accept="image/*"
           multiple
           onChange={handleImageChange}
-          className="absolute h-[70px] w-[70px] opacity-0"
+          className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
         />
         <CameraIcon />
         <div className="text-regular12 text-gray0">
