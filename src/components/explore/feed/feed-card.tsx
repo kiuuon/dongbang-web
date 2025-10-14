@@ -11,7 +11,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   return (
     <button
       type="button"
-      className="flex max-w-[170px] flex-col"
+      className="flex flex-col"
       onClick={() => {
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(JSON.stringify({ message: 'go to feed detail page', feedId: feed.id }));

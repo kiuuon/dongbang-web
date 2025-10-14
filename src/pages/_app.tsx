@@ -102,7 +102,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="scrollbar-hide m-auto max-w-[400px] overflow-scroll shadow-lg">
+      <div className="scrollbar-hide m-auto max-w-[600px] overflow-scroll shadow-lg">
         <Component {...pageProps} />
         {!isWebView && tabPage.includes(pathname) && <Tab />}
       </div>

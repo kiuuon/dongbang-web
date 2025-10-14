@@ -48,7 +48,9 @@ function FeedContent({ content }: { content: string }) {
   useEffect(() => {
     const hiddenEl = hiddenRef.current;
     const visibleEl = visibleRef.current;
+
     if (!visibleEl || !hiddenEl) return;
+
     setIsOverflowing(hiddenEl.scrollHeight > visibleEl.clientHeight);
   }, [content]);
 
@@ -73,11 +75,12 @@ function FeedContent({ content }: { content: string }) {
     >
       <div
         ref={hiddenRef}
-        className="invisible absolute left-0 top-0 whitespace-pre-line"
+        className="whitespace-pre-line, invisible absolute left-0 top-0 w-[600px]"
         style={{ visibility: 'hidden', pointerEvents: 'none', position: 'absolute' }}
       >
         {renderContentWithHashtags(cleanedContent)}
       </div>
+
       {isExpanded || !isOverflowing ? (
         <div className="whitespace-pre-line">{renderContentWithHashtags(cleanedContent)}</div>
       ) : (

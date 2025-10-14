@@ -43,7 +43,7 @@ function BottomSheet({
     <div
       tabIndex={0}
       role="button"
-      className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[400px] items-end bg-black bg-opacity-60"
+      className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-end bg-black bg-opacity-60"
       onClick={handleOutsideClick}
       onKeyDown={handleOutsideClick}
     >

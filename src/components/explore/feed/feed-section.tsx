@@ -71,7 +71,7 @@ function FeedSection({ keyword }: { keyword: string }) {
   return (
     <div
       ref={scrollRef}
-      className="scrollbar-hide mx-auto grid w-full max-w-[393px] grid-cols-2 gap-[13px] overflow-y-scroll px-[20px] pb-[80px] pt-[15px]"
+      className="scrollbar-hide mx-auto grid w-full grid-cols-2 gap-[13px] overflow-y-scroll px-[20px] pb-[80px] pt-[15px]"
     >
       {data?.pages.map((page) =>
         page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />),

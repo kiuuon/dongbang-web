@@ -114,7 +114,7 @@ function Club() {
       <Schedule />
       <BoardSummary />
 
-      <div className="fixed bottom-[60px] left-0 right-0 m-auto flex w-full max-w-[400px] items-end px-[20px]">
+      <div className="fixed bottom-[60px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">
         <button
           type="button"
           className="absolute right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"

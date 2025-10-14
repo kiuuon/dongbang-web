@@ -53,7 +53,7 @@ function FeedHeader({
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-10 m-auto flex h-[60px] w-full max-w-[400px] items-center justify-between bg-white px-[20px] transition-transform duration-300 ${
+      className={`fixed left-0 right-0 top-0 z-10 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between bg-white px-[20px] transition-transform duration-300 ${
         show ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
