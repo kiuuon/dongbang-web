@@ -1,12 +1,27 @@
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/router';
+
+import exploreStore from '@/stores/explore-store';
 
 function FeedContent({ content }: { content: string }) {
+  const router = useRouter();
   const hiddenRef = useRef<HTMLDivElement>(null);
   const visibleRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(true);
 
+  const setSearchTarget = exploreStore((state) => state.setSearchTarget);
+  const setKeyword = exploreStore((state) => state.setKeyword);
+  const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
+
   const cleanedContent = content.replace(/[\s\n]+$/, '');
+
+  const clickHashtag = (tag: string) => {
+    setSearchTarget('hashtag');
+    setKeyword(tag);
+    setSelectedHashtag(tag);
+    router.push('/explore');
+  };
 
   const renderContentWithHashtags = (text: string) => {
     const parts = text.split(/(?=#)|(\n)/g).filter(Boolean);
@@ -23,9 +38,7 @@ function FeedContent({ content }: { content: string }) {
             className="cursor-pointer text-green"
             onClick={(event) => {
               event.stopPropagation();
-              // TODO: Implement hashtag click handling
-              // eslint-disable-next-line no-console
-              console.log(tag);
+              clickHashtag(tag);
             }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
