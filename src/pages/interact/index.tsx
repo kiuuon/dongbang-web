@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
@@ -8,6 +8,13 @@ import { sendFeedback } from '@/lib/apis/feedback';
 function Interact() {
   const router = useRouter();
   const [feedBack, setFeedBack] = useState('');
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   const { mutate } = useMutation({
     mutationFn: () => sendFeedback(feedBack),
@@ -34,7 +41,9 @@ function Interact() {
   });
 
   return (
-    <div className="flex h-screen flex-col items-center justify-between px-[20px] py-[80px]">
+    <div
+      className={`flex h-screen flex-col items-center justify-between px-[20px] pt-[80px] ${isWebView ? 'pb-[20px]' : 'pb-[80px]'}`}
+    >
       <div className="flex flex-col items-center gap-[13px]">
         <Image src="/images/post.gif" alt="post" width={70} height={70} priority />
         <div className="text-bold20 text-center text-gray1">

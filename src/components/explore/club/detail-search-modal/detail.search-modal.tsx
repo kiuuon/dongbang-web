@@ -72,10 +72,10 @@ function DetailSearchModal({
         </div>
       </div>
 
-      <div className="flex h-[94px] w-full items-center gap-[48px] bg-white">
+      <div className="flex h-[94px] w-full items-center justify-center gap-[48px] bg-white">
         <button
           type="button"
-          className="text-bold16 ml-[44px] flex h-[45px] w-[101px] items-center justify-center"
+          className="text-bold16 flex h-[45px] w-[101px] items-center justify-center"
           onClick={reset}
         >
           전체 초기화

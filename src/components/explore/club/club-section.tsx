@@ -7,7 +7,7 @@ import { ClubType } from '@/types/club-type';
 import filtersStore from '@/stores/filter-store';
 import BottomSheet from '@/components/common/bottom-sheet';
 import ClubCard from './club-card';
-import DetailSearchModal from './detail-search-modal.tsx/detail.search-modal';
+import DetailSearchModal from './detail-search-modal/detail.search-modal';
 
 function ClubSection({
   keyword,

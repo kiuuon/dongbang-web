@@ -20,6 +20,7 @@ import TaggedClubModal from '@/components/feed/feed-card/tagged-club-modal';
 import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
 import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
+import exploreStore from '@/stores/explore-store';
 
 function FeedDetail() {
   const router = useRouter();
@@ -29,6 +30,10 @@ function FeedDetail() {
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+
+  const setSearchTarget = exploreStore((state) => state.setSearchTarget);
+  const setKeyword = exploreStore((state) => state.setKeyword);
+  const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
 
   const [sliderRef] = useKeenSlider({
     slideChanged(slider) {
@@ -69,6 +74,18 @@ function FeedDetail() {
     );
   }
 
+  const clickHashtag = (tag: string) => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'hashtag click', payload: tag }));
+      return;
+    }
+
+    setSearchTarget('hashtag');
+    setKeyword(tag);
+    setSelectedHashtag(tag);
+    router.push('/explore');
+  };
+
   const renderContentWithHashtags = (text: string) => {
     const parts = text.split(/(?=#)|(\n)/g).filter(Boolean);
 
@@ -84,16 +101,12 @@ function FeedDetail() {
             className="cursor-pointer text-green"
             onClick={(event) => {
               event.stopPropagation();
-              // TODO: Implement hashtag click handling
-              // eslint-disable-next-line no-console
-              console.log(tag);
+              clickHashtag(tag);
             }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.stopPropagation();
-                // TODO: Implement hashtag click handling
-                // eslint-disable-next-line no-console
-                console.log(tag);
+                clickHashtag(tag);
               }
             }}
           >

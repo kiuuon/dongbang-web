@@ -17,6 +17,11 @@ function FeedContent({ content }: { content: string }) {
   const cleanedContent = content.replace(/[\s\n]+$/, '');
 
   const clickHashtag = (tag: string) => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'hashtag click', payload: tag }));
+      return;
+    }
+
     setSearchTarget('hashtag');
     setKeyword(tag);
     setSelectedHashtag(tag);
@@ -43,9 +48,7 @@ function FeedContent({ content }: { content: string }) {
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.stopPropagation();
-                // TODO: Implement hashtag click handling
-                // eslint-disable-next-line no-console
-                console.log(tag);
+                clickHashtag(tag);
               }
             }}
           >
