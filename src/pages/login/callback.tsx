@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { supabase } from '@/lib/apis/supabaseClient';
 
-export default function LoginCallback() {
+function LoginCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
@@ -28,3 +28,5 @@ export default function LoginCallback() {
 
   return null;
 }
+
+export default LoginCallbackPage;

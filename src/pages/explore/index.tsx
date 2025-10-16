@@ -9,7 +9,7 @@ import ClubSection from '@/components/explore/club/club-section';
 import FeedSection from '@/components/explore/feed/feed-section';
 import HashtagSection from '@/components/explore/hastag/hastag-section';
 
-function Explore() {
+function ExplorePage() {
   const searchTarget = exploreStore((state) => state.searchTarget);
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const keyword = exploreStore((state) => state.keyword);
@@ -108,4 +108,4 @@ function Explore() {
   );
 }
 
-export default Explore;
+export default ExplorePage;

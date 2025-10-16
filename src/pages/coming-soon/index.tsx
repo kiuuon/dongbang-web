@@ -7,7 +7,7 @@ import { sendFeedback } from '@/lib/apis/feedback';
 import BackButton from '@/components/common/back-button';
 import Header from '@/components/layout/header';
 
-function ComingSoon() {
+function ComingSoonPage() {
   const router = useRouter();
   const [feedBack, setFeedBack] = useState('');
 
@@ -76,4 +76,4 @@ function ComingSoon() {
   );
 }
 
-export default ComingSoon;
+export default ComingSoonPage;

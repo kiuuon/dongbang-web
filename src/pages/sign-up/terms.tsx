@@ -2,7 +2,7 @@ import CheckBox from '@/components/sign-up/terms/check-box';
 import NextButton from '@/components/sign-up/terms/next-button';
 import { useEffect, useState } from 'react';
 
-function Terms() {
+function SignUpTermsPage() {
   const [isWebView, setIsWebView] = useState(true);
 
   useEffect(() => {
@@ -26,4 +26,4 @@ function Terms() {
   );
 }
 
-export default Terms;
+export default SignUpTermsPage;

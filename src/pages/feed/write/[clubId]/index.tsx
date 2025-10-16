@@ -14,7 +14,7 @@ import { upload } from '@/lib/apis/image';
 import { writeFeed } from '@/lib/apis/feed';
 import { fetchClubInfo } from '@/lib/apis/club';
 
-function WriteFeed() {
+function WriteFeedPage() {
   const uuid = crypto.randomUUID();
   const router = useRouter();
   const { clubId } = router.query;
@@ -236,4 +236,4 @@ function WriteFeed() {
   );
 }
 
-export default WriteFeed;
+export default WriteFeedPage;

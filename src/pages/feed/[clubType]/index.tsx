@@ -11,7 +11,7 @@ import JoinClubPrompt from '@/components/feed/join-club-prompt';
 import NotFeed from '@/components/feed/not-feed';
 import FeedCard from '@/components/feed/feed-card/feed-card';
 
-function Feed() {
+function FeedPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const observerElement = useRef(null);
   const router = useRouter();
@@ -155,4 +155,4 @@ function Feed() {
   );
 }
 
-export default Feed;
+export default FeedPage;

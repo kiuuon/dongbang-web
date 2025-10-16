@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { sendFeedback } from '@/lib/apis/feedback';
 
-function Interact() {
+function InteractPage() {
   const router = useRouter();
   const [feedBack, setFeedBack] = useState('');
   const [isWebView, setIsWebView] = useState(true);
@@ -80,4 +80,4 @@ function Interact() {
   );
 }
 
-export default Interact;
+export default InteractPage;

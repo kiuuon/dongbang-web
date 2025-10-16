@@ -8,7 +8,7 @@ import Header from '@/components/layout/header';
 import ClubCard from '@/components/club/club-card';
 import PlusIcon2 from '@/icons/plus-icon2';
 
-function ClubList() {
+function ClubListPage() {
   const router = useRouter();
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
@@ -74,4 +74,4 @@ function ClubList() {
   );
 }
 
-export default ClubList;
+export default ClubListPage;

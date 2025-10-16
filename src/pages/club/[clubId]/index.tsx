@@ -19,7 +19,7 @@ import Contents from '@/components/club/[clubId]/contetns';
 import Schedule from '@/components/club/[clubId]/schedule';
 import BoardSummary from '@/components/club/[clubId]/board-summary';
 
-function Club() {
+function ClubPage() {
   const router = useRouter();
   const { clubId } = router.query;
   const bottomSheetCloseRef = useRef<() => void>(null);
@@ -44,6 +44,7 @@ function Club() {
       return false;
     },
   });
+
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
@@ -170,4 +171,4 @@ function Club() {
   );
 }
 
-export default Club;
+export default ClubPage;

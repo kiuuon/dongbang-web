@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 
-function Complete() {
+function SignUpCompletePage() {
   const router = useRouter();
 
   const goToHome = () => {
@@ -25,4 +25,4 @@ function Complete() {
   );
 }
 
-export default Complete;
+export default SignUpCompletePage;

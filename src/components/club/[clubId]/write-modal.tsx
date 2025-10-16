@@ -6,6 +6,8 @@ import { fetchMyRole } from '@/lib/apis/club';
 import PlusPersonIcon from '@/icons/plus-person-icon';
 import PencilIcon2 from '@/icons/pencil-icon2';
 import FeedIcon from '@/icons/feed-icon';
+import PersonIcon2 from '@/icons/person-icon2';
+import EditIcon from '@/icons/edit-icon';
 
 function WriteModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -61,6 +63,17 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     router.push(`/feed/write/${clubId}`);
   };
 
+  const goToRecruitPage = () => {
+    if (window.ReactNativeWebView) {
+      onClose();
+      window.ReactNativeWebView.postMessage('go to recruit page');
+      return;
+    }
+
+    onClose();
+    router.push(`/club/${clubId}/recruit`);
+  };
+
   return (
     <div
       role="button"
@@ -74,12 +87,6 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       }}
     >
       <div className="absolute bottom-[140px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
-        {role === 'president' && (
-          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
-            <PlusPersonIcon />
-            부원 모집하기
-          </button>
-        )}
         <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
           <PencilIcon2 />
           게시글 작성
@@ -89,6 +96,22 @@ function WriteModal({ onClose }: { onClose: () => void }) {
           피드 작성
         </button>
       </div>
+      {role === 'president' && (
+        <div className="absolute bottom-[249px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToRecruitPage}>
+            <PlusPersonIcon />
+            부원 모집하기
+          </button>
+          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
+            <PersonIcon2 />
+            부원 관리하기
+          </button>
+          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
+            <EditIcon color="#F9A825" />
+            동아리 소개 수정
+          </button>
+        </div>
+      )}
     </div>
   );
 }

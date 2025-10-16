@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchUserId } from '@/lib/apis/auth';
 import EditIcon from '@/icons/edit-icon';
 import DeleteIcon from '@/icons/delete-icon';
-import ShareIcon from '@/icons/share-icon';
+import ExternalLinkIcon from '@/icons/external-link-icon';
 import HideIcon from '@/icons/hide-icon';
 import ReportIcon from '@/icons/report-icon';
 
@@ -33,7 +33,7 @@ function SettingModal({ authorId }: { authorId: string }) {
       {authorId === userId ? (
         <div className="mb-[30px] w-full rounded-[8px] bg-background">
           <div className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
-            <EditIcon />
+            <EditIcon color="black" />
             수정
           </div>
           <div className="h-[1px] w-full bg-gray0" />
@@ -43,14 +43,14 @@ function SettingModal({ authorId }: { authorId: string }) {
           </div>
           <div className="h-[1px] w-full bg-gray0" />
           <div className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
-            <ShareIcon />
+            <ExternalLinkIcon />
             공유
           </div>
         </div>
       ) : (
         <div className="mb-[30px] w-full rounded-[8px] bg-background">
           <div className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
-            <ShareIcon />
+            <ExternalLinkIcon />
             공유
           </div>
           <div className="h-[1px] w-full bg-gray0" />

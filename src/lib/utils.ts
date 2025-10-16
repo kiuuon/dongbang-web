@@ -15,3 +15,12 @@ export function formatKoreanDate(dateString: string) {
 
   return `${year}년 ${month}월 ${day}일`;
 }
+
+export function generateBase62Code(length: number): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code = '';
+  for (let i = 0; i < length; i += 1) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}

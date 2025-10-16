@@ -22,7 +22,7 @@ import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
 import exploreStore from '@/stores/explore-store';
 
-function FeedDetail() {
+function FeedDetailPage() {
   const router = useRouter();
   const { feedId } = router.query;
   const [page, setPage] = useState(0);
@@ -351,4 +351,4 @@ function FeedDetail() {
   );
 }
 
-export default FeedDetail;
+export default FeedDetailPage;

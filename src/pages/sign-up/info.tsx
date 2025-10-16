@@ -4,7 +4,7 @@ import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import InfoForm from '@/components/sign-up/info/info-form';
 
-function Info() {
+function SignUpInfoPage() {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
@@ -27,4 +27,4 @@ function Info() {
   );
 }
 
-export default Info;
+export default SignUpInfoPage;
