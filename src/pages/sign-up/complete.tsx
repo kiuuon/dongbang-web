@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 function SignUpCompletePage() {
   const router = useRouter();
 
+  const redirectTo = (router.query.redirect as string) || '/';
+
   const goToHome = () => {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage('sign up complete');
       return;
     }
-    router.push('/');
+    router.push(redirectTo);
   };
 
   return (

@@ -10,5 +10,9 @@ export async function fetchUser() {
     return null;
   }
 
+  if (data.length === 0) {
+    return null;
+  }
+
   return data[0];
 }

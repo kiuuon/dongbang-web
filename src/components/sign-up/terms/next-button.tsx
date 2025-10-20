@@ -9,6 +9,8 @@ function NextButton() {
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
   const marketing = termsStore((state) => state.marketing);
 
+  const redirectTo = (router.query.redirect as string) || '/';
+
   const handleNextButton = () => {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(
@@ -22,7 +24,11 @@ function NextButton() {
       return;
     }
 
-    router.push('/sign-up/info');
+    if (redirectTo === '/') {
+      router.push('/sign-up/info');
+    } else {
+      router.push(`/sign-up/info?redirect=${redirectTo}`);
+    }
   };
 
   const isDisabled = !(termOfUse && privacyPolicy && thirdPartyConsent);

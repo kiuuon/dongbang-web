@@ -175,3 +175,24 @@ export async function fetchClubMembers(clubId: string) {
     role: member.role,
   }));
 }
+
+export async function joinClub(clubId: string) {
+  const userId = await fetchUserId();
+  const { error } = await supabase.from('Club_User').insert([{ club_id: clubId, user_id: userId, role: 'member' }]);
+
+  if (error) throw error;
+}
+
+export async function checkIsClubMember(clubId: string) {
+  const userId = await fetchUserId();
+  const { data, error } = await supabase
+    .from('Club_User')
+    .select('club_id')
+    .eq('club_id', clubId)
+    .eq('user_id', userId)
+    .single();
+
+  if (error) throw error;
+
+  return !!data;
+}

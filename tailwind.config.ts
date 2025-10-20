@@ -25,6 +25,7 @@ export default {
       gray4: '#3C3C3C',
       error: '#F40707',
       green: '#009E25',
+      yellow1: '#FFEB3B',
     },
     extend: {
       boxShadow: {

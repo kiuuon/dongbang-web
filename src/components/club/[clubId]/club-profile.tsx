@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchUser } from '@/lib/apis/user';
 import { fetchClubInfo, fetchClubMembers, fetchMyRole } from '@/lib/apis/club';
 // import CrownIcon from '@/icons/crown-icon';
-import CheckIcon3 from '@/icons/check-icon3';
 import PeopleIcon from '@/icons/people-icon';
 
 function ClubProfile() {
@@ -121,13 +120,6 @@ function ClubProfile() {
               {clubInfo?.location}
             </div>
           </div>
-          <button
-            type="button"
-            className="text-regular12 flex h-[40px] w-[89px] flex-row items-center justify-center gap-[8px] rounded-[4px] border border-primary"
-          >
-            <CheckIcon3 />
-            출석하기
-          </button>
         </div>
       </div>
       {clubInfo ? (

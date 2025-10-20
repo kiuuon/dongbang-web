@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import { fetchClubInfo, fetchMyClubs } from '@/lib/apis/club';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
-import MonitorIcon from '@/icons/monitor-icon';
+import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
@@ -15,8 +15,6 @@ import BottomSheet from '@/components/common/bottom-sheet';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
-import Contents from '@/components/club/[clubId]/contetns';
-import Schedule from '@/components/club/[clubId]/schedule';
 import BoardSummary from '@/components/club/[clubId]/board-summary';
 
 function ClubPage() {
@@ -101,7 +99,7 @@ function ClubPage() {
         </button>
         <div className="flex items-center gap-[20px]">
           <button type="button" onClick={goToCommingSoon}>
-            <MonitorIcon />
+            <BellIcon />
           </button>
           <button type="button" onClick={goToCommingSoon}>
             <MessageIcon />
@@ -111,8 +109,6 @@ function ClubPage() {
 
       <ClubProfile />
       <AnnouncementButton />
-      <Contents />
-      <Schedule />
       <BoardSummary />
 
       <div className="fixed bottom-[60px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">

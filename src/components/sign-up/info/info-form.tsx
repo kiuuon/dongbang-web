@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getSignUpInfoSchema } from '@/lib/validationSchema';
@@ -35,6 +35,10 @@ function InfoForm() {
   const privacyPolicy = termsStore((state) => state.privacyPolicy);
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
   const marketing = termsStore((state) => state.marketing);
+
+  const redirectTo = (router.query.redirect as string) || '/';
+
+  const queryClient = useQueryClient();
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -76,7 +80,12 @@ function InfoForm() {
   const { mutate: handleSignup } = useMutation({
     mutationFn: (body: UserType) => signUp(body),
     onSuccess: () => {
-      router.push('/sign-up/complete');
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      if (redirectTo === '/') {
+        router.push('/sign-up/complete');
+      } else {
+        router.push(`/sign-up/complete?redirect=${redirectTo}`);
+      }
     },
     onError: (error) => {
       if (window.ReactNativeWebView) {

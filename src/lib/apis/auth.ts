@@ -9,6 +9,15 @@ export async function login(provider: 'kakao' | 'google') {
   });
 }
 
+export async function loginAndRedirect(provider: 'kakao' | 'google', redirectTo: string) {
+  await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}${redirectTo}`,
+    },
+  });
+}
+
 export async function fetchSession() {
   const { data, error } = await supabase.auth.getUser();
 

@@ -71,16 +71,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
         if (window.ReactNativeWebView) return;
 
-        if (!user && router.pathname !== '/login') {
-          router.push('/login');
-        } else if (user && router.pathname === '/login') {
+        if (user && router.pathname === '/login') {
           setIsAuthenticated(true);
           router.push('/');
         } else {
           setIsAuthenticated(true);
         }
 
-        if (user && !userInfo && !router.pathname.startsWith('/sign-up/')) {
+        if (user && !userInfo && !router.pathname.startsWith('/sign-up/') && !router.pathname.startsWith('/invite/')) {
           router.push('/sign-up/terms');
         } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
           if (router.pathname !== '/sign-up/complete') {

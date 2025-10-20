@@ -51,3 +51,36 @@ export async function deleteInviteCode(clubId: string) {
 
   if (error) throw error;
 }
+
+export async function fetchClubIdByCode(code: string) {
+  const { data: invite, error } = await supabase
+    .from('Invite')
+    .select('club_id, expires_at')
+    .eq('code', code)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  if (!invite) return null;
+
+  const isExpired = new Date(invite.expires_at) < new Date();
+
+  if (isExpired) {
+    const { error: deleteError } = await supabase.from('Invite').delete().eq('code', code);
+
+    if (deleteError) throw deleteError;
+
+    return null;
+  }
+
+  const { data: club, error: clubError } = await supabase
+    .from('Club')
+    .select('id, name, logo, description, location, category')
+    .eq('id', invite.club_id)
+    .maybeSingle();
+
+  if (clubError) throw clubError;
+  if (!club) return null;
+
+  return club;
+}
