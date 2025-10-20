@@ -13,6 +13,7 @@ import KakaoIcon from '@/icons/kakao-icon';
 import GoogleIcon from '@/icons/google-icon';
 import XIcon6 from '@/icons/x-icon6';
 import CheckIcon4 from '@/icons/check-icon4';
+import AlertIcon from '@/icons/alert-icon';
 
 function InvitePage() {
   const router = useRouter();
@@ -147,7 +148,7 @@ function InvitePage() {
   if (isClubMember) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center">
-        <XIcon6 />
+        <AlertIcon />
         <div className="text-bold24 mb-[220px] mt-[40px]">이미 가입한 동아리입니다.</div>
         <button
           type="button"

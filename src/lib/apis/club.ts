@@ -185,6 +185,9 @@ export async function joinClub(clubId: string) {
 
 export async function checkIsClubMember(clubId: string) {
   const userId = await fetchUserId();
+
+  if (!userId) return false;
+
   const { data, error } = await supabase
     .from('Club_User')
     .select('club_id')
