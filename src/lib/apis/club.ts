@@ -193,7 +193,7 @@ export async function checkIsClubMember(clubId: string) {
     .select('club_id')
     .eq('club_id', clubId)
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
 
