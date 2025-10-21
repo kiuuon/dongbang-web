@@ -4,12 +4,26 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { fetchSession } from '@/lib/apis/auth';
+import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import Tab from '@/components/layout/tab';
 import { supabase } from '@/lib/apis/supabaseClient';
 
 const queryClient = new QueryClient();
+
+const REQUIRES_LOGIN_PATHS: (string | RegExp)[] = [
+  /^\/club\/create(\/.*)?$/,
+  /^\/club\/[^/]+\/recruit/,
+  /^\/feed\/[^/]+\/write/,
+  '/feed/my',
+  '/feed/campus',
+];
+
+function requiresLoginPath(pathname: string) {
+  return REQUIRES_LOGIN_PATHS.some((pattern) =>
+    typeof pattern === 'string' ? pathname === pattern : pattern.test(pathname),
+  );
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -39,14 +53,22 @@ export default function App({ Component, pageProps }: AppProps) {
     const handler = async (event: MessageEvent) => {
       try {
         const { data } = await supabase.auth.getSession();
-        const { accessToken, refreshToken } = event.data;
-        if (!data.session) {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          if (error) {
-            throw error;
+        const { type, action, payload } = JSON.parse(event.data);
+
+        if (type === 'event') {
+          if (action === 'set session request') {
+            const { accessToken, refreshToken } = payload;
+            if (!data.session) {
+              const { error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
+              if (error) {
+                throw error;
+              }
+            }
+          } else if (action === 'login request') {
+            login(payload);
           }
         }
       } catch (error) {
@@ -56,10 +78,16 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     };
 
-    window.addEventListener('message', handler);
+    if ((window as any).ReactNativeWebView) {
+      window.addEventListener('message', handler);
+      (document as any).addEventListener('message', handler);
+    }
 
     return () => {
-      window.removeEventListener('message', handler);
+      if ((window as any).ReactNativeWebView) {
+        window.removeEventListener('message', handler);
+        (document as any).removeEventListener('message', handler);
+      }
     };
   }, []);
 
@@ -78,7 +106,14 @@ export default function App({ Component, pageProps }: AppProps) {
           setIsAuthenticated(true);
         }
 
-        if (user && !userInfo && !router.pathname.startsWith('/sign-up/') && !router.pathname.startsWith('/invite/')) {
+        if (!user && requiresLoginPath(router.asPath)) {
+          router.replace('/login');
+        } else if (
+          user &&
+          !userInfo &&
+          !router.pathname.startsWith('/sign-up/') &&
+          !router.pathname.startsWith('/invite/')
+        ) {
           router.push('/sign-up/terms');
         } else if (user && userInfo && router.pathname.startsWith('/sign-up/')) {
           if (router.pathname !== '/sign-up/complete') {

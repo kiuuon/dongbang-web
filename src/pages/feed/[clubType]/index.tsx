@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
+import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedsByClubType } from '@/lib/apis/feed';
+import LoginModal from '@/components/common/login-modal';
 import BottomSheet from '@/components/common/bottom-sheet';
 import FeedHeader from '@/components/feed/feed-header';
 import JoinClubPrompt from '@/components/feed/join-club-prompt';
@@ -18,6 +20,26 @@ function FeedPage() {
   const { clubType } = router.query;
   const bottomSheetCloseRef = useRef<() => void>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
@@ -111,6 +133,9 @@ function FeedPage() {
             <ClipLoader size={30} color="#F9A825" />
           </div>
         )}
+
+        {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
+
         {isBottomSheetOpen && (
           <BottomSheet
             setIsBottomSheetOpen={setIsBottomSheetOpen}
@@ -124,7 +149,14 @@ function FeedPage() {
                 <button
                   type="button"
                   className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => goToSelectedClubType('my')}
+                  onClick={() => {
+                    if (session?.user) {
+                      goToSelectedClubType('my');
+                    } else {
+                      setIsBottomSheetOpen(false);
+                      setIsLoginModalOpen(true);
+                    }
+                  }}
                 >
                   내 동아리
                 </button>
@@ -133,7 +165,14 @@ function FeedPage() {
                 <button
                   type="button"
                   className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => goToSelectedClubType('campus')}
+                  onClick={() => {
+                    if (session?.user) {
+                      goToSelectedClubType('campus');
+                    } else {
+                      setIsBottomSheetOpen(false);
+                      setIsLoginModalOpen(true);
+                    }
+                  }}
                 >
                   교내 동아리
                 </button>

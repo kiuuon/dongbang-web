@@ -19,7 +19,9 @@ function LoginCallbackPage() {
       const { access_token: accessToken, refresh_token: refreshToken } = session;
 
       if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ accessToken, refreshToken }));
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ type: 'event', action: 'login success', payload: { accessToken, refreshToken } }),
+        );
       } else {
         router.replace('/');
       }

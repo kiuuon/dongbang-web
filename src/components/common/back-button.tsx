@@ -7,7 +7,7 @@ function BackButton() {
 
   const handleBackButtonClick = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('back');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'back button click' }));
       return;
     }
     router.back();

@@ -1,8 +1,10 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast, { Toaster } from 'react-hot-toast';
+import { ClipLoader } from 'react-spinners';
 
 import { generateBase62Code } from '@/lib/utils';
+import { fetchMyRole } from '@/lib/apis/club';
 import { fetchInviteCode, createInviteCode, deleteInviteCode } from '@/lib/apis/invite';
 import DuplicateIcon from '@/icons/duplicate-icon';
 import TrashIcon from '@/icons/trash-icon';
@@ -30,6 +32,25 @@ function RecruitPage() {
         return false;
       }
       alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: myRole, isPending } = useQuery({
+    queryKey: ['myRole', clubId],
+    queryFn: () => fetchMyRole(clubId as string),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
   });
@@ -73,6 +94,19 @@ function RecruitPage() {
       alert(`초대 링크 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
     },
   });
+
+  if (isPending) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <ClipLoader size={30} color="#F9A825" />
+      </div>
+    );
+  }
+
+  if (myRole === 'member') {
+    router.replace(`/club/${clubId}`);
+    return null;
+  }
 
   const issueInvitationLink = () => {
     const newCode = generateBase62Code(8);

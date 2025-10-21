@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { sendFeedback } from '@/lib/apis/feedback';
+import { fetchSession } from '@/lib/apis/auth';
+import LoginModal from '@/components/common/login-modal';
 
 function InteractPage() {
   const router = useRouter();
   const [feedBack, setFeedBack] = useState('');
   const [isWebView, setIsWebView] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   useEffect(() => {
     if (!window.ReactNativeWebView) {
@@ -16,11 +19,30 @@ function InteractPage() {
     }
   }, []);
 
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
   const { mutate } = useMutation({
     mutationFn: () => sendFeedback(feedBack),
     onSuccess: () => {
       if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage('completed');
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'complete send feedback' }));
         return;
       }
       router.back();
@@ -66,16 +88,31 @@ function InteractPage() {
           type="button"
           className="text-bold16 my-[21px] flex h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
           onClick={() => {
-            if (feedBack.trim() === '') {
-              alert('피드백을 입력해주세요.');
-              return;
+            if (session?.user) {
+              if (feedBack.trim() === '') {
+                alert('피드백을 입력해주세요.');
+                return;
+              }
+              mutate();
+            } else {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({
+                    type: 'event',
+                    action: 'open login modal',
+                  }),
+                );
+                return;
+              }
+
+              setIsLoginModalOpen(true);
             }
-            mutate();
           }}
         >
           전송
         </button>
       </div>
+      {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
     </div>
   );
 }

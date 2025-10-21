@@ -18,7 +18,7 @@ function FeedContent({ content }: { content: string }) {
 
   const clickHashtag = (tag: string) => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'hashtag click', payload: tag }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'hashtag click', payload: tag }));
       return;
     }
 

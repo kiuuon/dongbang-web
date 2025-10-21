@@ -3,13 +3,16 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
+import { fetchSession } from '@/lib/apis/auth';
 import { fetchMyClubs } from '@/lib/apis/club';
-import Header from '@/components/layout/header';
-import ClubCard from '@/components/club/club-card';
 import PlusIcon2 from '@/icons/plus-icon2';
+import Header from '@/components/layout/header';
+import LoginModal from '@/components/common/login-modal';
+import ClubCard from '@/components/club/club-card';
 
 function ClubListPage() {
   const router = useRouter();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
@@ -25,6 +28,25 @@ function ClubListPage() {
         return false;
       }
       alert(`동아리 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
   });
@@ -51,12 +73,30 @@ function ClubListPage() {
         <button
           type="button"
           onClick={() => {
-            document.body.style.overflow = 'auto';
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage('create club');
-              return;
+            if (session?.user) {
+              document.body.style.overflow = 'auto';
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({
+                    type: 'event',
+                    action: 'create club',
+                  }),
+                );
+                return;
+              }
+              router.push('/club/create');
+            } else {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({
+                    type: 'event',
+                    action: 'open login modal',
+                  }),
+                );
+                return;
+              }
+              setIsLoginModalOpen(true);
             }
-            router.push('/club/create');
           }}
         >
           <PlusIcon2 />
@@ -70,6 +110,8 @@ function ClubListPage() {
       ) : (
         myClubs?.map((club) => <ClubCard key={club.id} club={club} />)
       )}
+
+      {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
     </div>
   );
 }

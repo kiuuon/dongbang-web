@@ -195,7 +195,7 @@ function InvitePage() {
   }
   return (
     <div className="flex h-screen flex-col items-center justify-center">
-      <div className="H-[71px] flex flex-row items-center justify-center gap-[18]">
+      <div className="H-[71px] flex flex-row items-center justify-center gap-[18px]">
         <DongbangIcon />
         <span className="text-bold24">동방</span>
       </div>

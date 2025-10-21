@@ -18,7 +18,7 @@ function Home() {
         }
 
         if (!user) {
-          router.push('/login');
+          router.push('/feed/union');
         } else if (user && !userInfo) {
           router.push('/sign-up/terms');
         } else if (user && userInfo) {

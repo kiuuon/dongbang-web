@@ -58,6 +58,7 @@ function InfoForm() {
       return false;
     },
   });
+
   const { data: universityList } = useQuery({
     queryKey: ['universityList'],
     queryFn: fetchUniversityList,

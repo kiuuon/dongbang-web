@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
+import { fetchSession } from '@/lib/apis/auth';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
@@ -21,6 +23,25 @@ function FeedHeader({
   }[clubType as string];
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
+
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -45,9 +66,17 @@ function FeedHeader({
 
   const handleNavigationOpen = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'open navigation' }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open navigation' }));
     } else {
       setIsBottomSheetOpen((prev) => !prev);
+    }
+  };
+
+  const goToLoginPage = () => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to login page' }));
+    } else {
+      router.push('/login');
     }
   };
 
@@ -64,14 +93,24 @@ function FeedHeader({
         </button>
       </div>
 
-      <div className="flex items-center gap-[20px]">
-        <button type="button">
-          <BellIcon />
+      {session?.user ? (
+        <div className="flex items-center gap-[20px]">
+          <button type="button">
+            <BellIcon />
+          </button>
+          <button type="button">
+            <MessageIcon />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={goToLoginPage}
+          className="text-bold16 rounded-[5px] bg-primary px-[8px] py-[5px] text-white"
+        >
+          로그인
         </button>
-        <button type="button">
-          <MessageIcon />
-        </button>
-      </div>
+      )}
     </header>
   );
 }

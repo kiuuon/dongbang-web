@@ -105,6 +105,10 @@ export async function fetchRecommendedClubs() {
 
 export async function fetchMyClubs() {
   const userId = await fetchUserId();
+  if (!userId) {
+    return [];
+  }
+
   const { data: clubData, error: fetchClubDataError } = await supabase
     .from('Club_User')
     .select('club_id')

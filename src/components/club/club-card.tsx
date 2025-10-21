@@ -39,7 +39,13 @@ function ClubCard({ club }: { club: ClubType }) {
 
   const goToClub = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(`${club.id}`);
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: 'event',
+          action: 'go to club detail',
+          payload: club.id,
+        }),
+      );
       return;
     }
     router.push(`/club/${club.id}`);
@@ -49,13 +55,7 @@ function ClubCard({ club }: { club: ClubType }) {
     <button
       type="button"
       className="flex h-[124px] min-h-[124px] w-full items-center rounded-[12px] bg-white px-[20px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
-      onClick={() => {
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(`${club.id}`);
-          return;
-        }
-        goToClub();
-      }}
+      onClick={goToClub}
     >
       <Image
         src={club.logo}
