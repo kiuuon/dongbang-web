@@ -76,7 +76,7 @@ function FeedDetailPage() {
 
   const clickHashtag = (tag: string) => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'hashtag click', payload: tag }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'hashtag click', payload: tag }));
       return;
     }
 
@@ -135,7 +135,9 @@ function FeedDetailPage() {
   const handleClubClick = () => {
     if (feed.taggedClubs.length > 0) {
       if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'tagged club click', payload: feed.taggedClubs }));
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ type: 'event', action: 'tagged club click', payload: feed.taggedClubs }),
+        );
         return;
       }
       setIsTaggedClubModalOpen(true);
@@ -153,7 +155,11 @@ function FeedDetailPage() {
           onClick={() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
-                JSON.stringify({ type: 'setting click', payload: { feedId: feed.id, authorId: feed.author_id } }),
+                JSON.stringify({
+                  type: 'event',
+                  action: 'setting click',
+                  payload: { feedId: feed.id, authorId: feed.author_id },
+                }),
               );
               return;
             }
@@ -280,7 +286,7 @@ function FeedDetailPage() {
                 onClick={() => {
                   if (window.ReactNativeWebView) {
                     window.ReactNativeWebView.postMessage(
-                      JSON.stringify({ type: 'tagged user click', payload: feed.taggedUsers }),
+                      JSON.stringify({ type: 'event', action: 'tagged user click', payload: feed.taggedUsers }),
                     );
                     return;
                   }
@@ -312,7 +318,9 @@ function FeedDetailPage() {
             className="flex items-center"
             onClick={() => {
               if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'interact click', payload: feed.id }));
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'interact click', payload: feed.id }),
+                );
                 return;
               }
               setIsInteractModalOpen(true);

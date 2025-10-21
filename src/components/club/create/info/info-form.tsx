@@ -96,12 +96,16 @@ function InfoForm() {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
-          campusClubType: defaultCampusClubType,
-          name: data.name,
-          category: data.category,
-          location: data.location,
-          description: data.description,
-          tags: data.tags,
+          type: 'event',
+          action: 'complete info form',
+          payload: {
+            campusClubType: defaultCampusClubType,
+            name: data.name,
+            category: data.category,
+            location: data.location,
+            description: data.description,
+            tags: data.tags,
+          },
         }),
       );
       return;

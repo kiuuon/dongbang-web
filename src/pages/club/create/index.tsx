@@ -10,7 +10,9 @@ function Create() {
 
   const goToClubCreate = (clubType: string) => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(clubType);
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ type: 'event', action: 'select club type', payload: { clubType } }),
+      );
       return;
     }
     router.push(`/club/create/${clubType}/info`);

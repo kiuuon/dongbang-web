@@ -115,12 +115,16 @@ function WriteFeedPage() {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
-            photos: photoUrls,
-            title,
-            content,
-            isNicknameVisible,
-            isPrivate,
-            clubType: clubInfo?.type,
+            type: 'event',
+            action: 'write feed',
+            payload: {
+              photos: photoUrls,
+              title,
+              content,
+              isNicknameVisible,
+              isPrivate,
+              clubType: clubInfo?.type,
+            },
           }),
         );
       } else {
@@ -201,7 +205,7 @@ function WriteFeedPage() {
             className="flex items-center justify-between"
             onClick={() => {
               if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage('open tag modal');
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open tag modal' }));
                 return;
               }
               setIsTagModalOpen(true);

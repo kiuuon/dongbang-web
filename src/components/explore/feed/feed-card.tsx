@@ -13,11 +13,6 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       type="button"
       className="flex flex-col"
       onClick={() => {
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(JSON.stringify({ message: 'go to feed detail page', feedId: feed.id }));
-          return;
-        }
-
         router.push({ pathname: `/feed/detail/${feed.id}`, query: { scroll: scrollRef.current?.scrollTop || 0 } });
       }}
     >

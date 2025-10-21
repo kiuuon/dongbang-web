@@ -158,16 +158,20 @@ function InfoForm() {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
-          id: session?.user?.id as string,
-          name: data.name,
-          birth: `${+data.birth.slice(0, 2) < 50 ? '20' : '19'}${data.birth.slice(0, 2)}-${data.birth.slice(2, 4)}-${data.birth.slice(4, 6)}`,
-          gender: data.gender,
-          email: session?.user?.email as string,
-          nickname: data.nickname,
-          university_id: universityList?.find((item) => item.name === data.university)?.id,
-          major: data.major,
-          clubs_joined: data.clubCount,
-          join_path: data.path || null,
+          type: 'event',
+          action: 'sign up',
+          payload: {
+            id: session?.user?.id as string,
+            name: data.name,
+            birth: `${+data.birth.slice(0, 2) < 50 ? '20' : '19'}${data.birth.slice(0, 2)}-${data.birth.slice(2, 4)}-${data.birth.slice(4, 6)}`,
+            gender: data.gender,
+            email: session?.user?.email as string,
+            nickname: data.nickname,
+            university_id: universityList?.find((item) => item.name === data.university)?.id,
+            major: data.major,
+            clubs_joined: data.clubCount,
+            join_path: data.path || null,
+          },
         }),
       );
       return;

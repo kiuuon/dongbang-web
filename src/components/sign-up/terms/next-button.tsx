@@ -15,10 +15,14 @@ function NextButton() {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
-          termOfUse,
-          privacyPolicy,
-          thirdPartyConsent,
-          marketing,
+          type: 'event',
+          action: 'click next button',
+          payload: {
+            termOfUse,
+            privacyPolicy,
+            thirdPartyConsent,
+            marketing,
+          },
         }),
       );
       return;

@@ -48,7 +48,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {
       onClose();
-      window.ReactNativeWebView.postMessage('comingSoon');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to coming soon page' }));
       return;
     }
     router.push('/coming-soon');
@@ -57,7 +57,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
   const writeFeed = () => {
     if (window.ReactNativeWebView) {
       onClose();
-      window.ReactNativeWebView.postMessage('go to write feed page');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to write feed page' }));
       return;
     }
     router.push(`/feed/write/${clubId}`);
@@ -66,7 +66,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
   const goToRecruitPage = () => {
     if (window.ReactNativeWebView) {
       onClose();
-      window.ReactNativeWebView.postMessage('go to recruit page');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to recruit page' }));
       return;
     }
 

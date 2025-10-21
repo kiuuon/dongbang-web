@@ -7,7 +7,7 @@ function SignUpCompletePage() {
 
   const goToHome = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('sign up complete');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'sign up complete' }));
       return;
     }
     router.push(redirectTo);

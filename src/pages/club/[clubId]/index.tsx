@@ -66,7 +66,7 @@ function ClubPage() {
     if (!myClubs || myClubs.length <= 1) return;
 
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('openNavigation');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open navigation' }));
     } else {
       setIsBottomSheetOpen((prev) => !prev);
     }
@@ -79,7 +79,7 @@ function ClubPage() {
 
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage('comingSoon');
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to coming soon page' }));
       return;
     }
     router.push('/coming-soon');

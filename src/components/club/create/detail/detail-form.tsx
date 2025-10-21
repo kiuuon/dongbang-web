@@ -129,10 +129,14 @@ function DetailForm() {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
-            type: router.query.clubType as string,
-            logo,
-            activity_photos: activityPhotos,
-            detail_description: data.description,
+            type: 'event',
+            action: 'create club',
+            payload: {
+              type: router.query.clubType as string,
+              logo,
+              activity_photos: activityPhotos,
+              detail_description: data.description,
+            },
           }),
         );
       } else {
