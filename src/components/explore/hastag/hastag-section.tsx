@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { fetchHashtags } from '@/lib/apis/feed';
+import { fetchHashtags } from '@/lib/apis/feed/feed';
 import exploreStore from '@/stores/explore-store';
 import FeedSection from '../feed/feed-section';
 

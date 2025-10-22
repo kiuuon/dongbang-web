@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import Image from 'next/image';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 
+import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
 import { FeedType } from '@/types/feed-type';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import LikesIcon from '@/icons/likes-icon';
 import CommentsIcon from '@/icons/comments-icon';
-import InteractIcon from '@/icons/interact-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import TwinkleIcon from '@/icons/twinkle-icon';
 import BottomSheet from '@/components/common/bottom-sheet';
@@ -19,11 +20,94 @@ import InteractModal from './interact-modal';
 import SettingModal from './setting-modal';
 
 function FeedCard({ feed }: { feed: FeedType }) {
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+
+  const { data: isLike } = useQuery({
+    queryKey: ['isLike', feed.id],
+    queryFn: () => fetchMyFeedLike(feed.id),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: likeCount } = useQuery({
+    queryKey: ['likeCount', feed.id],
+    queryFn: () => fetchFeedLikeCount(feed.id),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { mutate: addLike } = useMutation({
+    mutationFn: () => addFeedLike(feed.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
+    },
+    onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 추가에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
+      alert(`좋아요 추가에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+    },
+  });
+
+  const { mutate: removeLike } = useMutation({
+    mutationFn: () => removeFeedLike(feed.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
+    },
+    onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 삭제에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
+      alert(`좋아요 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+    },
+  });
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
@@ -55,6 +139,14 @@ function FeedCard({ feed }: { feed: FeedType }) {
       setIsTaggedClubModalOpen(true);
     } else {
       // TODO: 클럽 소개 페이지로 이동하는 로직
+    }
+  };
+
+  const toggleLike = () => {
+    if (isLike) {
+      removeLike();
+    } else {
+      addLike();
     }
   };
 
@@ -222,29 +314,14 @@ function FeedCard({ feed }: { feed: FeedType }) {
 
         <div className="flex w-full items-center gap-[10px]">
           <div className="flex items-center gap-[4px]">
-            <button type="button">
-              <LikesIcon />
+            <button type="button" onClick={toggleLike}>
+              <LikesIcon isActive={isLike as boolean} />
             </button>
-            <button type="button">3</button>
+            <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
           </div>
           <button type="button" className="flex items-center gap-[4px]">
             <CommentsIcon />
             <span>5</span>
-          </button>
-          <button
-            type="button"
-            className="flex items-center"
-            onClick={() => {
-              if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(
-                  JSON.stringify({ type: 'event', action: 'interact click', payload: feed.id }),
-                );
-                return;
-              }
-              setIsInteractModalOpen(true);
-            }}
-          >
-            <InteractIcon color="#000" />
           </button>
         </div>
       </div>

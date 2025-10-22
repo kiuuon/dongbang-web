@@ -3,7 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { FeedType } from '@/types/feed-type';
-import { searchFeeds } from '@/lib/apis/feed';
+import { searchFeeds } from '@/lib/apis/feed/feed';
 import FeedCard from './feed-card';
 
 function FeedSection({ keyword }: { keyword: string }) {

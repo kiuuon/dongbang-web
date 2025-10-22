@@ -1,12 +1,34 @@
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 
+import { fetchFeedLikeCount } from '@/lib/apis/feed/like';
 import { FeedType } from '@/types/feed-type';
 import { formatKoreanDate } from '@/lib/utils';
 import LikesIcon2 from '@/icons/likes-icon2';
 
 function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
+
+  const { data: likeCount } = useQuery({
+    queryKey: ['likeCount', feed.id],
+    queryFn: () => fetchFeedLikeCount(feed.id),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   return (
     <button
@@ -52,7 +74,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
           <div className="text-regular12">{formatKoreanDate(feed.created_at)}</div>
           <div className="flex items-center gap-[4px]">
             <LikesIcon2 />
-            <span className="text-regular12">21</span>
+            <span className="text-regular12">{likeCount}</span>
           </div>
         </div>
       </div>

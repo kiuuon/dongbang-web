@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchFeedDetail } from '@/lib/apis/feed';
+import { fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import TwinkleIcon from '@/icons/twinkle-icon';
 import LikesIcon from '@/icons/likes-icon';
-import InteractIcon from '@/icons/interact-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
@@ -24,7 +24,8 @@ import exploreStore from '@/stores/explore-store';
 
 function FeedDetailPage() {
   const router = useRouter();
-  const { feedId } = router.query;
+  const { feedId } = router.query as { feedId: string };
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
@@ -34,6 +35,88 @@ function FeedDetailPage() {
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const setKeyword = exploreStore((state) => state.setKeyword);
   const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
+
+  const { data: isLike } = useQuery({
+    queryKey: ['isLike', feedId],
+    queryFn: () => fetchMyFeedLike(feedId),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: likeCount } = useQuery({
+    queryKey: ['likeCount', feedId],
+    queryFn: () => fetchFeedLikeCount(feedId),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { mutate: addLike } = useMutation({
+    mutationFn: () => addFeedLike(feedId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
+    },
+    onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 추가에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
+      alert(`좋아요 추가에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+    },
+  });
+
+  const { mutate: removeLike } = useMutation({
+    mutationFn: () => removeFeedLike(feedId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
+    },
+    onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '좋아요 삭제에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
+      alert(`좋아요 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+    },
+  });
 
   const [sliderRef] = useKeenSlider({
     slideChanged(slider) {
@@ -143,6 +226,14 @@ function FeedDetailPage() {
       setIsTaggedClubModalOpen(true);
     } else {
       // TODO: 클럽 소개 페이지로 이동하는 로직
+    }
+  };
+
+  const toggleLike = () => {
+    if (isLike) {
+      removeLike();
+    } else {
+      addLike();
     }
   };
 
@@ -306,28 +397,13 @@ function FeedDetailPage() {
           </div>
         )}
 
-        <div className="flex w-full items-center gap-[10px]">
+        <div className="flex w-full items-center">
           <div className="flex items-center gap-[4px]">
-            <button type="button">
-              <LikesIcon />
+            <button type="button" onClick={toggleLike}>
+              <LikesIcon isActive={isLike as boolean} />
             </button>
-            <button type="button">3</button>
+            <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
           </div>
-          <button
-            type="button"
-            className="flex items-center"
-            onClick={() => {
-              if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(
-                  JSON.stringify({ type: 'event', action: 'interact click', payload: feed.id }),
-                );
-                return;
-              }
-              setIsInteractModalOpen(true);
-            }}
-          >
-            <InteractIcon color="#000" />
-          </button>
         </div>
       </div>
 

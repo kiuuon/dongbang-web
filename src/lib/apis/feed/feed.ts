@@ -1,6 +1,6 @@
 import { FeedType } from '@/types/feed-type';
-import { supabase } from './supabaseClient';
-import { fetchUserId } from './auth';
+import { supabase } from '../supabaseClient';
+import { fetchUserId } from '../auth';
 
 export async function writeFeed(
   photos: string[],

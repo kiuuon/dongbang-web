@@ -5,7 +5,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchFeedsByClubType } from '@/lib/apis/feed';
+import { fetchFeedsByClubType } from '@/lib/apis/feed/feed';
 import LoginModal from '@/components/common/login-modal';
 import BottomSheet from '@/components/common/bottom-sheet';
 import FeedHeader from '@/components/feed/feed-header';

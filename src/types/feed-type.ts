@@ -17,6 +17,7 @@ export interface FeedType {
   content: string;
   is_nickname_visible: boolean;
   is_private: boolean;
+  like_count: number;
   taggedUsers: {
     user: {
       name: string;

@@ -11,7 +11,7 @@ import Loading from '@/components/common/loading';
 import PhotoSection from '@/components/feed/write/photo-section';
 import TagModal from '@/components/feed/write/tag-modal/tag-modal';
 import { upload } from '@/lib/apis/image';
-import { writeFeed } from '@/lib/apis/feed';
+import { writeFeed } from '@/lib/apis/feed/feed';
 import { fetchClubInfo } from '@/lib/apis/club';
 
 function WriteFeedPage() {
