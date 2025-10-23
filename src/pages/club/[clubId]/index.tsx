@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -23,6 +23,13 @@ function ClubPage() {
   const bottomSheetCloseRef = useRef<() => void>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
@@ -111,7 +118,9 @@ function ClubPage() {
       <AnnouncementButton />
       <BoardSummary />
 
-      <div className="fixed bottom-[60px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">
+      <div
+        className={`fixed ${isWebView ? 'bottom-[30px]' : 'bottom-[90px]'} left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]`}
+      >
         <button
           type="button"
           className="absolute right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"

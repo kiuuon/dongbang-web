@@ -36,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const isOpen = loginModalStore((state) => state.isOpen);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
-  const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage'];
+  const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage', '/club/[clubId]'];
 
   useEffect(() => {
     if (!window.ReactNativeWebView) {

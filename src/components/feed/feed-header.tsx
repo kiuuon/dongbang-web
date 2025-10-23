@@ -24,7 +24,7 @@ function FeedHeader({
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
 
-  const { data: session } = useQuery({
+  const { data: session, isPending } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => {
@@ -93,7 +93,8 @@ function FeedHeader({
         </button>
       </div>
 
-      {session?.user ? (
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {isPending ? null : session?.user ? (
         <div className="flex items-center gap-[20px]">
           <button type="button">
             <BellIcon />

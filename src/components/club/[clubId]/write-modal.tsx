@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
@@ -30,6 +30,14 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       return false;
     },
   });
+
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -86,7 +94,9 @@ function WriteModal({ onClose }: { onClose: () => void }) {
         }
       }}
     >
-      <div className="absolute bottom-[140px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+      <div
+        className={`absolute ${isWebView ? 'bottom-[110px]' : 'bottom-[170px]'} right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]`}
+      >
         <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
           <PencilIcon2 />
           게시글 작성
@@ -97,7 +107,9 @@ function WriteModal({ onClose }: { onClose: () => void }) {
         </button>
       </div>
       {role === 'president' && (
-        <div className="absolute bottom-[249px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+        <div
+          className={`absolute ${isWebView ? 'bottom-[219px]' : 'bottom-[279px]'} bottom-[249px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]`}
+        >
           <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToRecruitPage}>
             <PlusPersonIcon />
             부원 모집하기
