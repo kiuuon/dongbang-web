@@ -253,6 +253,16 @@ function FeedDetailPage() {
 
   const toggleLike = () => {
     if (!session?.user) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'event',
+            action: 'open login modal',
+          }),
+        );
+        return;
+      }
+
       setIsLoginModalOpen(true);
       return;
     }
