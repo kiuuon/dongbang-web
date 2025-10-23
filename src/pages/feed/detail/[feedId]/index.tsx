@@ -11,6 +11,7 @@ import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
 import loginModalStore from '@/stores/login-modal-store';
+import exploreStore from '@/stores/explore-store';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import TwinkleIcon from '@/icons/twinkle-icon';
@@ -22,7 +23,7 @@ import TaggedClubModal from '@/components/feed/feed-card/tagged-club-modal';
 import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
 import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
-import exploreStore from '@/stores/explore-store';
+import LikesModal from '@/components/feed/feed-card/likes-modal';
 
 function FeedDetailPage() {
   const router = useRouter();
@@ -33,6 +34,7 @@ function FeedDetailPage() {
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
 
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const setKeyword = exploreStore((state) => state.setKeyword);
@@ -439,7 +441,18 @@ function FeedDetailPage() {
             <button type="button" onClick={toggleLike}>
               <LikesIcon isActive={isLike as boolean} />
             </button>
-            <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
+            <button
+              type="button"
+              onClick={() => {
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open likes modal' }));
+                  return;
+                }
+                setIsLikesModalOpen(true);
+              }}
+            >
+              {(likeCount as number) > 0 && <button type="button">{likeCount}</button>}
+            </button>
           </div>
         </div>
       </div>
@@ -448,6 +461,11 @@ function FeedDetailPage() {
 
       <div className="text-regular12">댓글</div>
 
+      {isLikesModalOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsLikesModalOpen}>
+          <LikesModal feedId={feed.id} />
+        </BottomSheet>
+      )}
       {isTaggedClubModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedClubModalOpen}>
           <TaggedClubModal taggedClubs={feed.taggedClubs} />

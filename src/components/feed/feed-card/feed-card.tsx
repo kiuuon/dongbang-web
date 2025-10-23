@@ -13,13 +13,13 @@ import MoreVertIcon from '@/icons/more-vert-icon';
 import LikesIcon from '@/icons/likes-icon';
 import CommentsIcon from '@/icons/comments-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
-import TwinkleIcon from '@/icons/twinkle-icon';
 import BottomSheet from '@/components/common/bottom-sheet';
 import FeedContent from './feed-content';
 import TaggedClubModal from './tagged-club-modal';
 import TaggedUserModal from './tagged-user-modal';
 import InteractModal from './interact-modal';
 import SettingModal from './setting-modal';
+import LikesModal from './likes-modal';
 
 function FeedCard({ feed }: { feed: FeedType }) {
   const queryClient = useQueryClient();
@@ -28,6 +28,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const { data: session } = useQuery({
@@ -140,16 +141,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
     },
   });
 
-  const getRole = (role: string | null) => {
-    if (role === 'president') {
-      return '회장';
-    }
-    if (role === 'member') {
-      return '부원';
-    }
-    return '';
-  };
-
   const handleClubClick = () => {
     if (feed.taggedClubs.length > 0) {
       if (window.ReactNativeWebView) {
@@ -257,7 +248,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
               {feed.taggedClubs.length > 0 && ` & ${feed.taggedClubs[0].club.name}`}
             </div>
             <div className="text-regular12 flex h-[18px] items-center text-gray3">
-              {formatKoreanDate(feed.created_at)}
+              {formatKoreanDate(feed.created_at)} {feed.is_nickname_visible && `by ${feed.author.name}`}
             </div>
           </div>
         </button>
@@ -298,8 +289,9 @@ function FeedCard({ feed }: { feed: FeedType }) {
         ))}
       </div>
 
-      <div className="mb-[9px] flex h-[7px] w-full items-center justify-center">
-        {feed.photos.length > 1 && (
+      {/* 인디케이터 */}
+      {feed.photos.length > 1 && (
+        <div className="mb-[8px] flex h-[7px] w-full items-center justify-center">
           <div className="flex max-w-[65px] gap-1 overflow-hidden">
             <div
               className="flex transition-transform duration-300"
@@ -313,56 +305,71 @@ function FeedCard({ feed }: { feed: FeedType }) {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 피드 버튼 박스 */}
+      <div className="mb-[10px] flex flex-row items-center justify-between">
+        <div className="flex w-full items-center gap-[10px]">
+          {/* 좋아요 버튼 */}
+          <div className="flex items-center gap-[4px]">
+            <button type="button" onClick={toggleLike}>
+              <LikesIcon isActive={isLike as boolean} />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({ type: 'event', action: 'open likes modal', payload: feed.id }),
+                  );
+                  return;
+                }
+                setIsLikesModalOpen(true);
+              }}
+            >
+              {(likeCount as number) > 0 && <button type="button">{likeCount}</button>}
+            </button>
+          </div>
+          {/* 댓글 버튼 */}
+          <button type="button" className="flex items-center gap-[4px]">
+            <CommentsIcon />
+            <span>5</span>
+          </button>
+        </div>
+        {/* 태그된 사람 버튼 */}
+        {feed.taggedUsers.length > 0 && (
+          <button
+            type="button"
+            className="text-regular12 flex items-center gap-[4px] whitespace-nowrap rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'tagged user click', payload: feed.taggedUsers }),
+                );
+                return;
+              }
+              setIsTaggedUserModalOpen(true);
+            }}
+          >
+            <ProfileIcon2 />
+            {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
+          </button>
         )}
       </div>
 
-      <div className="flex w-full items-center gap-[10px]">
-        <div className="flex items-center gap-[4px]">
-          <button type="button" onClick={toggleLike}>
-            <LikesIcon isActive={isLike as boolean} />
-          </button>
-          <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
-        </div>
-        <button type="button" className="flex items-center gap-[4px]">
-          <CommentsIcon />
-          <span>5</span>
-        </button>
-      </div>
-
+      {/* 피드 제목 */}
       {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
+
+      {/* 피드 내용 */}
       {feed.content && <FeedContent content={feed.content} />}
 
-      <div className="flex flex-col items-center gap-[16px]">
-        {(feed.is_nickname_visible || feed.taggedUsers.length > 0) && (
-          <div className="flex w-full items-center gap-[4px]">
-            {feed.taggedUsers.length > 0 && (
-              <button
-                type="button"
-                className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2"
-                onClick={() => {
-                  if (window.ReactNativeWebView) {
-                    window.ReactNativeWebView.postMessage(
-                      JSON.stringify({ type: 'event', action: 'tagged user click', payload: feed.taggedUsers }),
-                    );
-                    return;
-                  }
-                  setIsTaggedUserModalOpen(true);
-                }}
-              >
-                <ProfileIcon2 />
-                {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
-              </button>
-            )}
-            {feed.is_nickname_visible && (
-              <div className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2">
-                <TwinkleIcon />
-                {feed.author.name} | {getRole(feed.author.role) || '탈퇴'}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
+      {/* 바텀 시트 */}
+      {isLikesModalOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsLikesModalOpen}>
+          <LikesModal feedId={feed.id} />
+        </BottomSheet>
+      )}
       {isTaggedClubModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedClubModalOpen}>
           <TaggedClubModal taggedClubs={feed.taggedClubs} />

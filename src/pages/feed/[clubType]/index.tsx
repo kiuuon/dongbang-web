@@ -141,7 +141,7 @@ function FeedPage() {
               bottomSheetCloseRef.current = closeFn;
             }}
           >
-            <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
+            <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
             <div className="flex w-full flex-col px-[20px]">
               {clubType !== 'my' && (
                 <button

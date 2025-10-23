@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchClubMembers } from '@/lib/apis/club';
@@ -72,7 +73,33 @@ function PersonTagModal({
             onClick={() => selectMember(member.userId)}
           >
             <div className="flex items-center gap-[29px]">
-              {member.avatar ? '' : <div className="h-[40px] w-[40px] rounded-full bg-black" />}
+              {member.avatar ? (
+                <Image
+                  src={member.avatar}
+                  alt="아바타"
+                  width={40}
+                  height={40}
+                  style={{
+                    objectFit: 'cover',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                  }}
+                />
+              ) : (
+                <Image
+                  src="/images/none_avatar.png"
+                  alt="아바타"
+                  width={40}
+                  height={40}
+                  style={{
+                    objectFit: 'cover',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                  }}
+                />
+              )}
               <span className="text-bold12">{member.name}</span>
             </div>
             <div

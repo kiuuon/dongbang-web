@@ -11,7 +11,7 @@ function LoginModal({ onClose }: { onClose?: () => void }) {
       onClick={onClose}
       onKeyDown={onClose}
     >
-      <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white pb-[44px] pt-[30px]">
+      <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white py-[30px]">
         <div className="H-[71px] flex flex-row items-center justify-center gap-[18px]">
           <DongbangIcon />
           <span className="text-bold24">동방</span>
@@ -34,7 +34,7 @@ function LoginModal({ onClose }: { onClose?: () => void }) {
           <span className="text-regular16 flex w-full items-center justify-center">카카오톡 계정으로 시작하기</span>
         </button>
 
-        <button type="button" className="text-regular16 mt-[45px] text-gray3" onClick={onClose}>
+        <button type="button" className="text-regular16 mt-[20px] text-gray3" onClick={onClose}>
           다음에 할게요
         </button>
       </div>

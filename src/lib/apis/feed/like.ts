@@ -47,14 +47,18 @@ export async function fetchMyFeedLike(feedId: string) {
   return !!data;
 }
 
-export async function fetchFeedLikedUsers(feedId: string) {
+type LikedUser = {
+  id: string;
+  name: string;
+  avatar: string | null;
+};
+
+export async function fetchFeedLikedUsers(feedId: string): Promise<LikedUser[] | null> {
   const { data, error } = await supabase
     .from('Feed_Like')
     .select(
       `
-      user_id,
-      created_at,
-      User (
+      User!inner (
         id,
         name,
         avatar
@@ -65,6 +69,13 @@ export async function fetchFeedLikedUsers(feedId: string) {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
+  if (!data) return [];
 
-  return data.map((like) => like.User);
+  return data.flatMap((like) =>
+    (Array.isArray(like.User) ? like.User : [like.User]).map((user) => ({
+      id: user.id,
+      name: user.name,
+      avatar: user.avatar,
+    })),
+  );
 }

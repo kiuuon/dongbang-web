@@ -141,7 +141,7 @@ function ClubPage() {
             bottomSheetCloseRef.current = closeFn;
           }}
         >
-          <div className="mb-[17px] mt-[10px] h-[4px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
+          <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
           <div className="scrollbar-hide mb-[20px] flex max-h-[228px] w-full flex-col overflow-y-scroll px-[20px]">
             {myClubs?.map(
               (club) =>
