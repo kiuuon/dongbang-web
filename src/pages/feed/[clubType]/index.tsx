@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedsByClubType } from '@/lib/apis/feed/feed';
-import LoginModal from '@/components/common/login-modal';
+import loginModalStore from '@/stores/login-modal-store';
 import BottomSheet from '@/components/common/bottom-sheet';
 import FeedHeader from '@/components/feed/feed-header';
 import JoinClubPrompt from '@/components/feed/join-club-prompt';
@@ -20,7 +20,7 @@ function FeedPage() {
   const { clubType } = router.query;
   const bottomSheetCloseRef = useRef<() => void>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -133,8 +133,6 @@ function FeedPage() {
             <ClipLoader size={30} color="#F9A825" />
           </div>
         )}
-
-        {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
 
         {isBottomSheetOpen && (
           <BottomSheet

@@ -5,14 +5,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { sendFeedback } from '@/lib/apis/feedback';
 import { fetchSession } from '@/lib/apis/auth';
+import loginModalStore from '@/stores/login-modal-store';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
-import LoginModal from '@/components/common/login-modal';
 
 function ComingSoonPage() {
   const router = useRouter();
   const [feedBack, setFeedBack] = useState('');
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -108,8 +108,6 @@ function ComingSoonPage() {
           전송
         </button>
       </div>
-
-      {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
     </div>
   );
 }

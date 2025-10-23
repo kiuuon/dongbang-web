@@ -33,6 +33,8 @@ export async function fetchFeedLikeCount(feedId: string) {
 export async function fetchMyFeedLike(feedId: string) {
   const userId = await fetchUserId();
 
+  if (!userId) return false;
+
   const { data, error } = await supabase
     .from('Feed_Like')
     .select('id')

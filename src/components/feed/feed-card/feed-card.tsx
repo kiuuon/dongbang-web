@@ -4,8 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 
+import { fetchSession } from '@/lib/apis/auth';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
+import loginModalStore from '@/stores/login-modal-store';
 import { FeedType } from '@/types/feed-type';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import LikesIcon from '@/icons/likes-icon';
@@ -26,6 +28,26 @@ function FeedCard({ feed }: { feed: FeedType }) {
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
+
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   const { data: isLike } = useQuery({
     queryKey: ['isLike', feed.id],
@@ -143,6 +165,11 @@ function FeedCard({ feed }: { feed: FeedType }) {
   };
 
   const toggleLike = () => {
+    if (!session?.user) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     if (isLike) {
       removeLike();
     } else {

@@ -5,14 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchMyClubs } from '@/lib/apis/club';
+import loginModalStore from '@/stores/login-modal-store';
 import PlusIcon2 from '@/icons/plus-icon2';
 import Header from '@/components/layout/header';
-import LoginModal from '@/components/common/login-modal';
 import ClubCard from '@/components/club/club-card';
 
 function ClubListPage() {
   const router = useRouter();
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
   const { data: myClubs } = useQuery({
     queryKey: ['myClubs'],
     queryFn: fetchMyClubs,
@@ -110,8 +110,6 @@ function ClubListPage() {
       ) : (
         myClubs?.map((club) => <ClubCard key={club.id} club={club} />)
       )}
-
-      {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
     </div>
   );
 }

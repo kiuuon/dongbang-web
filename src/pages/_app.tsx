@@ -6,8 +6,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
-import Tab from '@/components/layout/tab';
 import { supabase } from '@/lib/apis/supabaseClient';
+import loginModalStore from '@/stores/login-modal-store';
+import Tab from '@/components/layout/tab';
+import LoginModal from '@/components/common/login-modal';
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [isWebView, setIsWebView] = useState(true);
+  const isOpen = loginModalStore((state) => state.isOpen);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage'];
 
@@ -137,6 +141,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <div className="scrollbar-hide m-auto max-w-[600px] overflow-scroll shadow-lg">
         <Component {...pageProps} />
+        {isOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
         {!isWebView && tabPage.includes(pathname) && <Tab />}
       </div>
     </QueryClientProvider>

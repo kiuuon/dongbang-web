@@ -6,9 +6,11 @@ import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import { ClipLoader } from 'react-spinners';
 
+import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
+import loginModalStore from '@/stores/login-modal-store';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import TwinkleIcon from '@/icons/twinkle-icon';
@@ -35,6 +37,26 @@ function FeedDetailPage() {
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const setKeyword = exploreStore((state) => state.setKeyword);
   const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
+
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
 
   const { data: isLike } = useQuery({
     queryKey: ['isLike', feedId],
@@ -230,6 +252,11 @@ function FeedDetailPage() {
   };
 
   const toggleLike = () => {
+    if (!session?.user) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
     if (isLike) {
       removeLike();
     } else {
