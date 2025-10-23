@@ -10,7 +10,6 @@ import { fetchClubIdByCode } from '@/lib/apis/invite';
 import { fetchUser } from '@/lib/apis/user';
 import DongbangIcon from '@/icons/dongbang-icon';
 import KakaoIcon from '@/icons/kakao-icon';
-import GoogleIcon from '@/icons/google-icon';
 import XIcon6 from '@/icons/x-icon6';
 import CheckIcon4 from '@/icons/check-icon4';
 import AlertIcon from '@/icons/alert-icon';
@@ -238,24 +237,14 @@ function InvitePage() {
             아래 버튼을 눌러 동방에 가입하고
             <br /> {`${club?.name}에 바로 참여해보세요!`}
           </div>
-          <div className="flex flex-col gap-[12px]">
-            <button
-              type="button"
-              className="bg-yellow1 flex h-[48px] w-[292px] flex-row items-center justify-center gap-[8px] rounded-[12px] pl-[27px]"
-              onClick={() => loginAndRedirect('kakao', `/invite/${code}`)}
-            >
-              <KakaoIcon />
-              <span className="text-regular16 flex w-full items-center justify-center">카카오톡 계정으로 시작하기</span>
-            </button>
-            <button
-              type="button"
-              className="flex h-[48px] w-[292px] flex-row items-center justify-center gap-[8px] rounded-[12px] border border-gray0 pl-[27px]"
-              onClick={() => loginAndRedirect('google', `/invite/${code}`)}
-            >
-              <GoogleIcon />
-              <span className="text-regular16 flex w-full items-center justify-center">구글 계정으로 시작하기</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            className="flex h-[48px] w-[292px] flex-row items-center justify-center gap-[8px] rounded-[12px] bg-yellow1 pl-[27px]"
+            onClick={() => loginAndRedirect('kakao', `/invite/${code}`)}
+          >
+            <KakaoIcon />
+            <span className="text-regular16 flex w-full items-center justify-center">카카오톡 계정으로 시작하기</span>
+          </button>
         </div>
       )}
     </div>

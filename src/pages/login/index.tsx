@@ -1,7 +1,6 @@
 import Image from 'next/image';
 
 import KakaoLoginButton from '@/components/login/KakaoLoginButton';
-import GoogleLoginButton from '@/components/login/GoogleLoginButton';
 
 function LoginPage() {
   return (
@@ -9,7 +8,6 @@ function LoginPage() {
       <Image src="/images/logo.png" alt="로고" width={140} height={140} />
       <div className="flex w-full flex-col gap-[12px]">
         <KakaoLoginButton />
-        <GoogleLoginButton />
       </div>
     </div>
   );

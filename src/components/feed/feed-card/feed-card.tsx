@@ -188,7 +188,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
   };
 
   return (
-    <div key={feed.id} className="flex flex-col border-b border-gray0 pb-[18px]">
+    <div key={feed.id} className="flex flex-col pb-[18px]">
       <div className="flex h-[40px] items-center justify-between">
         <button type="button" className="flex h-full items-center gap-[12px]" onClick={handleClubClick}>
           {feed.taggedClubs.length > 0 ? (
@@ -298,7 +298,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
         ))}
       </div>
 
-      <div className="mb-[12px] flex h-[7px] w-full items-center justify-center">
+      <div className="mb-[9px] flex h-[7px] w-full items-center justify-center">
         {feed.photos.length > 1 && (
           <div className="flex max-w-[65px] gap-1 overflow-hidden">
             <div
@@ -314,6 +314,19 @@ function FeedCard({ feed }: { feed: FeedType }) {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="flex w-full items-center gap-[10px]">
+        <div className="flex items-center gap-[4px]">
+          <button type="button" onClick={toggleLike}>
+            <LikesIcon isActive={isLike as boolean} />
+          </button>
+          <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
+        </div>
+        <button type="button" className="flex items-center gap-[4px]">
+          <CommentsIcon />
+          <span>5</span>
+        </button>
       </div>
 
       {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
@@ -348,19 +361,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
             )}
           </div>
         )}
-
-        <div className="flex w-full items-center gap-[10px]">
-          <div className="flex items-center gap-[4px]">
-            <button type="button" onClick={toggleLike}>
-              <LikesIcon isActive={isLike as boolean} />
-            </button>
-            <button type="button">{(likeCount as number) > 0 && <button type="button">{likeCount}</button>}</button>
-          </div>
-          <button type="button" className="flex items-center gap-[4px]">
-            <CommentsIcon />
-            <span>5</span>
-          </button>
-        </div>
       </div>
 
       {isTaggedClubModalOpen && (
