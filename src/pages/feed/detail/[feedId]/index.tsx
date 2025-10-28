@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,17 +13,19 @@ import { formatKoreanDate } from '@/lib/utils';
 import loginModalStore from '@/stores/login-modal-store';
 import exploreStore from '@/stores/explore-store';
 import MoreVertIcon from '@/icons/more-vert-icon';
+import CommentsIcon from '@/icons/comments-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
-import TwinkleIcon from '@/icons/twinkle-icon';
 import LikesIcon from '@/icons/likes-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
+import CommentSection from '@/components/feed/comment/comment-section';
 import TaggedClubModal from '@/components/feed/feed-card/tagged-club-modal';
 import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
 import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
 import LikesModal from '@/components/feed/feed-card/likes-modal';
+import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
 
 function FeedDetailPage() {
   const router = useRouter();
@@ -148,8 +150,6 @@ function FeedDetailPage() {
     },
   });
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
   }, [router]);
@@ -169,6 +169,26 @@ function FeedDetailPage() {
         return false;
       }
       alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: commentCount } = useQuery({
+    queryKey: ['commentCount', feedId],
+    queryFn: () => fetchFeedCommentCount(feed.id),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
   });
@@ -226,16 +246,6 @@ function FeedDetailPage() {
     });
   };
 
-  const getRole = (role: string | null) => {
-    if (role === 'president') {
-      return '회장';
-    }
-    if (role === 'member') {
-      return '부원';
-    }
-    return '';
-  };
-
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
   const currentIndicatorShiftX = Math.min(Math.max(page - 2, 0) * 13, maxIndicatorShiftX);
 
@@ -277,7 +287,7 @@ function FeedDetailPage() {
   };
 
   return (
-    <div ref={scrollRef} className="scrollbar-hide h-screen overflow-y-scroll px-[20px] pb-[47px] pt-[75px]">
+    <div className="scrollbar-hide h-screen overflow-y-scroll px-[20px] pb-[47px] pt-[75px]">
       <Header>
         <BackButton />
         <button
@@ -300,8 +310,10 @@ function FeedDetailPage() {
         </button>
       </Header>
 
+      {/* 피드 헤더 */}
       <div className="flex h-[40px] items-center justify-between">
         <button type="button" className="flex h-full items-center gap-[12px]" onClick={handleClubClick}>
+          {/* 피드 작성 동아리 로고 */}
           {feed.taggedClubs.length > 0 ? (
             <div className="relative h-[40px] w-[40px]">
               <Image
@@ -356,18 +368,20 @@ function FeedDetailPage() {
             />
           )}
 
+          {/* 피드 작성 정보 */}
           <div className="flex h-full flex-col justify-between">
             <div className="text-bold16 flex h-[19px] items-center">
               {feed.club.name}
               {feed.taggedClubs.length > 0 && ` & ${feed.taggedClubs[0].club.name}`}
             </div>
             <div className="text-regular12 flex h-[18px] items-center text-gray3">
-              {formatKoreanDate(feed.created_at)}
+              {formatKoreanDate(feed.created_at)} {feed.is_nickname_visible && `by ${feed.author.name}`}
             </div>
           </div>
         </button>
       </div>
 
+      {/* 피드 이미지 */}
       <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
         {feed.photos.map((photo: string) => (
           <div key={photo} className="keen-slider__slide">
@@ -385,8 +399,9 @@ function FeedDetailPage() {
         ))}
       </div>
 
-      <div className="mb-[12px] flex h-[7px] w-full items-center justify-center">
-        {feed.photos.length > 1 && (
+      {/* 인디케이터 */}
+      {feed.photos.length > 1 && (
+        <div className="mb-[8px] flex h-[7px] w-full items-center justify-center">
           <div className="flex max-w-[65px] gap-1 overflow-hidden">
             <div
               className="flex transition-transform duration-300"
@@ -400,67 +415,73 @@ function FeedDetailPage() {
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
-      {feed.content && <div className="mb-[10px] whitespace-pre-line">{renderContentWithHashtags(feed.content)}</div>}
-
-      <div className="flex flex-col items-center gap-[16px]">
-        {(feed.is_nickname_visible || feed.taggedUsers.length > 0) && (
-          <div className="flex w-full items-center gap-[4px]">
-            {feed.taggedUsers.length > 0 && (
-              <button
-                type="button"
-                className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2"
-                onClick={() => {
-                  if (window.ReactNativeWebView) {
-                    window.ReactNativeWebView.postMessage(
-                      JSON.stringify({ type: 'event', action: 'tagged user click', payload: feed.taggedUsers }),
-                    );
-                    return;
-                  }
-                  setIsTaggedUserModalOpen(true);
-                }}
-              >
-                <ProfileIcon2 />
-                {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
-              </button>
-            )}
-            {feed.is_nickname_visible && (
-              <div className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2">
-                <TwinkleIcon />
-                {feed.author.name} | {getRole(feed.author.role) || '탈퇴'}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="flex w-full items-center">
+      {/* 피드 버튼 박스 */}
+      <div className="mb-[10px] flex flex-row items-center justify-between">
+        <div className="flex w-full items-center gap-[10px]">
+          {/* 좋아요 버튼 */}
           <div className="flex items-center gap-[4px]">
             <button type="button" onClick={toggleLike}>
               <LikesIcon isActive={isLike as boolean} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open likes modal' }));
-                  return;
-                }
-                setIsLikesModalOpen(true);
-              }}
-            >
-              {(likeCount as number) > 0 && <button type="button">{likeCount}</button>}
-            </button>
+            {(likeCount as number) > 0 && (
+              <button
+                type="button"
+                className="text-regular16"
+                onClick={() => {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({ type: 'event', action: 'open likes modal', payload: feed.id }),
+                    );
+                    return;
+                  }
+                  setIsLikesModalOpen(true);
+                }}
+              >
+                {likeCount}
+              </button>
+            )}
           </div>
+          {/* 댓글 버튼 */}
+          <button type="button" className="text-regular16 flex items-center gap-[4px]" onClick={() => {}}>
+            <CommentsIcon />
+            {(commentCount as number) > 0 && <span>{commentCount}</span>}
+          </button>
         </div>
+        {/* 태그된 사람 버튼 */}
+        {feed.taggedUsers.length > 0 && (
+          <button
+            type="button"
+            className="text-regular12 flex items-center gap-[4px] whitespace-nowrap rounded-[4px] border border-gray0 px-[5px] py-[3px] text-gray2"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'tagged user click', payload: feed.taggedUsers }),
+                );
+                return;
+              }
+              setIsTaggedUserModalOpen(true);
+            }}
+          >
+            <ProfileIcon2 />
+            {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
+          </button>
+        )}
       </div>
 
-      <div className="-mx-[20px] mb-[10px] mt-[12px] h-[3px] w-[calc(100%+40px)] bg-background" />
+      {/* 피드 제목 */}
+      {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
 
-      <div className="text-regular12">댓글</div>
+      {/* 피드 내용 */}
+      {feed.content && <div className="mb-[10px] whitespace-pre-line">{renderContentWithHashtags(feed.content)}</div>}
 
+      <div className="-mx-[20px] mb-[20px] mt-[20px] h-[3px] w-[calc(100%+40px)] bg-background" />
+
+      <CommentSection feed={feed} />
+
+      {/* 바텀 시트 */}
       {isLikesModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsLikesModalOpen}>
           <LikesModal feedId={feed.id} />

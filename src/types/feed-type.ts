@@ -32,3 +32,19 @@ export interface FeedType {
   }[];
   created_at: string;
 }
+
+export interface CommentType {
+  id: string;
+  feed_id: string;
+  author_id: string;
+  like_count: number;
+  reply_count: number;
+  author: {
+    id: string;
+    name: string;
+    nickname: string;
+    avatar: string | null;
+  };
+  content: string;
+  created_at: string;
+}

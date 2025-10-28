@@ -22,6 +22,14 @@ function FeedPage() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
+  useEffect(() => {
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollRef.current && savedPosition) {
+      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem('scrollPosition');
+    }
+  }, []);
+
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
@@ -104,7 +112,7 @@ function FeedPage() {
       );
     }
 
-    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} />));
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
@@ -123,7 +131,7 @@ function FeedPage() {
       </Head>
       <div
         ref={scrollRef}
-        className={`scrollbar-hide flex h-screen flex-col gap-[30px] overflow-y-scroll px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
+        className={`scrollbar-hide flex h-screen flex-col overflow-y-scroll px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
       >
         <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
         {getContent()}

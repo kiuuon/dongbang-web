@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 
 import { fetchSession } from '@/lib/apis/auth';
+import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate } from '@/lib/utils';
 import loginModalStore from '@/stores/login-modal-store';
@@ -21,8 +23,9 @@ import InteractModal from './interact-modal';
 import SettingModal from './setting-modal';
 import LikesModal from './likes-modal';
 
-function FeedCard({ feed }: { feed: FeedType }) {
+function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [page, setPage] = useState(0);
   const [isTaggedUserModalOpen, setIsTaggedUserModalOpen] = useState(false);
   const [isTaggedClubModalOpen, setIsTaggedClubModalOpen] = useState(false);
@@ -86,6 +89,26 @@ function FeedCard({ feed }: { feed: FeedType }) {
       }
 
       alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      return false;
+    },
+  });
+
+  const { data: commentCount } = useQuery({
+    queryKey: ['commentCount', feed.id],
+    queryFn: () => fetchFeedCommentCount(feed.id),
+    throwOnError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return false;
+      }
+
+      alert(`댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
   });
@@ -179,9 +202,11 @@ function FeedCard({ feed }: { feed: FeedType }) {
   };
 
   return (
-    <div key={feed.id} className="flex flex-col pb-[18px]">
+    <div key={feed.id} className="flex flex-col pb-[20px]">
+      {/* 피드 헤더 */}
       <div className="flex h-[40px] items-center justify-between">
         <button type="button" className="flex h-full items-center gap-[12px]" onClick={handleClubClick}>
+          {/* 피드 작성 동아리 로고 */}
           {feed.taggedClubs.length > 0 ? (
             <div className="relative h-[40px] w-[40px]">
               <Image
@@ -242,6 +267,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
             />
           )}
 
+          {/* 피드 작성 정보 */}
           <div className="flex h-full flex-col justify-between">
             <div className="text-bold16 flex h-[19px] items-center">
               {feed.club.name}
@@ -252,6 +278,8 @@ function FeedCard({ feed }: { feed: FeedType }) {
             </div>
           </div>
         </button>
+
+        {/* 설정 버튼 */}
         <button
           type="button"
           onClick={() => {
@@ -272,6 +300,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
         </button>
       </div>
 
+      {/* 피드 이미지 */}
       <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
         {feed.photos.map((photo) => (
           <div key={photo} className="keen-slider__slide">
@@ -316,25 +345,43 @@ function FeedCard({ feed }: { feed: FeedType }) {
             <button type="button" onClick={toggleLike}>
               <LikesIcon isActive={isLike as boolean} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(
-                    JSON.stringify({ type: 'event', action: 'open likes modal', payload: feed.id }),
-                  );
-                  return;
-                }
-                setIsLikesModalOpen(true);
-              }}
-            >
-              {(likeCount as number) > 0 && <button type="button">{likeCount}</button>}
-            </button>
+            {(likeCount as number) > 0 && (
+              <button
+                type="button"
+                className="text-regular16"
+                onClick={() => {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({ type: 'event', action: 'open likes modal', payload: feed.id }),
+                    );
+                    return;
+                  }
+                  setIsLikesModalOpen(true);
+                }}
+              >
+                {likeCount}
+              </button>
+            )}
           </div>
           {/* 댓글 버튼 */}
-          <button type="button" className="flex items-center gap-[4px]">
+          <button
+            type="button"
+            className="text-regular16 flex items-center gap-[4px]"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'open comments bottom sheet', payload: feed.id }),
+                );
+                return;
+              }
+              router.push({
+                pathname: `/feed/detail/${feed.id}`,
+                query: { scroll: scrollRef.current?.scrollTop || 0 },
+              });
+            }}
+          >
             <CommentsIcon />
-            <span>5</span>
+            {(commentCount as number) > 0 && <span>{commentCount}</span>}
           </button>
         </div>
         {/* 태그된 사람 버튼 */}
