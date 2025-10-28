@@ -56,6 +56,45 @@ export async function deleteRootComment(commentId: string) {
   if (error) throw error;
 }
 
+export async function fetchReplyComment(feedId: string, parentId: string, page: number) {
+  const PAGE_SIZE = 5;
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await supabase
+    .from('Comment')
+    .select(
+      `
+    id, feed_id, parent_id, author_id, content, like_count, reply_count, created_at,
+    author:User!Comment_author_id_fkey(id, name, nickname, avatar)
+  `,
+    )
+    .eq('feed_id', feedId)
+    .eq('parent_id', parentId)
+    .order('created_at', { ascending: true })
+    .range(start, end);
+
+  if (error) throw error;
+
+  return data.map((comment) => ({
+    ...comment,
+    author: comment.author?.[0] || comment.author,
+  }));
+}
+
+export async function addReplyComment(feedId: string, parentId: string, content: string) {
+  const userId = await fetchUserId();
+
+  const { error } = await supabase.from('Comment').insert({
+    feed_id: feedId,
+    parent_id: parentId,
+    author_id: userId,
+    content,
+  });
+
+  if (error) throw error;
+}
+
 export async function fetchCommentLikeCount(commentId: string) {
   const { data, error } = await supabase.from('Comment').select('like_count').eq('id', commentId).single();
 

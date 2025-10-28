@@ -3,7 +3,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { addRootComment, fetchFeedCommentCount, fetchRootComment } from '@/lib/apis/feed/comment';
+import { addReplyComment, addRootComment, fetchFeedCommentCount, fetchRootComment } from '@/lib/apis/feed/comment';
 import loginModalStore from '@/stores/login-modal-store';
 import { FeedType } from '@/types/feed-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
@@ -12,11 +12,13 @@ import CommentCard from './comment-card';
 function CommentSection({ feed }: { feed: FeedType }) {
   const queryClient = useQueryClient();
   const [inputValue, setInputValue] = useState('');
+  const [reply, setReply] = useState('');
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const observerElement = useRef(null);
-
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const bottomCommentRef = useRef<HTMLDivElement>(null);
+  const bottomReplyRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -66,7 +68,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
     initialPageParam: 0,
     queryKey: ['rootCommentList', feed.id],
     queryFn: ({ pageParam }) => fetchRootComment(feed.id, pageParam),
-    getNextPageParam: (lastPage, allPages) => (lastPage?.length === 20 ? allPages.length : undefined),
+    getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),
     throwOnError: (error) => {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
@@ -111,8 +113,39 @@ function CommentSection({ feed }: { feed: FeedType }) {
       setInputValue('');
 
       setTimeout(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        bottomCommentRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
+    },
+    onError: (error) => {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'error',
+            headline: '댓글 작성에 실패했습니다. 다시 시도해주세요.',
+            message: error.message,
+          }),
+        );
+        return;
+      }
+      alert(`댓글 작성에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+    },
+  });
+
+  const { mutate: hanldeAddReplyComment } = useMutation({
+    mutationFn: () => addReplyComment(feed.id, reply, inputValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rootCommentList', feed.id] });
+      queryClient.invalidateQueries({ queryKey: ['replyCommentList', reply] });
+
+      const ref = bottomReplyRefs.current[reply];
+      if (ref) {
+        setTimeout(() => {
+          ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+
+      setInputValue('');
+      setReply('');
     },
     onError: (error) => {
       if (window.ReactNativeWebView) {
@@ -141,16 +174,38 @@ function CommentSection({ feed }: { feed: FeedType }) {
     <div className="flex flex-col gap-[12px] pb-[24px]">
       <div className="text-regular12">댓글 {(commentCount as number) > 0 && commentCount}</div>
       {(commentCount as number) > 0 ? (
-        <div>{data?.pages[0].map((comment) => <CommentCard key={comment.id} comment={comment} />)}</div>
+        <div>
+          {
+            data?.pages.map((page) =>
+              page.map((comment) => (
+                <div>
+                  <CommentCard
+                    key={comment.id}
+                    comment={comment}
+                    reply={reply}
+                    setReply={setReply}
+                    inputRef={inputRef}
+                  />
+                  <div
+                    ref={(el) => {
+                      bottomReplyRefs.current[comment.id] = el;
+                    }}
+                  />
+                </div>
+              )),
+            )[0]
+          }
+        </div>
       ) : (
         <div className="mt-[28px] flex w-full flex-col items-center justify-center gap-[16px]">
           <div className="text-bold24">아직 등록된 댓글이 없어요</div>
           <div className="text-regular20 text-gray3">첫 댓글을 남겨보세요</div>
         </div>
       )}
-      <div ref={bottomRef} />
+      <div ref={bottomCommentRef} />
       <div className="fixed bottom-0 left-1/2 z-10 w-screen max-w-[600px] -translate-x-1/2 border-t border-t-gray0 bg-white p-[8px]">
         <input
+          ref={inputRef}
           value={inputValue}
           className="text-regular16 w-full rounded-[10px] border border-gray0 py-[8px] pl-[16px] pr-[40px] outline-none placeholder:text-gray2"
           placeholder="댓글을 입력해주세요."
@@ -177,7 +232,11 @@ function CommentSection({ feed }: { feed: FeedType }) {
                 setIsLoginModalOpen(true);
                 return;
               }
-              hanldeAddRootComment();
+              if (reply === '') {
+                hanldeAddRootComment();
+              } else {
+                hanldeAddReplyComment();
+              }
             }}
           >
             <RightArrowIcon6 />
