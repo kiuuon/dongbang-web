@@ -18,6 +18,8 @@ import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
 import LikesIcon3 from '@/icons/likes-icon3';
 import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
+import TopArrowIcon from '@/icons/top-arrow-icon';
+import BottomArrowIcon4 from '@/icons/bottom-arrow-icon4';
 import ReplyCard from './reply-card';
 
 export default function CommentCard({
@@ -365,6 +367,7 @@ export default function CommentCard({
               {comment.like_count}
             </button>
           )}
+
           {isDropDownOpen && (
             <div
               ref={dropdownRef}
@@ -392,11 +395,13 @@ export default function CommentCard({
           )}
         </div>
       </div>
+
       {comment.reply_count > 0 && (
         <div className="mb-[16px] flex flex-col pl-[44px]">
           <button type="button" className="flex items-center gap-[4px]" onClick={() => setIsReplyOpen((prev) => !prev)}>
             <div className="h-[1px] w-[21px] bg-gray3" />
             <div className="text-regular12 text-gray3">답글 {comment.reply_count}개</div>
+            {isReplyOpen ? <TopArrowIcon /> : <BottomArrowIcon4 />}
           </button>
 
           {isReplyOpen && (

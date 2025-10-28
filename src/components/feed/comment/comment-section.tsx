@@ -166,6 +166,46 @@ function CommentSection({ feed }: { feed: FeedType }) {
     return (
       <div className="flex w-full justify-center">
         <ClipLoader size={30} color="#F9A825" />
+        <div className="fixed bottom-0 left-1/2 z-10 w-screen max-w-[600px] -translate-x-1/2 border-t border-t-gray0 bg-white p-[8px]">
+          <input
+            ref={inputRef}
+            value={inputValue}
+            className="text-regular16 w-full rounded-[10px] border border-gray0 py-[8px] pl-[16px] pr-[40px] outline-none placeholder:text-gray2"
+            placeholder="댓글을 입력해주세요."
+            onChange={(event) => {
+              setInputValue(event.target.value);
+            }}
+          />
+          {inputValue !== '' && (
+            <button
+              type="button"
+              className="absolute bottom-0 right-[16px] top-0"
+              onClick={() => {
+                if (!session?.user) {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'event',
+                        action: 'open login modal',
+                      }),
+                    );
+                    return;
+                  }
+
+                  setIsLoginModalOpen(true);
+                  return;
+                }
+                if (reply === '') {
+                  hanldeAddRootComment();
+                } else {
+                  hanldeAddReplyComment();
+                }
+              }}
+            >
+              <RightArrowIcon6 />
+            </button>
+          )}
+        </div>
       </div>
     );
   }
