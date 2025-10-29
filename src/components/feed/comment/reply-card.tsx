@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
-import { addCommentLike, deleteRootComment, fetchMyCommentLike, removeCommentLike } from '@/lib/apis/feed/comment';
+import { addCommentLike, deleteComment, fetchMyCommentLike, removeCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import loginModalStore from '@/stores/login-modal-store';
 import { CommentType } from '@/types/feed-type';
@@ -160,8 +160,8 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
     },
   });
 
-  const { mutate: handleDeleteRootComment } = useMutation({
-    mutationFn: () => deleteRootComment(reply.id),
+  const { mutate: handleDeleteComment } = useMutation({
+    mutationFn: () => deleteComment(reply.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
       queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
@@ -322,7 +322,7 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
                 type="button"
                 className="flex w-full items-center gap-[9px]"
                 onClick={() => {
-                  handleDeleteRootComment();
+                  handleDeleteComment();
                 }}
               >
                 <TrashIcon2 />

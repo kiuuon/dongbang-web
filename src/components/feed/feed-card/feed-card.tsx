@@ -434,7 +434,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       )}
       {isSettingModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsSettingModalOpen}>
-          <SettingModal authorId={feed.author_id} />
+          <SettingModal authorId={feed.author_id} feedId={feed.id} onClose={() => setIsSettingModalOpen(false)} />
         </BottomSheet>
       )}
     </div>

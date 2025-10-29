@@ -6,7 +6,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
 import {
   addCommentLike,
-  deleteRootComment,
+  deleteComment,
   fetchMyCommentLike,
   fetchReplyComment,
   removeCommentLike,
@@ -201,8 +201,8 @@ export default function CommentCard({
     },
   });
 
-  const { mutate: handleDeleteRootComment } = useMutation({
-    mutationFn: () => deleteRootComment(comment.id),
+  const { mutate: handleDeleteComment } = useMutation({
+    mutationFn: () => deleteComment(comment.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['commentCount', feedId] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feed.id] });
@@ -378,7 +378,7 @@ export default function CommentCard({
                   type="button"
                   className="flex w-full items-center gap-[9px]"
                   onClick={() => {
-                    handleDeleteRootComment();
+                    handleDeleteComment();
                   }}
                 >
                   <TrashIcon2 />

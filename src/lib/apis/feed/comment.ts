@@ -50,12 +50,6 @@ export async function addRootComment(feedId: string, content: string) {
   if (error) throw error;
 }
 
-export async function deleteRootComment(commentId: string) {
-  const { error } = await supabase.from('Comment').delete().eq('id', commentId);
-
-  if (error) throw error;
-}
-
 export async function fetchReplyComment(feedId: string, parentId: string, page: number) {
   const PAGE_SIZE = 5;
   const start = page * PAGE_SIZE;
@@ -91,6 +85,12 @@ export async function addReplyComment(feedId: string, parentId: string, content:
     author_id: userId,
     content,
   });
+
+  if (error) throw error;
+}
+
+export async function deleteComment(commentId: string) {
+  const { error } = await supabase.from('Comment').delete().eq('id', commentId);
 
   if (error) throw error;
 }

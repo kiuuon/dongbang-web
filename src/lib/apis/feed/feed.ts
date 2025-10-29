@@ -33,6 +33,12 @@ export async function writeFeed(
   }
 }
 
+export async function deleteFeed(feedId: string) {
+  const { error } = await supabase.from('Feed').delete().eq('id', feedId);
+
+  if (error) throw error;
+}
+
 export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
   const PAGE_SIZE = 5;
   const start = page * PAGE_SIZE;
