@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchUserId } from '@/lib/apis/auth';
@@ -9,6 +10,8 @@ import ReportIcon from '@/icons/report-icon';
 
 function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId: string; onClose: () => void }) {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const { feedId: isFeedDetail } = router.query;
 
   const { data: userId } = useQuery({
     queryKey: ['userId'],
@@ -37,6 +40,8 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
       });
 
       onClose();
+
+      if (isFeedDetail) router.back();
     },
     onError: (error) => {
       if (window.ReactNativeWebView) {
@@ -53,7 +58,9 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     },
   });
 
-  const clickEditButton = () => {};
+  const clickEditButton = () => {
+    router.push(`/feed/edit/${feedId}`);
+  };
 
   const clickDeleteButton = () => {
     handleDeleteFeed();

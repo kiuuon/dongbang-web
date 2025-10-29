@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { upload } from '@/lib/apis/image';
+import { editFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
 import RightArrowIcon5 from '@/icons/right-arrow-icon5';
@@ -10,21 +12,20 @@ import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
 import PhotoSection from '@/components/feed/write/photo-section';
 import TagModal from '@/components/feed/write/tag-modal/tag-modal';
-import { upload } from '@/lib/apis/image';
-import { writeFeed } from '@/lib/apis/feed/feed';
-import { fetchClubInfo } from '@/lib/apis/club';
 
-function WriteFeedPage() {
+function EditFeedPage() {
   const uuid = crypto.randomUUID();
   const router = useRouter();
-  const { clubId } = router.query;
+  const { feedId } = router.query;
+  const queryClient = useQueryClient();
+
   const [photos, setPhotos] = useState<File[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isNicknameVisible, setIsNicknameVisible] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [, setDeletedUrls] = useState<string[]>([]);
+  const [deletedUrls, setDeletedUrls] = useState<string[]>([]);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
@@ -32,24 +33,36 @@ function WriteFeedPage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const { data: clubInfo } = useQuery({
-    queryKey: ['club', clubId],
-    queryFn: () => fetchClubInfo(clubId as string),
+  const { data: feed } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
     throwOnError: (error) => {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
             type: 'error',
-            headline: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+            headline: '피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
             message: error.message,
           }),
         );
         return false;
       }
-      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
+      alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
       return false;
     },
   });
+
+  useEffect(() => {
+    if (feed) {
+      setTitle(feed.title);
+      setContent(feed.content);
+      setIsNicknameVisible(feed.is_nickname_visible);
+      setIsPrivate(feed.is_private);
+      setPreviewUrls(feed.photos);
+      setSelectedMembers(feed.taggedUsers.map(({ user }: { user: { id: string } }) => user.id));
+      setSelectedClubs(feed.taggedClubs.map(({ club }: { club: { id: string } }) => club.id));
+    }
+  }, [feed]);
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'feed-image'),
@@ -69,20 +82,15 @@ function WriteFeedPage() {
     },
   });
 
-  const { mutate: handleWriteFeed } = useMutation({
+  const { mutate: handleEditFeed } = useMutation({
     mutationFn: async (photoUrls: string[]) =>
-      writeFeed(
-        photoUrls,
-        title,
-        content,
-        isNicknameVisible,
-        isPrivate,
-        clubId as string,
-        clubInfo?.type,
-        selectedMembers,
-        selectedClubs,
-      ),
+      editFeed(feed.id, photoUrls, title, content, isNicknameVisible, isPrivate, selectedMembers, selectedClubs),
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'feeds',
+      });
+      queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
+
       router.back();
     },
     onError: (error) => {
@@ -103,28 +111,34 @@ function WriteFeedPage() {
 
   const handleWriteButton = async () => {
     try {
-      if (photos.length === 0) {
+      // 기존 url은 http 형태 새로 추가된 url은 DataURL 형태
+      const orderedUrls: string[] = Array.from(previewRef.current?.children ?? []).map((child) =>
+        (child as HTMLElement).style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, ''),
+      );
+
+      if (orderedUrls.length === 0) {
         alert('사진을 추가해주세요.');
         return;
       }
 
       setIsLoading(true);
 
-      const orderedUrls: string[] = Array.from(previewRef.current?.children ?? []).map((child) =>
-        (child as HTMLElement).style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, ''),
-      );
-
+      // 2️⃣ 새로 추가된 파일 업로드
       const uploadedUrls = await Promise.all(
         photos.map((photo, index) => uploadPhoto({ file: photo, fileName: `feed/${uuid}/${index}.png` })),
       ).then((res) => res.map((r) => r.publicUrl));
 
+      // 기존 URL은 그대로, DataURL은 업로드된 URL로 교체
       let uploadIndex = 0;
       const finalImages = orderedUrls.map((url) => {
-        if (url.startsWith('http')) return url;
+        if (url.startsWith('http')) return url; // 기존 이미지
         const newUrl = uploadedUrls[uploadIndex];
         uploadIndex += 1;
-        return newUrl;
+        return newUrl; // 새 업로드 URL
       });
+
+      // 삭제된 URL 제외
+      const filteredFinalImages = finalImages.filter((url) => !deletedUrls.includes(url));
 
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
@@ -132,17 +146,16 @@ function WriteFeedPage() {
             type: 'event',
             action: 'write feed',
             payload: {
-              photos: finalImages,
+              photos: filteredFinalImages,
               title,
               content,
               isNicknameVisible,
               isPrivate,
-              clubType: clubInfo?.type,
             },
           }),
         );
       } else {
-        handleWriteFeed(finalImages);
+        handleEditFeed(filteredFinalImages);
       }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -249,7 +262,7 @@ function WriteFeedPage() {
       </button>
       {isTagModalOpen && (
         <TagModal
-          clubId={clubId as string}
+          clubId={feed?.club_id}
           setIsBottomSheetOpen={setIsTagModalOpen}
           selectedMembers={selectedMembers}
           setSelectedMembers={setSelectedMembers}
@@ -262,4 +275,4 @@ function WriteFeedPage() {
   );
 }
 
-export default WriteFeedPage;
+export default EditFeedPage;

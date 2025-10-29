@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
@@ -7,14 +6,14 @@ import { fetchClubMembers } from '@/lib/apis/club';
 import ToggleIcon2 from '@/icons/toggle-icon2';
 
 function PersonTagModal({
+  clubId,
   selected,
   setSelected,
 }: {
+  clubId: string;
   selected: string[];
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
-  const router = useRouter();
-  const { clubId } = router.query;
   const [searchText, setSearchText] = useState('');
 
   const { data: members } = useQuery({

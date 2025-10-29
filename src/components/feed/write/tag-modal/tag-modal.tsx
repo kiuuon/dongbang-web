@@ -5,12 +5,14 @@ import PersonTagModal from './person-tag-modal';
 import ClubTagModal from './club-tag-modal';
 
 function TagModal({
+  clubId,
   setIsBottomSheetOpen,
   selectedMembers,
   setSelectedMembers,
   selectedClubs,
   setSelectedClubs,
 }: {
+  clubId: string;
   setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedMembers: string[];
   setSelectedMembers: React.Dispatch<React.SetStateAction<string[]>>;
@@ -53,9 +55,9 @@ function TagModal({
           </button>
         </div>
         {isClub ? (
-          <ClubTagModal selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
+          <ClubTagModal clubId={clubId} selected={draftSelectedClubs} setSelected={setDraftSelectedClubs} />
         ) : (
-          <PersonTagModal selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
+          <PersonTagModal clubId={clubId} selected={draftSelectedMembers} setSelected={setDraftSelectedMembers} />
         )}
         <button
           type="button"

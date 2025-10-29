@@ -382,7 +382,7 @@ function FeedDetailPage() {
       </div>
 
       {/* 피드 이미지 */}
-      <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
+      <div key={feed.photos.join(',')} ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
         {feed.photos.map((photo: string) => (
           <div key={photo} className="keen-slider__slide">
             <Image
@@ -504,7 +504,7 @@ function FeedDetailPage() {
       )}
       {isSettingModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsSettingModalOpen}>
-          <SettingModal authorId={feed.author_id} />
+          <SettingModal authorId={feed.author_id} feedId={feed.id} onClose={() => setIsSettingModalOpen(false)} />
         </BottomSheet>
       )}
     </div>

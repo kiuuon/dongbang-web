@@ -301,7 +301,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       </div>
 
       {/* 피드 이미지 */}
-      <div ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
+      <div key={feed.photos.join(',')} ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
         {feed.photos.map((photo) => (
           <div key={photo} className="keen-slider__slide">
             <Image

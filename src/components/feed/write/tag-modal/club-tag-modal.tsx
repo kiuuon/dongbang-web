@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
@@ -8,14 +7,14 @@ import { fetchClubs } from '@/lib/apis/club';
 import { ClubType } from '@/types/club-type';
 
 function ClubTagModal({
+  clubId,
   selected,
   setSelected,
 }: {
+  clubId: string;
   selected: string[];
   setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
-  const router = useRouter();
-  const { clubId } = router.query;
   const [searchText, setSearchText] = useState('');
 
   const observerElement = useRef(null);
