@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
 import { generateBase62Code } from '@/lib/utils';
@@ -170,7 +170,6 @@ function RecruitPage() {
           </button>
         )}
       </div>
-      <Toaster />
     </div>
   );
 }

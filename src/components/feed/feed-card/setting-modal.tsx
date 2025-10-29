@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 import { fetchUserId } from '@/lib/apis/auth';
 import { deleteFeed } from '@/lib/apis/feed/feed';
@@ -66,7 +67,16 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     handleDeleteFeed();
   };
 
-  const clickShareButton = () => {};
+  const clickShareButton = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/feed/detail/${feedId}`;
+      await navigator.clipboard.writeText(url);
+      toast.success('피드 링크가 클립보드에 복사되었습니다!');
+      onClose();
+    } catch (error) {
+      toast.error('피드 링크 복사에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
     <div className="flex w-full flex-col items-center px-[20px]">

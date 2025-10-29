@@ -109,7 +109,7 @@ function EditFeedPage() {
     },
   });
 
-  const handleWriteButton = async () => {
+  const handleEditButton = async () => {
     try {
       // 기존 url은 http 형태 새로 추가된 url은 DataURL 형태
       const orderedUrls: string[] = Array.from(previewRef.current?.children ?? []).map((child) =>
@@ -123,7 +123,7 @@ function EditFeedPage() {
 
       setIsLoading(true);
 
-      // 2️⃣ 새로 추가된 파일 업로드
+      // 새로 추가된 파일 업로드
       const uploadedUrls = await Promise.all(
         photos.map((photo, index) => uploadPhoto({ file: photo, fileName: `feed/${uuid}/${index}.png` })),
       ).then((res) => res.map((r) => r.publicUrl));
@@ -144,7 +144,7 @@ function EditFeedPage() {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
             type: 'event',
-            action: 'write feed',
+            action: 'edit feed',
             payload: {
               photos: filteredFinalImages,
               title,
@@ -256,9 +256,9 @@ function EditFeedPage() {
       <button
         type="button"
         className="text-bold16 mb-[20px] mt-[20px] flex h-[56px] min-h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
-        onClick={handleWriteButton}
+        onClick={handleEditButton}
       >
-        게시
+        수정
       </button>
       {isTagModalOpen && (
         <TagModal

@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
 import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
@@ -58,7 +59,6 @@ export default function App({ Component, pageProps }: AppProps) {
       try {
         const { data } = await supabase.auth.getSession();
         const { type, action, payload } = JSON.parse(event.data);
-
         if (type === 'event') {
           if (action === 'set session request') {
             const { accessToken, refreshToken } = payload;
@@ -73,6 +73,15 @@ export default function App({ Component, pageProps }: AppProps) {
             }
           } else if (action === 'login request') {
             login(payload);
+          } else if (action === 'edit feed') {
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'feeds',
+            });
+            queryClient.invalidateQueries({ queryKey: ['feedDetail', payload] });
+          } else if (action === 'delete feed') {
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'feeds',
+            });
           }
         }
       } catch (error) {
@@ -144,6 +153,7 @@ export default function App({ Component, pageProps }: AppProps) {
         {isOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
         {!isWebView && tabPage.includes(pathname) && <Tab />}
       </div>
+      <Toaster />
     </QueryClientProvider>
   );
 }
