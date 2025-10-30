@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFeedLikeCount } from '@/lib/apis/feed/like';
-import { formatKoreanDate, handleQueryError } from '@/lib/utils';
+import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import LikesIcon2 from '@/icons/likes-icon2';
 import { FeedType } from '@/types/feed-type';

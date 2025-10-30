@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
@@ -21,7 +21,6 @@ function ClubSection({
   setIsDetailSearchModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { filters } = filtersStore();
-  const [openClubCardId, setOpenClubCardId] = useState<string | null>(null);
 
   const observerElement = useRef(null);
   const { data: clubCount } = useQuery({
@@ -68,16 +67,7 @@ function ClubSection({
               <ClipLoader size={30} color="#F9A825" />
             </div>
           ) : (
-            data?.pages.map((page) =>
-              page?.map((club: ClubType) => (
-                <ClubCard
-                  key={club.id}
-                  club={club}
-                  openClubCardId={openClubCardId}
-                  setOpenClubCardId={setOpenClubCardId}
-                />
-              )),
-            )
+            data?.pages.map((page) => page?.map((club: ClubType) => <ClubCard key={club.id} club={club} />))
           )}
           {hasNextPage && (
             <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
