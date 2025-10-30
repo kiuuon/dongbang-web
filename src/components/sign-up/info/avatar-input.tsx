@@ -29,7 +29,7 @@ function AvatarInput({ onChange }: { onChange: (value: File | null) => void }) {
     <div>
       {preview ? (
         <div
-          className="relative h-[70px] w-[70px] min-w-[70px] rounded-full"
+          className="relative h-[64px] w-[64px] min-w-[64px] rounded-full"
           style={{
             backgroundImage: `url(${preview})`,
             backgroundSize: 'cover',
@@ -47,14 +47,14 @@ function AvatarInput({ onChange }: { onChange: (value: File | null) => void }) {
       ) : (
         <label
           htmlFor="file-upload"
-          className="relative flex h-[70px] w-[70px] min-w-[70px] cursor-pointer flex-col items-center justify-center rounded-full bg-gray0"
+          className="relative flex h-[64px] w-[64px] min-w-[64px] cursor-pointer flex-col items-center justify-center rounded-full bg-gray0"
         >
           <input
             id="file-upload"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="absolute h-[70px] w-[70px] cursor-pointer opacity-0"
+            className="absolute h-[64px] w-[64px] cursor-pointer opacity-0"
           />
           <CameraIcon />
         </label>

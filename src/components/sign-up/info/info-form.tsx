@@ -164,7 +164,7 @@ function InfoForm() {
     <form className="flex h-full w-full flex-col justify-between" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex w-full flex-col gap-[16px]">
         {/* 학생증 */}
-        <div className="w-full rounded-[10px] bg-gradient-to-br from-[#FFF9E8] via-[#FFE6A1] to-[#F9A825] p-[20px]">
+        <div className="w-full rounded-[10px] bg-gradient-to-br from-[#FFF9E8] via-[#FFE6A1] to-[#F9A825] p-[20px] shadow-[0_6px_16px_0_rgba(0,0,0,0.24)]">
           <div className="flex justify-between">
             <div className="flex gap-[14px]">
               <div>

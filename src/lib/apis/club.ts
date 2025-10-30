@@ -22,10 +22,6 @@ export async function fetchClubs(keyword: string, filters: Filters, page: number
     p_detail_types: filters.detailTypes ?? [],
     p_location: filters.location ?? null,
     p_categories: filters.categories ?? [],
-    p_recruitment_statuses: filters.recruitmentStatuses ?? [],
-    p_end_date_option: filters.endDateOption ?? null,
-    p_dues_option: filters.duesOption ?? null,
-    p_meeting: filters.meeting ?? null,
     p_limit_count: PAGE_SIZE,
     p_offset_count: page * PAGE_SIZE,
   });
@@ -43,10 +39,6 @@ export async function fetchClubsCount(keyword: string, filters: Filters) {
     p_detail_types: filters.detailTypes ?? [],
     p_location: filters.location ?? null,
     p_categories: filters.categories ?? [],
-    p_recruitment_statuses: filters.recruitmentStatuses ?? [],
-    p_end_date_option: filters.endDateOption ?? null,
-    p_dues_option: filters.duesOption ?? null,
-    p_meeting: filters.meeting ?? null,
   });
   if (error) throw error;
 
