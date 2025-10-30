@@ -3,9 +3,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
-import { generateBase62Code } from '@/lib/utils';
 import { fetchMyRole } from '@/lib/apis/club';
 import { fetchInviteCode, createInviteCode, deleteInviteCode } from '@/lib/apis/invite';
+import { generateBase62Code, handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import DuplicateIcon from '@/icons/duplicate-icon';
 import TrashIcon from '@/icons/trash-icon';
 import ShareIcon from '@/icons/share-icon';
@@ -20,39 +21,13 @@ function RecruitPage() {
   const { data: code } = useQuery({
     queryKey: ['inviteCode', clubId],
     queryFn: () => fetchInviteCode(clubId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '초대 코드를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INVITE_CODE_FETCH_FAILED),
   });
 
   const { data: myRole, isPending } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   const { mutate: handleCreateCode } = useMutation({
@@ -60,19 +35,7 @@ function RecruitPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inviteCode', clubId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '초대 링크 발급에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`초대 링크 발급에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.INVITE_LINK_CREATE_FAILED),
   });
 
   const { mutate: handleDeleteCode } = useMutation({
@@ -80,19 +43,7 @@ function RecruitPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inviteCode', clubId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '초대 링크 삭제에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`초대 링크 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.INVITE_LINK_DELETE_FAILED),
   });
 
   if (isPending) {

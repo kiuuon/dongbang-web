@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 
 import { fetchUserId } from '@/lib/apis/auth';
 import { deleteFeed } from '@/lib/apis/feed/feed';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import EditIcon from '@/icons/edit-icon';
 import DeleteIcon from '@/icons/delete-icon';
 import ExternalLinkIcon from '@/icons/external-link-icon';
@@ -17,20 +19,7 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
   const { data: userId } = useQuery({
     queryKey: ['userId'],
     queryFn: fetchUserId,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '사용자 ID를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`사용자 ID를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
   const { mutate: handleDeleteFeed } = useMutation({
@@ -44,19 +33,7 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
 
       if (isFeedDetail) router.back();
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드 삭제에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`피드 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEED.DELETE_FAILED),
   });
 
   const clickEditButton = () => {

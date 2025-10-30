@@ -8,8 +8,10 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
-import { formatKoreanDate } from '@/lib/utils';
+import { formatKoreanDate, handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import exploreStore from '@/stores/explore-store';
 import MoreVertIcon from '@/icons/more-vert-icon';
@@ -25,7 +27,6 @@ import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
 import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
 import LikesModal from '@/components/feed/feed-card/likes-modal';
-import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
 
 function FeedDetailPage() {
   const router = useRouter();
@@ -46,60 +47,31 @@ function FeedDetailPage() {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { data: isLike } = useQuery({
     queryKey: ['isLike', feedId],
     queryFn: () => fetchMyFeedLike(feedId),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
   const { data: likeCount } = useQuery({
     queryKey: ['likeCount', feedId],
     queryFn: () => fetchFeedLikeCount(feedId),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.COUNT_FETCH_FAILED),
+  });
 
-      alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+  const { data: feed, isPending } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
+  });
+
+  const { data: commentCount } = useQuery({
+    queryKey: ['commentCount', feedId],
+    queryFn: () => fetchFeedCommentCount(feed.id),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.COUNT_FETCH_FAILED),
   });
 
   const { mutate: addLike } = useMutation({
@@ -108,19 +80,7 @@ function FeedDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
       queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 추가에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`좋아요 추가에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
   });
 
   const { mutate: removeLike } = useMutation({
@@ -129,19 +89,7 @@ function FeedDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
       queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 삭제에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`좋아요 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
   });
 
   const [sliderRef] = useKeenSlider({
@@ -153,45 +101,6 @@ function FeedDetailPage() {
   useEffect(() => {
     sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
   }, [router]);
-
-  const { data: feed, isPending } = useQuery({
-    queryKey: ['feedDetail', feedId],
-    queryFn: () => fetchFeedDetail(feedId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
-  });
-
-  const { data: commentCount } = useQuery({
-    queryKey: ['commentCount', feedId],
-    queryFn: () => fetchFeedCommentCount(feed.id),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
-  });
 
   if (isPending) {
     return (

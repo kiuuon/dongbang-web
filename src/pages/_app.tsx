@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { supabase } from '@/lib/apis/supabaseClient';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import Tab from '@/components/layout/tab';
 import LoginModal from '@/components/common/login-modal';
@@ -86,7 +87,7 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       } catch (error) {
         if ((error as any).status !== 400) {
-          alert(`세션 정보를 설정하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
+          alert(`${ERROR_MESSAGE.SESSION.SET_FAILED}\n\n${(error as Error).message}`);
         }
       }
     };
@@ -137,7 +138,7 @@ export default function App({ Component, pageProps }: AppProps) {
           setIsRegistered(true);
         }
       } catch (error) {
-        alert(`로그인 상태를 확인하는 데 실패했습니다. 다시 시도해주세요.\n\n${(error as Error).message}`);
+        alert(`${ERROR_MESSAGE.AUTH.LOGIN_STATUS_CHECK_FAILED}\n\n${(error as Error).message}`);
       }
     })();
   }, [router]);

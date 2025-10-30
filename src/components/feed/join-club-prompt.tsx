@@ -3,26 +3,15 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
 import { fetchRecommendedClubs } from '@/lib/apis/club';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import XIcon from '@/icons/x-icon';
 
 function JoinClubPrompt() {
   const { data: recommendedClubs } = useQuery({
     queryKey: ['recommendedClubs'],
     queryFn: fetchRecommendedClubs,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리 추천을 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리 추천을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.RECOMMEND_FETCH_FAILED),
   });
 
   const [clubList, setClubList] = useState<typeof recommendedClubs>([]);

@@ -3,6 +3,8 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchClubs, fetchClubsCount } from '@/lib/apis/club';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';
 import filtersStore from '@/stores/filter-store';
 import BottomSheet from '@/components/common/bottom-sheet';
@@ -25,20 +27,7 @@ function ClubSection({
   const { data: clubCount } = useQuery({
     queryKey: ['clubCount', keyword, filters],
     queryFn: () => fetchClubsCount(keyword, filters),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.COUNT_FETCH_FAILED),
   });
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
@@ -46,20 +35,7 @@ function ClubSection({
     queryKey: ['clubs', keyword, filters],
     queryFn: ({ pageParam }) => fetchClubs(keyword, filters, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {

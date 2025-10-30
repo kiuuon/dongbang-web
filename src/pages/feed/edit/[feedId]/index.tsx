@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { upload } from '@/lib/apis/image';
 import { editFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
 import RightArrowIcon5 from '@/icons/right-arrow-icon5';
@@ -36,20 +38,7 @@ function EditFeedPage() {
   const { data: feed } = useQuery({
     queryKey: ['feedDetail', feedId],
     queryFn: () => fetchFeedDetail(feedId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
   });
 
   useEffect(() => {
@@ -66,20 +55,7 @@ function EditFeedPage() {
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'feed-image'),
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '사진 업로드에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.IMAGE.PHOTO_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 
   const { mutate: handleEditFeed } = useMutation({
@@ -93,20 +69,7 @@ function EditFeedPage() {
 
       router.back();
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드를 작성하는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`'피드를 작성하는데 실패했습니다. 다시 시도해주세요.'\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEED.EDIT_FAILED, () => setIsLoading(false)),
   });
 
   const handleEditButton = async () => {

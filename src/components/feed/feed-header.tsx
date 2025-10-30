@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
@@ -27,20 +29,7 @@ function FeedHeader({
   const { data: session, isPending } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   useEffect(() => {

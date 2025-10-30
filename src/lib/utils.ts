@@ -24,3 +24,35 @@ export function generateBase62Code(length: number): string {
   }
   return code;
 }
+
+export function handleQueryError(error: any, message: string) {
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type: 'error',
+        headline: message,
+        message: error.message,
+      }),
+    );
+    return false;
+  }
+
+  alert(`${message}\n\n${error.message}`);
+  return false;
+}
+
+export function handleMutationError(error: any, message: string, onFinally?: () => void) {
+  if (window.ReactNativeWebView) {
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type: 'error',
+        headline: message,
+        message: error.message,
+      }),
+    );
+  } else {
+    alert(`${message}\n\n${error.message}`);
+  }
+
+  if (onFinally) onFinally();
+}

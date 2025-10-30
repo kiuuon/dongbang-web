@@ -6,6 +6,8 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedsByClubType } from '@/lib/apis/feed/feed';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import BottomSheet from '@/components/common/bottom-sheet';
 import FeedHeader from '@/components/feed/feed-header';
@@ -33,20 +35,7 @@ function FeedPage() {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
@@ -54,20 +43,7 @@ function FeedPage() {
     queryKey: ['feeds', clubType],
     queryFn: ({ pageParam }) => fetchFeedsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`피드를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {

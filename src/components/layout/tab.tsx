@@ -1,13 +1,15 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
+import { fetchSession } from '@/lib/apis/auth';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import HomeIcon from '@/icons/home-icon';
 import SearchIcon from '@/icons/search-icon';
 import ClubIcon from '@/icons/club-icon';
 import InteractIcon from '@/icons/interact-icon';
 import ProfileIcon from '@/icons/profile-icon';
-import { useQuery } from '@tanstack/react-query';
-import { fetchSession } from '@/lib/apis/auth';
 
 function Tab() {
   const router = useRouter();
@@ -15,20 +17,7 @@ function Tab() {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   return (

@@ -4,6 +4,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchClubs } from '@/lib/apis/club';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';
 
 function ClubTagModal({
@@ -36,20 +38,7 @@ function ClubTagModal({
     queryKey: ['clubs', searchText, filters],
     queryFn: ({ pageParam }) => fetchClubs(searchText, filters, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {

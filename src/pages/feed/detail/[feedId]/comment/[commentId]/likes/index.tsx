@@ -1,9 +1,12 @@
-import BackButton from '@/components/common/back-button';
-import Header from '@/components/layout/header';
-import { fetchCommentLikedUsers } from '@/lib/apis/feed/comment';
-import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchCommentLikedUsers } from '@/lib/apis/feed/comment';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
+import BackButton from '@/components/common/back-button';
+import Header from '@/components/layout/header';
 
 function CommentLikesPage() {
   const router = useRouter();
@@ -12,21 +15,7 @@ function CommentLikesPage() {
   const { data: feedLikedUsers } = useQuery({
     queryKey: ['commentLikedUsers', commentId],
     queryFn: () => fetchCommentLikedUsers(commentId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.USERS_FETCH_FAILED),
   });
 
   return (

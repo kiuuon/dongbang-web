@@ -4,6 +4,8 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { addReplyComment, addRootComment, fetchFeedCommentCount, fetchRootComment } from '@/lib/apis/feed/comment';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import { FeedType } from '@/types/feed-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
@@ -23,40 +25,13 @@ function CommentSection({ feed }: { feed: FeedType }) {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { data: commentCount, isPending: isCommentCountPending } = useQuery({
     queryKey: ['commentCount', feed.id],
     queryFn: () => fetchFeedCommentCount(feed.id),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.COUNT_FETCH_FAILED),
   });
 
   const {
@@ -69,20 +44,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
     queryKey: ['rootCommentList', feed.id],
     queryFn: ({ pageParam }) => fetchRootComment(feed.id, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`댓글 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {
@@ -116,19 +78,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
         bottomCommentRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 작성에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`댓글 작성에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.WRITE_FAILED),
   });
 
   const { mutate: hanldeAddReplyComment } = useMutation({
@@ -147,19 +97,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
       setInputValue('');
       setReply('');
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 작성에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`댓글 작성에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.WRITE_FAILED),
   });
 
   if (isCommentCountPending || isRootCommentListPending) {

@@ -2,26 +2,14 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFeedLikedUsers } from '@/lib/apis/feed/like';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 
 function LikesModal({ feedId }: { feedId: string }) {
   const { data: feedLikedUsers } = useQuery({
     queryKey: ['feedLikedUsers', feedId],
     queryFn: () => fetchFeedLikedUsers(feedId),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.USERS_FETCH_FAILED),
   });
 
   return (

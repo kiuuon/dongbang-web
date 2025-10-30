@@ -2,29 +2,17 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
-import { ClubType } from '@/types/club-type';
 import { fetchMyRole } from '@/lib/apis/club';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
+import { ClubType } from '@/types/club-type';
 
 function ClubCard({ club }: { club: ClubType }) {
   const router = useRouter();
   const { data: role } = useQuery({
     queryKey: ['myRole', club.id],
     queryFn: () => fetchMyRole(club.id),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`내 역할을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   const getRole = () => {

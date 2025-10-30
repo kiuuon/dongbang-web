@@ -7,6 +7,8 @@ import { clubDetailSchema } from '@/lib/validationSchema';
 
 import { upload } from '@/lib/apis/image';
 import { createClub } from '@/lib/apis/club';
+import { handleMutationError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import clubInfoStore from '@/stores/club-info-store';
 import { NewClubType } from '@/types/club-type';
 import SubmitButton from '@/components/common/submit-button';
@@ -37,38 +39,13 @@ function DetailForm() {
 
   const { mutateAsync: uploadLogo } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'club-image'),
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '로고 업로드에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`로고 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.IMAGE.LOGO_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 
   const { mutateAsync: uploadActivityPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'club-image'),
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '활동 사진 업로드에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`활동 사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) =>
+      handleMutationError(error, ERROR_MESSAGE.IMAGE.ACTIVITY_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 
   const { mutate: handleCreateClub } = useMutation({
@@ -84,20 +61,7 @@ function DetailForm() {
       });
       router.push('/club');
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리 개설에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`동아리 개설에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CREATE_FAILED, () => setIsLoading(false)),
   });
 
   const onSubmit = async (data: { logo: File; activity: File[]; description: string }) => {

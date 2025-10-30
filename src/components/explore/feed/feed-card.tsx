@@ -3,9 +3,10 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFeedLikeCount } from '@/lib/apis/feed/like';
-import { FeedType } from '@/types/feed-type';
-import { formatKoreanDate } from '@/lib/utils';
+import { formatKoreanDate, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import LikesIcon2 from '@/icons/likes-icon2';
+import { FeedType } from '@/types/feed-type';
 
 function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
@@ -13,21 +14,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
   const { data: likeCount } = useQuery({
     queryKey: ['likeCount', feed.id],
     queryFn: () => fetchFeedLikeCount(feed.id),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.COUNT_FETCH_FAILED),
   });
 
   return (

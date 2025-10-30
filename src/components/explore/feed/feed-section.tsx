@@ -2,8 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { FeedType } from '@/types/feed-type';
 import { searchFeeds } from '@/lib/apis/feed/feed';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
+import { FeedType } from '@/types/feed-type';
 import FeedCard from './feed-card';
 
 function FeedSection({ keyword }: { keyword: string }) {
@@ -24,10 +26,7 @@ function FeedSection({ keyword }: { keyword: string }) {
     queryFn: ({ pageParam }) => searchFeeds(keyword, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
     placeholderData: (prev) => prev,
-    throwOnError: (error) => {
-      alert(`피드를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {

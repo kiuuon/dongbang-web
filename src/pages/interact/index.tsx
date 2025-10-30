@@ -3,8 +3,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { sendFeedback } from '@/lib/apis/feedback';
 import { fetchSession } from '@/lib/apis/auth';
+import { sendFeedback } from '@/lib/apis/feedback';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import LoginModal from '@/components/common/login-modal';
 
 function InteractPage() {
@@ -22,20 +24,7 @@ function InteractPage() {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { mutate } = useMutation({
@@ -47,19 +36,7 @@ function InteractPage() {
       }
       router.back();
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드백 전송에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`피드백 전송에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEEDBACK.SEND_FAILED),
   });
 
   return (

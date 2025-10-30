@@ -12,6 +12,8 @@ import {
   removeCommentLike,
 } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import { CommentType } from '@/types/feed-type';
 import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
@@ -64,78 +66,25 @@ export default function CommentCard({
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { data: userId } = useQuery({
     queryKey: ['userId'],
     queryFn: fetchUserId,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '사용자 ID를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`사용자 ID를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
   const { data: feed } = useQuery({
     queryKey: ['feedDetail', feedId],
     queryFn: () => fetchFeedDetail(feedId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`피드 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
   });
 
   const { data: isLike } = useQuery({
     queryKey: ['isCommentLike', comment.id],
     queryFn: () => fetchMyCommentLike(comment.id),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-
-      alert(`내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -165,19 +114,7 @@ export default function CommentCard({
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 추가에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`좋아요 추가에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
   });
 
   const { mutate: removeLike } = useMutation({
@@ -186,19 +123,7 @@ export default function CommentCard({
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '좋아요 삭제에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`좋아요 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
   });
 
   const { mutate: handleDeleteComment } = useMutation({
@@ -207,19 +132,7 @@ export default function CommentCard({
       queryClient.invalidateQueries({ queryKey: ['commentCount', feedId] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feed.id] });
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '댓글 삭제에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`댓글 삭제에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.DELETE_FAILED),
   });
 
   const toggleLike = () => {

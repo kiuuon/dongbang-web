@@ -3,13 +3,15 @@ import { useRouter } from 'next/router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getSignUpInfoSchema } from '@/lib/validationSchema';
 
-import SubmitButton from '@/components/common/submit-button';
 import { fetchUniversityList, signUp } from '@/lib/apis/sign-up';
 import { fetchSession } from '@/lib/apis/auth';
-import { UserType } from '@/types/user-type';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
+import { getSignUpInfoSchema } from '@/lib/validationSchema';
 import termsStore from '@/stores/terms-store';
+import { UserType } from '@/types/user-type';
+import SubmitButton from '@/components/common/submit-button';
 import GenderInput from './gender-input';
 import UniversityInput from './university-input';
 import NicknameInput from './nickname-input';
@@ -43,39 +45,13 @@ function InfoForm() {
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`세션 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
   const { data: universityList } = useQuery({
     queryKey: ['universityList'],
     queryFn: fetchUniversityList,
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.UNIVERSITY.LIST_FETCH_FAILED),
   });
 
   const { mutate: handleSignup } = useMutation({
@@ -88,19 +64,7 @@ function InfoForm() {
         router.push(`/sign-up/complete?redirect=${redirectTo}`);
       }
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '회원가입에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`회원가입에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.SIGN_UP_FAILED),
   });
 
   const signUpInfoSchema = universityList ? getSignUpInfoSchema(universityList, isDuplicate, isSameCheck) : null;

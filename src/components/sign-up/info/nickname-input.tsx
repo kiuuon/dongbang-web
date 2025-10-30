@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { isNicknameExists } from '@/lib/apis/sign-up';
+import { handleMutationError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 
 function NicknameInput({
   value,
@@ -32,23 +34,7 @@ function NicknameInput({
         setIsDuplicate(false);
       }
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        setIsDuplicate(false);
-        setIsSameCheck(false);
-        return;
-      }
-      alert(`닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsDuplicate(false);
-      setIsSameCheck(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.NICKNAME_DUPLICATE_CHECK_FAILED),
   });
 
   return (

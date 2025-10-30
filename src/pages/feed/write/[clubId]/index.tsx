@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { upload } from '@/lib/apis/image';
+import { writeFeed } from '@/lib/apis/feed/feed';
+import { fetchClubInfo } from '@/lib/apis/club';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon from '@/icons/toggle-icon';
 import PersonIcon from '@/icons/person-icon';
 import RightArrowIcon5 from '@/icons/right-arrow-icon5';
@@ -10,9 +15,6 @@ import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
 import PhotoSection from '@/components/feed/write/photo-section';
 import TagModal from '@/components/feed/write/tag-modal/tag-modal';
-import { upload } from '@/lib/apis/image';
-import { writeFeed } from '@/lib/apis/feed/feed';
-import { fetchClubInfo } from '@/lib/apis/club';
 
 function WriteFeedPage() {
   const uuid = crypto.randomUUID();
@@ -35,38 +37,12 @@ function WriteFeedPage() {
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
-    throwOnError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return false;
-      }
-      alert(`동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      return false;
-    },
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'feed-image'),
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '사진 업로드에 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`사진 업로드에 실패했습니다. 다시 시도해주세요.\n\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.IMAGE.PHOTO_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 
   const { mutate: handleWriteFeed } = useMutation({
@@ -85,20 +61,7 @@ function WriteFeedPage() {
     onSuccess: () => {
       router.back();
     },
-    onError: (error) => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'error',
-            headline: '피드를 작성하는 데 실패했습니다. 다시 시도해주세요.',
-            message: error.message,
-          }),
-        );
-        return;
-      }
-      alert(`'피드를 작성하는데 실패했습니다. 다시 시도해주세요.'\n${error.message}`);
-      setIsLoading(false);
-    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEED.WRITE_FAILED, () => setIsLoading(false)),
   });
 
   const handleWriteButton = async () => {
