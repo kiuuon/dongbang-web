@@ -43,7 +43,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
         />
         <span className="text-regular12 w-full truncate text-start">{feed.club.name}</span>
       </div>
-      <div className="relative my-[4px] aspect-[170/227] w-full">
+      <div className="relative my-[4px] aspect-square w-full">
         <Image
           src={feed.photos[0]}
           alt="피드 이미지"
@@ -56,9 +56,10 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
         />
       </div>
       <div className="w-full">
-        <div className="text-bold14 mb-[3px] w-full truncate text-start">{feed.title ? feed.title : feed.content}</div>
-        <div className="flex w-full justify-between pr-[4px]">
-          <div className="text-regular12">{formatKoreanDate(feed.created_at)}</div>
+        <div className="flex w-full justify-between px-[4px]">
+          <div className="text-bold14 mb-[3px] w-full truncate text-start">
+            {feed.title ? feed.title : feed.content}
+          </div>
           <div className="flex items-center gap-[4px]">
             <LikesIcon2 />
             <span className="text-regular12">{likeCount}</span>
