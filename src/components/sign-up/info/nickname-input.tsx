@@ -40,13 +40,13 @@ function NicknameInput({
   return (
     <div className="flex flex-col gap-[10px]">
       <label htmlFor="nickname" className="text-bold12">
-        닉네임
+        사용자명
       </label>
       <div className="flex w-full gap-[4px]">
         <input
           id="nickname"
           value={value}
-          placeholder="사용할 닉네임을 입력해주세요."
+          placeholder="사용자명을 입력해주세요."
           className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
           onChange={handleNickname}
           onBlur={onBlur}

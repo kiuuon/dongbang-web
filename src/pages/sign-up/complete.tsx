@@ -14,7 +14,7 @@ function SignUpCompletePage() {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-between px-[20px]">
+    <div className="flex h-screen max-w-[600px] flex-col items-center justify-between px-[20px]">
       <div className="text-bold32 mt-[231px]">가입이 완료되었습니다</div>
       <button
         type="button"

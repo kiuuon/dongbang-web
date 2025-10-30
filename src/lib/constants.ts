@@ -50,6 +50,7 @@ const ERROR_MESSAGE = {
     LOGO_UPLOAD_FAILED: '로고 업로드에 실패했습니다. 다시 시도해주세요.',
     ACTIVITY_UPLOAD_FAILED: '활동 사진 업로드에 실패했습니다. 다시 시도해주세요.',
     PHOTO_UPLOAD_FAILED: '사진 업로드에 실패했습니다. 다시 시도해주세요.',
+    AVATAR_UPLOAD_FAILED: '프로필 사진 업로드에 실패했습니다. 다시 시도해주세요.',
   },
   LIKE: {
     USERS_FETCH_FAILED: '좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.',

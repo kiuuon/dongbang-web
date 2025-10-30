@@ -96,7 +96,7 @@ function CheckBox() {
             onKeyDown={() => setThirdPartyConsent(!thirdPartyConsent)}
           >
             {thirdPartyConsent ? <CheckIcon2 /> : <NoneCheckIcon />}
-            <span className="text-bold16 ml-[15px] mr-[13px] text-error">[필수]</span>
+            <span className="text-regular16 ml-[15px] mr-[13px]">[선택]</span>
             <div className="text-regular16">개인정보 제3자 제공 동의</div>
           </div>
           <button

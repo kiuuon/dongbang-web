@@ -35,7 +35,7 @@ function NextButton() {
     }
   };
 
-  const isDisabled = !(termOfUse && privacyPolicy && thirdPartyConsent);
+  const isDisabled = !(termOfUse && privacyPolicy);
 
   return (
     <button

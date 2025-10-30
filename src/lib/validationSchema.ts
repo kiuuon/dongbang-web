@@ -6,15 +6,12 @@ export const getSignUpInfoSchema = (
   isSameCheck: boolean,
 ) =>
   yup.object().shape({
+    avatar: yup.mixed<File>().notRequired(),
     name: yup
       .string()
       .required('이름을 입력하세요')
-      .matches(/^[a-zA-Z가-힣]{2,10}$/, '2~10글자 이내에 한글 또는 영문을 입력하세요'),
+      .matches(/^[a-zA-Z가-힣]{2,10}$/, '2~10글자 이내의 한글 또는 영문을 입력하세요'),
     gender: yup.string().required('성별을 선택하세요'),
-    birth: yup
-      .string()
-      .required('생년월일을 입력하세요')
-      .matches(/^[0-9]{6}$/, '6자리 숫자로 입력하세요'),
     university: yup
       .string()
       .required('학교를 입력하세요')
@@ -24,12 +21,10 @@ export const getSignUpInfoSchema = (
     major: yup.string().required('학과를 입력하세요'),
     nickname: yup
       .string()
-      .required('닉네임을 입력하세요')
-      .matches(/^[a-zA-Z가-힣]{2,8}$/, '2~8글자 이내에 한글 또는 영문을 입력하세요')
+      .required('사용자명을 입력하세요')
+      .matches(/^[a-z0-9._]{2,8}$/, '2~8글자 이내의 소문자, 숫자, 밑줄(_), 마침표(.)만 입력하세요')
       .test('isUniqueNickname', '이미 사용중인 닉네임입니다', () => !isDuplicate)
       .test('isValidNickname', '중복 체크를 해주세요', () => isSameCheck),
-    clubCount: yup.string().required('동아리 수를 선택하세요'),
-    path: yup.string(),
   });
 
 export const campusClubInfoSchema = yup.object().shape({
