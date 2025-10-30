@@ -7,7 +7,6 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import filtersStore from '@/stores/filter-store';
 import AffiliationSection from './affiliation-section';
 import CategorySection from './category-section';
-import RecruitmentSection from './recruitment-section';
 
 function DetailSearchModal({
   setIsDetailSearchModalOpen,
@@ -46,18 +45,10 @@ function DetailSearchModal({
           >
             분야
           </button>
-          <button
-            type="button"
-            className={`${tab === '모집 설정' ? 'bg-white text-black' : 'bg-background text-gray2'} text-bold16 flex h-[51px] items-center pl-[32px]`}
-            onClick={() => setTab('모집 설정')}
-          >
-            모집 설정
-          </button>
         </div>
         <div className="h-full w-full overflow-y-auto bg-white">
           {tab === '소속' && <AffiliationSection />}
           {tab === '분야' && <CategorySection />}
-          {tab === '모집 설정' && <RecruitmentSection />}
         </div>
       </div>
 
