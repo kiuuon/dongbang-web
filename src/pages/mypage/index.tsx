@@ -81,7 +81,7 @@ function MyPage() {
               className="text-bold16 w-full rounded-lg bg-primary py-4 text-white"
               onClick={() => {
                 if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to lgoin page' }));
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to login page' }));
                 } else {
                   router.push('/login');
                 }
