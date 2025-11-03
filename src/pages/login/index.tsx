@@ -68,7 +68,7 @@ function LoginPage() {
                 );
                 return;
               }
-              router.push('/feed/union');
+              router.push('/feed/all');
             }}
           >
             둘러보기

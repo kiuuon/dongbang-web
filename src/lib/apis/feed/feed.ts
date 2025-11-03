@@ -63,7 +63,7 @@ export async function deleteFeed(feedId: string) {
   if (error) throw error;
 }
 
-export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', page: number) {
+export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' | 'all', page: number) {
   const PAGE_SIZE = 5;
   const start = page * PAGE_SIZE;
   const end = start + PAGE_SIZE - 1;
@@ -162,7 +162,46 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union', 
     return feedsWithRole;
   }
 
-  return [];
+  const { data: feeds, error: fetchFeedError } = await supabase
+    .from('Feed')
+    .select(
+      '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+    )
+    .order('created_at', { ascending: false })
+    .range(start, end);
+
+  if (fetchFeedError) {
+    throw fetchFeedError;
+  }
+
+  if (!feeds) {
+    return [];
+  }
+
+  const feedsWithRole = await Promise.all(
+    feeds.map(async (feed) => {
+      const { data: clubUser, error: fetchRoleError } = await supabase
+        .from('Club_User')
+        .select('role')
+        .eq('user_id', feed.author_id)
+        .eq('club_id', feed.club_id)
+        .maybeSingle();
+
+      if (fetchRoleError) {
+        throw fetchRoleError;
+      }
+
+      return {
+        ...feed,
+        author: {
+          ...feed.author,
+          role: clubUser?.role ?? null,
+        },
+      };
+    }),
+  );
+
+  return feedsWithRole;
 }
 
 export async function fetchFeedDetail(feedId: string) {

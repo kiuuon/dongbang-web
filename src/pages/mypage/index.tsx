@@ -114,7 +114,7 @@ function MyPage() {
         <div className="flex justify-between">
           <div className="flex gap-[14px]">
             <div>
-              {user.avatar ? (
+              {user?.avatar ? (
                 <Image
                   src={user.avatar}
                   alt="아바타"
@@ -143,8 +143,8 @@ function MyPage() {
               )}
             </div>
             <div className="pt-[12px]">
-              <div className="text-bold16">{user.name}</div>
-              <div className="text-regular14 text-gray2">{user.nickname}</div>
+              <div className="text-bold16">{user?.name}</div>
+              <div className="text-regular14 text-gray2">{user?.nickname}</div>
             </div>
           </div>
           <div className="flex h-auto items-center justify-center">
@@ -155,11 +155,11 @@ function MyPage() {
         <div className="text-regular14 flex flex-col gap-[4px] text-gray2">
           <div className="flex justify-between">
             <span>학교</span>
-            <span>{user.University.name}</span>
+            <span>{user?.University.name}</span>
           </div>
           <div className="flex justify-between">
             <span>학과</span>
-            <span>{user.major}</span>
+            <span>{user?.major}</span>
           </div>
         </div>
       </div>

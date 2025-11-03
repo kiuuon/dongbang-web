@@ -41,7 +41,7 @@ function FeedPage() {
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,
     queryKey: ['feeds', clubType],
-    queryFn: ({ pageParam }) => fetchFeedsByClubType(clubType as 'my' | 'campus' | 'union', pageParam),
+    queryFn: ({ pageParam }) => fetchFeedsByClubType(clubType as 'my' | 'campus' | 'union' | 'all', pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),
   });
@@ -166,6 +166,15 @@ function FeedPage() {
                   onClick={() => goToSelectedClubType('union')}
                 >
                   연합 동아리
+                </button>
+              )}
+              {clubType !== 'all' && (
+                <button
+                  type="button"
+                  className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                  onClick={() => goToSelectedClubType('all')}
+                >
+                  모든 동아리
                 </button>
               )}
             </div>

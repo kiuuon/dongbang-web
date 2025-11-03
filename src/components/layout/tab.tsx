@@ -22,7 +22,7 @@ function Tab() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 m-auto flex h-[60px] max-w-[600px] items-center justify-between border-t-[0.5px] border-t-background bg-white px-[34px]">
-      <Link href={session?.user ? '/feed/my' : '/feed/union'} replace className="flex flex-col items-center gap-[3px]">
+      <Link href={session?.user ? '/feed/my' : '/feed/all'} replace className="flex flex-col items-center gap-[3px]">
         <HomeIcon color={router.pathname.startsWith('/feed') ? '#F9A825' : '#989898'} />
         <div className={`text-regular10 ${router.pathname.startsWith('/feed') ? 'text-primary' : 'text-gray2'}`}>
           홈

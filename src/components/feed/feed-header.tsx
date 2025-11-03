@@ -22,6 +22,7 @@ function FeedHeader({
     my: '내 동아리',
     campus: '교내 동아리',
     union: '연합 동아리',
+    all: '모든 동아리',
   }[clubType as string];
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
