@@ -15,8 +15,8 @@ import ListIcon from '@/icons/list-icon';
 import FeedIcon2 from '@/icons/feed-icon2';
 import TaggedFeedIcon from '@/icons/tagged-feed-icon';
 import Header from '@/components/layout/header';
-import AuthoredFeedSection from '@/components/mypage/authored-feed-section';
-import TaggedFeedSection from '@/components/mypage/tagged-feed-section';
+import AuthoredFeedSection from '@/components/profile/authored-feed-section';
+import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 
 function MyPage() {
   const router = useRouter();

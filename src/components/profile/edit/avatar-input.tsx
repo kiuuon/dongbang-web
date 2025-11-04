@@ -1,0 +1,70 @@
+import CameraIcon from '@/icons/camera-icon';
+import XIcon7 from '@/icons/x-icon7';
+
+function AvatarInput({
+  onChange,
+  preview,
+  setPreview,
+}: {
+  onChange: (value: File | null) => void;
+  preview: string;
+  setPreview: any;
+}) {
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    onChange(file as File);
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemove = () => {
+    onChange(null);
+    setPreview('');
+  };
+
+  return (
+    <div>
+      {preview ? (
+        <div
+          className="relative h-[64px] w-[64px] min-w-[64px] rounded-full"
+          style={{
+            backgroundImage: `url(${preview})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute right-[-1] top-[-1] z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white"
+          >
+            <XIcon7 />
+          </button>
+        </div>
+      ) : (
+        <label
+          htmlFor="file-upload"
+          className="relative flex h-[64px] w-[64px] min-w-[64px] cursor-pointer flex-col items-center justify-center rounded-full bg-gray0"
+        >
+          <input
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="absolute h-[64px] w-[64px] cursor-pointer opacity-0"
+          />
+          <CameraIcon />
+        </label>
+      )}
+    </div>
+  );
+}
+
+export default AvatarInput;

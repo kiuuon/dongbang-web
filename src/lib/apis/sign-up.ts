@@ -1,5 +1,6 @@
 import { UserType } from '@/types/user-type';
 import { supabase } from './supabaseClient';
+import { fetchUserId } from './auth';
 
 export async function isNicknameExists(nickname: string) {
   const { data, error } = await supabase.from('User').select('id').eq('nickname', nickname);
@@ -23,6 +24,16 @@ export async function fetchUniversityList() {
 
 export async function signUp(body: UserType) {
   const { error } = await supabase.from('User').insert([body]);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function editProfile(body: UserType) {
+  const userId = await fetchUserId();
+
+  const { error } = await supabase.from('User').update([body]).eq('id', userId);
 
   if (error) {
     throw error;

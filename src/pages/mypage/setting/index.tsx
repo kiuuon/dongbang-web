@@ -27,6 +27,21 @@ function AccountSettingPage() {
       </Header>
       <button
         type="button"
+        className="text-bold16 mb-[20px] w-full rounded-lg bg-primary py-4 text-white"
+        onClick={() => {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ type: 'event', action: 'click edit profile button' }),
+            );
+          } else {
+            router.push('/profile/edit');
+          }
+        }}
+      >
+        프로필 수정
+      </button>
+      <button
+        type="button"
         className="text-bold16 w-full rounded-lg bg-primary py-4 text-white"
         onClick={() => {
           if (window.ReactNativeWebView) {
