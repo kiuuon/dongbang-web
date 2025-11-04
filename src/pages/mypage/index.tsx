@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
@@ -8,15 +8,41 @@ import { fetchSession } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import profileViewTypeStore from '@/stores/profile-view-type-store';
 import CogIcon from '@/icons/cog-icon';
-import Header from '@/components/layout/header';
 import GridIcon from '@/icons/grid-icon';
 import ListIcon from '@/icons/list-icon';
+import FeedIcon2 from '@/icons/feed-icon2';
+import TaggedFeedIcon from '@/icons/tagged-feed-icon';
+import Header from '@/components/layout/header';
+import AuthoredFeedSection from '@/components/mypage/authored-feed-section';
+import TaggedFeedSection from '@/components/mypage/tagged-feed-section';
 
 function MyPage() {
   const router = useRouter();
 
-  const [viewType, setViewType] = useState('grid');
+  const viewType = profileViewTypeStore((state) => state.viewType);
+  const setViewType = profileViewTypeStore((state) => state.setViewType);
+  const selectedFeedType = profileViewTypeStore((state) => state.selectedFeedType);
+  const setSelectedFeedType = profileViewTypeStore((state) => state.setSelectedFeedType);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollRef.current && savedPosition) {
+      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem('scrollPosition');
+    }
+  }, []);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -78,7 +104,7 @@ function MyPage() {
           <div className="text-regular14 flex flex-col gap-[4px] text-gray2">
             <button
               type="button"
-              className="text-bold16 w-full rounded-lg bg-primary py-4 text-white"
+              className="text-bold16 w-full rounded-[12px] bg-primary py-[12px] text-white"
               onClick={() => {
                 if (window.ReactNativeWebView) {
                   window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to login page' }));
@@ -101,7 +127,10 @@ function MyPage() {
   }
 
   return (
-    <div className="h-screen p-[20px] pt-[72px]">
+    <div
+      ref={scrollRef}
+      className={`scrollbar-hide h-screen overflow-y-auto p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}
+    >
       <Header>
         <div />
         <button type="button">
@@ -164,10 +193,11 @@ function MyPage() {
         </div>
       </div>
 
-      <div className="flex w-full gap-[14px]">
+      {/* 버튼 */}
+      <div className="mb-[24px] mt-[16px] flex w-full gap-[14px]">
         <button
           type="button"
-          className="text-regular14 mb-[24px] mt-[16px] h-[32px] w-full rounded-[8px] bg-gray0"
+          className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0"
           onClick={() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
@@ -180,20 +210,42 @@ function MyPage() {
         >
           계정 관리
         </button>
-        <button type="button" className="text-regular14 mb-[24px] mt-[16px] h-[32px] w-full rounded-[8px] bg-gray0">
+        <button type="button" className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0">
           프로필 공유
         </button>
       </div>
 
+      {/* 피드 */}
       <div>
-        <div className="mb-[48px] flex w-full justify-end gap-[27px]">
-          <button type="button" onClick={() => setViewType('grid')}>
-            <GridIcon isActive={viewType === 'grid'} />
-          </button>
-          <button type="button" onClick={() => setViewType('list')}>
-            <ListIcon isActive={viewType === 'list'} />
-          </button>
+        <div className="mb-[15px] flex w-full justify-between border-b border-b-gray0">
+          <div className="flex">
+            <button
+              type="button"
+              className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
+              onClick={() => setSelectedFeedType('authored')}
+            >
+              <FeedIcon2 isActive={selectedFeedType === 'authored'} />
+            </button>
+            <button
+              type="button"
+              className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
+              onClick={() => setSelectedFeedType('tagged')}
+            >
+              <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
+            </button>
+          </div>
+          <div className="flex gap-[27px] pb-[5px]">
+            <button type="button" onClick={() => setViewType('grid')}>
+              <GridIcon isActive={viewType === 'grid'} />
+            </button>
+            <button type="button" onClick={() => setViewType('list')}>
+              <ListIcon isActive={viewType === 'list'} />
+            </button>
+          </div>
         </div>
+
+        {selectedFeedType === 'authored' && <AuthoredFeedSection scrollRef={scrollRef} />}
+        {selectedFeedType === 'tagged' && <TaggedFeedSection scrollRef={scrollRef} />}
       </div>
     </div>
   );

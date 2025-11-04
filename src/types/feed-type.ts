@@ -2,7 +2,9 @@ export interface FeedType {
   id: string;
   author_id: string;
   author: {
+    id: string;
     name: string;
+    nickname: string;
     avatar: string;
     role: string | null;
   };

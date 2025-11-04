@@ -65,7 +65,16 @@ function EditFeedPage() {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'feeds',
       });
+
       queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
+
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'authoredFeedList',
+      });
+
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'taggedFeedList',
+      });
 
       router.back();
     },

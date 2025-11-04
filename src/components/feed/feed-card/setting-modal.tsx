@@ -29,6 +29,14 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
         predicate: (query) => query.queryKey[0] === 'feeds',
       });
 
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'authoredFeedList',
+      });
+
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'taggedFeedList',
+      });
+
       onClose();
 
       if (isFeedDetail) router.back();

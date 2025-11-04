@@ -77,7 +77,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
       p_offset_count: page * PAGE_SIZE,
     }).select(`
       *,
-      author:User(name, avatar),
+      author:User(id, name, nickname, avatar),
       club:Club(name, logo),
       taggedUsers:Feed_User(user:User(name, avatar)),
       taggedClubs:Feed_Club(club:Club(name, logo))
@@ -122,7 +122,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
     const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
-        '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+        '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
       )
       .eq('club_type', clubType)
       .order('created_at', { ascending: false })
@@ -165,7 +165,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
   const { data: feeds, error: fetchFeedError } = await supabase
     .from('Feed')
     .select(
-      '*, author:User(name, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+      '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
     )
     .order('created_at', { ascending: false })
     .range(start, end);
@@ -210,7 +210,7 @@ export async function fetchFeedDetail(feedId: string) {
     .select(
       `
       *,
-      author:User(name, avatar),
+      author:User(id, name, nickname, avatar),
       club:Club(name, logo),
       taggedUsers:Feed_User(user:User(id, name, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
@@ -252,7 +252,7 @@ export async function searchFeeds(keyword: string, page: number) {
     offset_count: page * PAGE_SIZE,
   }).select(`
       *,
-      author:User(name, avatar),
+      author:User(id, name, nickname, avatar),
       club:Club(name, logo),
       taggedUsers:Feed_User(user:User(name, avatar)),
       taggedClubs:Feed_Club(club:Club(name, logo))
@@ -279,6 +279,57 @@ export async function fetchHashtags(keyword: string, page: number) {
     .select('id, name')
     .ilike('name', `%${keyword ?? ''}%`)
     .order('name', { ascending: true })
+    .range(start, end);
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function fetchFeedsByAuthor(userId: string, page: number) {
+  const PAGE_SIZE = 15;
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await supabase
+    .from('Feed')
+    .select(
+      `
+      *,
+      author:User(id, name, nickname, avatar),
+      club:Club(name, logo),
+      taggedUsers:Feed_User(user:User(name, avatar)),
+      taggedClubs:Feed_Club(club:Club(name, logo))
+    `,
+    )
+    .eq('author_id', userId)
+    .order('created_at', { ascending: false })
+    .range(start, end);
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function fetchFeedsTaggedUser(userId: string, page: number) {
+  const PAGE_SIZE = 15;
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await supabase
+    .from('Feed')
+    .select(
+      `
+      *,
+      author:User(id, name, nickname, avatar),
+      Feed_User!inner(user_id),
+      club:Club(name, logo),
+      taggedUsers:Feed_User(user:User(name, avatar)),
+      taggedClubs:Feed_Club(club:Club(name, logo))
+    `,
+    )
+    .eq('Feed_User.user_id', userId)
+    .order('created_at', { ascending: false })
     .range(start, end);
 
   if (error) throw error;

@@ -78,10 +78,27 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'feeds',
             });
+
             queryClient.invalidateQueries({ queryKey: ['feedDetail', payload] });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'authoredFeedList',
+            });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'taggedFeedList',
+            });
           } else if (action === 'delete feed') {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'feeds',
+            });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'authoredFeedList',
+            });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'taggedFeedList',
             });
           }
         }
