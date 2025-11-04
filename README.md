@@ -1,4 +1,4 @@
-### [🪟 동방 바로가기](https://dongbang.vercel.app/)
+### [🪟 동방 바로가기](https://www.dongaribang.com)
 
 ## 동방 - 동아리 홍보와 관리를 효율적으로 도와주는 서비스
 
