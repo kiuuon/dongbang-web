@@ -1,37 +1,11 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 
+import clubInfoStore from '@/stores/club-info-store';
 import XIcon2 from '@/icons/x-icon2';
 
-function TagInput({
-  value,
-  onChange,
-  defaultCampusClubType,
-  defaultCategory,
-  defaultLocation,
-}: {
-  value: string[];
-  onChange: (value: string[]) => void;
-  defaultCampusClubType: string;
-  defaultCategory: string;
-  defaultLocation: string;
-}) {
-  const router = useRouter();
-  const { clubType } = router.query;
+function TagInput({ value, onChange }: { value: string[]; onChange: (value: string[]) => void }) {
   const [inputValue, setInputValue] = useState('');
-
-  useEffect(() => {
-    const newTag = [...value];
-    if (clubType !== 'union') {
-      newTag[1] = defaultCampusClubType;
-    } else {
-      newTag[1] = defaultLocation;
-    }
-    newTag[2] = defaultCategory;
-
-    onChange(newTag);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultCampusClubType, defaultCategory, defaultLocation]);
+  const setTags = clubInfoStore((state) => state.setTags);
 
   const handleAddTag = () => {
     if (inputValue === '') {
@@ -50,12 +24,14 @@ function TagInput({
     }
     const newTag = [...value, inputValue];
     onChange(newTag);
+    setTags(newTag);
     setInputValue('');
   };
 
   const handleRemoveTag = (index: number) => {
     const newTag = value.filter((_, i) => i !== index);
     onChange(newTag);
+    setTags(newTag);
   };
 
   return (

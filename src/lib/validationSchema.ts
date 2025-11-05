@@ -44,16 +44,17 @@ export const campusClubInfoSchema = yup.object().shape({
     then: (schema) => schema.required('동아리 위치를 입력하세요'),
     otherwise: (schema) => schema.required('동아리 활동 지역을 선택하세요'),
   }),
-  description: yup.string().max(30, '최대 30자까지 입력 가능합니다').required('한 줄 소개를 입력하세요'),
-  tags: yup.array().required('태그를 추가하세요'),
+  bio: yup.string().max(30, '최대 30자까지 입력 가능합니다').required('한 줄 소개를 입력하세요'),
+  description: yup.string().max(300, '최대 300자까지 입력 가능합니다').required('동아리 상세 설명을 입력하세요'),
 });
 
 export const clubDetailSchema = yup.object().shape({
   logo: yup.mixed<File>().required('로고를 선택하세요'),
-  activity: yup
-    .array()
-    .min(1, '활동 사진을 선택하세요')
-    .max(5, '최대 5장 이하로 업로드 해주세요')
-    .required('활동 사진을 선택하세요'),
-  description: yup.string().max(300, '최대 300자까지 입력 가능합니다').required('동아리 상세 설명을 입력하세요'),
+  background: yup.mixed<File>().notRequired(),
+  // activity: yup
+  //   .array()
+  //   .min(1, '활동 사진을 선택하세요')
+  //   .max(5, '최대 5장 이하로 업로드 해주세요')
+  //   .required('활동 사진을 선택하세요'),
+  tags: yup.array().required('태그를 추가하세요'),
 });

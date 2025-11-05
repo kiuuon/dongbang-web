@@ -94,7 +94,7 @@ function InfoForm() {
     trigger,
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isDirty },
-    reset,
+    setValue,
   } = useForm({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -124,18 +124,13 @@ function InfoForm() {
       setPreview(user.avatar);
       setIsDuplicate(false);
       setIsSameCheck(true);
-      reset(
-        {
-          name: user.name ?? '',
-          gender: user.gender ?? '',
-          university: user.University?.name ?? '',
-          major: user.major ?? '',
-          nickname: user.nickname ?? '',
-        },
-        { keepDirty: false }, // 이전 입력 덮어쓰기
-      );
+      setValue('name', user.name);
+      setValue('gender', user.gender);
+      setValue('university', user.University.name);
+      setValue('major', user.major);
+      setValue('nickname', user.nickname);
     }
-  }, [user, reset]);
+  }, [user, setValue]);
 
   useEffect(() => {
     trigger('nickname');

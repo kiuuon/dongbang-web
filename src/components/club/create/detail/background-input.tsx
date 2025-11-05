@@ -3,7 +3,7 @@ import { useState } from 'react';
 import CameraIcon from '@/icons/camera-icon';
 import XIcon7 from '@/icons/x-icon7';
 
-function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
+function BackgroundInput({ onChange }: { onChange: (value: File | null) => void }) {
   const [preview, setPreview] = useState<string | null>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +29,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
     <div>
       {preview ? (
         <div
-          className="relative h-[80px] w-[80px] min-w-[80px] rounded-[16px]"
+          className="relative h-[321px] w-full"
           style={{
             backgroundImage: `url(${preview})`,
             backgroundSize: 'cover',
@@ -39,7 +39,7 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute right-[-6] top-[-6] z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white"
+            className="absolute right-[5px] top-[10px] z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white"
           >
             <XIcon7 />
           </button>
@@ -47,14 +47,14 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
       ) : (
         <label
           htmlFor="file-upload"
-          className="relative flex h-[80px] w-[80px] min-w-[80px] cursor-pointer flex-col items-center justify-center rounded-[16px] bg-gray0"
+          className="relative flex h-[321px] w-full min-w-[64px] cursor-pointer flex-col items-center justify-center bg-secondary"
         >
           <input
             id="file-upload"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="absolute h-[80px] w-[80px] cursor-pointer opacity-0"
+            className="absolute h-[64px] w-[64px] cursor-pointer opacity-0"
           />
           <CameraIcon />
         </label>
@@ -63,4 +63,4 @@ function LogoInput({ onChange }: { onChange: (value: File | null) => void }) {
   );
 }
 
-export default LogoInput;
+export default BackgroundInput;

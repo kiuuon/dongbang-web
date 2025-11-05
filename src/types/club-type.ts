@@ -21,10 +21,10 @@ export interface NewClubType {
   name: string;
   category: string;
   location: string | undefined;
+  bio: string;
   description: string;
   tags: string[];
   logo: string;
-  activity_photos: string[];
-  detail_description: string;
+  background: string | null;
   detail_type: string | null;
 }

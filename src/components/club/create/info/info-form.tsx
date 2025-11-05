@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { campusClubInfoSchema } from '@/lib/validationSchema';
-import { useQuery } from '@tanstack/react-query';
 
 import { fetchUser } from '@/lib/apis/user';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import SubmitButton from '@/components/common/submit-button';
 import clubInfoStore from '@/stores/club-info-store';
+import SubmitButton from '@/components/common/submit-button';
 import CampusClubTypeInput from './campus-club-type-input';
 import CategoryInput from './category-input';
 import LocationInput from './location-input';
-import TagInput from './tag-input';
 
 function InfoForm() {
   const router = useRouter();
@@ -22,11 +21,14 @@ function InfoForm() {
   const setName = clubInfoStore((state) => state.setName);
   const setCategory = clubInfoStore((state) => state.setCategory);
   const setLocation = clubInfoStore((state) => state.setLocation);
+  const setBio = clubInfoStore((state) => state.setBio);
   const setDescription = clubInfoStore((state) => state.setDescription);
   const setTags = clubInfoStore((state) => state.setTags);
+
   const [defaultCampusClubType, setDefaultCampusClubType] = useState(clubInfoStore.getState().campusClubType ?? '');
   const [defaultCategory, setDefaultCategory] = useState(clubInfoStore.getState().category ?? '');
   const [defaultLocation, setDefaultLocation] = useState(clubInfoStore.getState().location ?? '');
+
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUser,
@@ -37,7 +39,6 @@ function InfoForm() {
     control,
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -46,41 +47,33 @@ function InfoForm() {
       name: clubInfoStore.getState().name ?? '',
       category: clubInfoStore.getState().category ?? '',
       location: clubInfoStore.getState().location ?? '',
+      bio: clubInfoStore.getState().bio ?? '',
       description: clubInfoStore.getState().description ?? '',
-      tags: clubInfoStore.getState().tags.length ? clubInfoStore.getState().tags : ['', ''],
     },
     mode: 'onBlur',
     resolver: yupResolver(campusClubInfoSchema),
   });
-
-  useEffect(() => {
-    if (clubType === 'union' && clubInfoStore.getState().tags.length === 0) {
-      setValue('tags', ['연합 동아리', ''], {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    } else if (clubType !== 'union' && clubInfoStore.getState().tags.length === 0) {
-      setValue('tags', [user?.University.name, ''], {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    }
-  }, [clubType, setValue, user]);
 
   const onSubmit = (data: {
     campusClubType?: string | undefined;
     name: string;
     category: string;
     location?: string | undefined;
+    bio: string;
     description: string;
-    tags: string[];
   }) => {
     setClubCampusType(data.campusClubType);
     setName(data.name);
     setCategory(data.category);
     setLocation(data.location);
+    setBio(data.bio);
     setDescription(data.description);
-    setTags(data.tags);
+
+    if (clubType === 'union') {
+      setTags(['union', defaultLocation, defaultCategory]);
+    } else {
+      setTags([user?.University.name, defaultCampusClubType, defaultCategory]);
+    }
 
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(
@@ -92,8 +85,12 @@ function InfoForm() {
             name: data.name,
             category: data.category,
             location: data.location,
+            bio: data.bio,
             description: data.description,
-            tags: data.tags,
+            tags:
+              clubType === 'union'
+                ? ['union', defaultLocation, defaultCategory]
+                : [user?.University.name, defaultCampusClubType, defaultCategory],
           },
         }),
       );
@@ -183,28 +180,28 @@ function InfoForm() {
               동아리 한 줄 소개
             </label>
             <textarea
-              id="description"
-              {...register('description')}
+              id="bio"
+              {...register('bio')}
               placeholder="동아리를 한 줄로 소개해 주세요."
               className="text-regular14 flex h-[48px] w-full resize-none rounded-[8px] border border-gray0 py-[12px] pl-[16px] leading-normal outline-none placeholder:text-gray1"
             />
           </div>
           {errors.description && <p className="text-regular10 mt-[8px] text-error">{errors.description.message}</p>}
         </div>
-        <Controller
-          name="tags"
-          control={control}
-          defaultValue={['', '', '']}
-          render={({ field }) => (
-            <TagInput
-              value={field.value}
-              onChange={field.onChange}
-              defaultCampusClubType={defaultCampusClubType}
-              defaultCategory={defaultCategory}
-              defaultLocation={defaultLocation}
+
+        <div className="flex flex-col">
+          <div className="flex flex-col gap-[10px]">
+            <label htmlFor="description" className="text-bold12">
+              동아리 상세 설명
+            </label>
+            <textarea
+              id="description"
+              {...register('description')}
+              className="text-regular14 h-[240px] w-full resize-none rounded-[8px] border border-gray0 p-[16px]"
             />
-          )}
-        />
+          </div>
+          {errors.description && <p className="text-regular10 mt-[8px] text-error">{errors.description.message}</p>}
+        </div>
       </div>
       <SubmitButton disabled={!isValid || isSubmitting}>다음</SubmitButton>
     </form>

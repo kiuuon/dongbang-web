@@ -18,7 +18,7 @@ function ProgressBar() {
   };
 
   return (
-    <div className="flex h-[24px] w-full justify-between bg-white">
+    <div className="flex h-[24px] w-full justify-between bg-white px-[20px]">
       <div className="text-bold20 flex items-center">{currentPageName()}</div>
       <div className="flex w-[104px] items-center gap-[3.5px]">
         <div

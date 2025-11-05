@@ -18,6 +18,7 @@ function Info() {
         name: '',
         category: '',
         location: '',
+        bio: '',
         description: '',
         tags: [],
       });

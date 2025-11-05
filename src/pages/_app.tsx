@@ -10,6 +10,7 @@ import { fetchUser } from '@/lib/apis/user';
 import { supabase } from '@/lib/apis/supabaseClient';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
+import clubInfoStore from '@/stores/club-info-store';
 import Tab from '@/components/layout/tab';
 import LoginModal from '@/components/common/login-modal';
 
@@ -37,6 +38,14 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isWebView, setIsWebView] = useState(true);
   const isOpen = loginModalStore((state) => state.isOpen);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
+
+  const setCampusClubType = clubInfoStore((state) => state.setCampusClubType);
+  const setName = clubInfoStore((state) => state.setName);
+  const setCategory = clubInfoStore((state) => state.setCategory);
+  const setLocation = clubInfoStore((state) => state.setLocation);
+  const setBio = clubInfoStore((state) => state.setBio);
+  const setDescription = clubInfoStore((state) => state.setDescription);
+  const setTags = clubInfoStore((state) => state.setTags);
 
   const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage', '/club/[clubId]'];
 
@@ -100,6 +109,15 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'taggedFeedList',
             });
+          } else if (action === 'set club detail in create club page') {
+            const { clubCampusType, name, category, location, bio, description, tags } = payload;
+            setCampusClubType(clubCampusType);
+            setName(name);
+            setCategory(category);
+            setLocation(location);
+            setBio(bio);
+            setDescription(description);
+            setTags(tags);
           }
         }
       } catch (error) {
@@ -120,7 +138,7 @@ export default function App({ Component, pageProps }: AppProps) {
         (document as any).removeEventListener('message', handler);
       }
     };
-  }, []);
+  }, [setCampusClubType, setName, setCategory, setLocation, setBio, setDescription, setTags]);
 
   useEffect(() => {
     (async () => {
