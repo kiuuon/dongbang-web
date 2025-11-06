@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -46,17 +47,18 @@ function RecruitPage() {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.INVITE_LINK_DELETE_FAILED),
   });
 
+  useEffect(() => {
+    if (myRole === 'member') {
+      router.replace(`/club/${clubId}`);
+    }
+  }, [myRole, router, clubId]);
+
   if (isPending) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <ClipLoader size={30} color="#F9A825" />
       </div>
     );
-  }
-
-  if (myRole === 'member') {
-    router.replace(`/club/${clubId}`);
-    return null;
   }
 
   const issueInvitationLink = () => {

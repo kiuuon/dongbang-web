@@ -47,7 +47,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const setDescription = clubInfoStore((state) => state.setDescription);
   const setTags = clubInfoStore((state) => state.setTags);
 
-  const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage', '/club/[clubId]'];
+  const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage'];
 
   useEffect(() => {
     if (!window.ReactNativeWebView) {
@@ -97,6 +97,10 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'taggedFeedList',
             });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'clubFeedList',
+            });
           } else if (action === 'delete feed') {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'feeds',
@@ -108,6 +112,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'taggedFeedList',
+            });
+
+            queryClient.invalidateQueries({
+              predicate: (query) => query.queryKey[0] === 'clubFeedList',
             });
           } else if (action === 'set club detail in create club page') {
             const { clubCampusType, name, category, location, bio, description, tags } = payload;

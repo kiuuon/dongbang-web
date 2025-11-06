@@ -1,32 +1,27 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchUserId } from '@/lib/apis/auth';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import { fetchFeedsByAuthor } from '@/lib/apis/feed/feed';
-import profileViewTypeStore from '@/stores/profile-view-type-store';
-import FeedCard from '../feed/feed-card/feed-card';
+import { fetchFeedsByClub } from '@/lib/apis/feed/feed';
+import { FeedType } from '@/types/feed-type';
+import clubPageStore from '@/stores/club-page-store';
+import FeedCard from '@/components/feed/feed-card/feed-card';
 
-function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function FeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
-  const viewType = profileViewTypeStore((state) => state.viewType);
+  const { clubId } = router.query;
+  const viewType = clubPageStore((state) => state.viewType);
 
   const observerElement = useRef(null);
 
-  const { data: userId } = useQuery({
-    queryKey: ['userId'],
-    queryFn: fetchUserId,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
-  });
-
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     initialPageParam: 0,
-    queryKey: ['authoredFeedList', userId],
-    queryFn: ({ pageParam }) => fetchFeedsByAuthor(userId as string, pageParam),
+    queryKey: ['clubFeedList', clubId],
+    queryFn: ({ pageParam }) => fetchFeedsByClub(clubId as string, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 15 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),
   });
@@ -52,7 +47,7 @@ function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDiv
   }, [fetchNextPage, hasNextPage]);
 
   if (data?.pages[0].length === 0) {
-    return <div className="text-bold24 mt-[128px] flex w-full items-center justify-center">작성한 피드 없음</div>;
+    return <div className="text-bold24 mt-[80px] flex w-full items-center justify-center">피드 없음</div>;
   }
 
   return (
@@ -60,7 +55,7 @@ function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDiv
       {viewType === 'grid' && (
         <div className="grid w-full grid-cols-3">
           {data?.pages.map((page) =>
-            page.map((feed) => (
+            page.map((feed: FeedType) => (
               <button
                 type="button"
                 className="relative aspect-square w-full"
@@ -91,8 +86,10 @@ function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDiv
         </div>
       )}
       {viewType === 'list' && (
-        <div className="flex w-full flex-col">
-          {data?.pages.map((page) => page.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />))}
+        <div className="w-full overflow-x-hidden">
+          {data?.pages.map((page) =>
+            page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />),
+          )}
         </div>
       )}
       {hasNextPage && (
@@ -104,4 +101,4 @@ function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDiv
   );
 }
 
-export default AuthoredFeedSection;
+export default FeedSection;

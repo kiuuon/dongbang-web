@@ -6,6 +6,7 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedsByClubType } from '@/lib/apis/feed/feed';
+import { fetchMyClubs } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
@@ -36,6 +37,12 @@ function FeedPage() {
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
+  });
+
+  const { data: myClubs } = useQuery({
+    queryKey: ['myClubs'],
+    queryFn: fetchMyClubs,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.LIST_FETCH_FAILED),
   });
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
@@ -76,7 +83,7 @@ function FeedPage() {
       return null;
     }
 
-    if (!data?.pages[0]) {
+    if (myClubs?.length === 0) {
       return <JoinClubPrompt />;
     }
 

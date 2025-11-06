@@ -3,62 +3,57 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-import { fetchClubInfo, fetchMyClubs } from '@/lib/apis/club';
+import { fetchSession } from '@/lib/apis/auth';
+import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import BottomArrowIcon from '@/icons/bottom-arrow-icon';
-import BellIcon from '@/icons/bell-icon';
+import loginModalStore from '@/stores/login-modal-store';
 import MessageIcon from '@/icons/message-icon';
 import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
-import BottomSheet from '@/components/common/bottom-sheet';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
-import BoardSummary from '@/components/club/[clubId]/board-summary';
+import Board from '@/components/club/[clubId]/board/board';
+import MembersModal from '@/components/club/[clubId]/members-modal';
 
 function ClubPage() {
   const router = useRouter();
   const { clubId } = router.query;
-  const bottomSheetCloseRef = useRef<() => void>(null);
-  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
-  const [isWebView, setIsWebView] = useState(true);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   useEffect(() => {
-    if (!window.ReactNativeWebView) {
-      setIsWebView(false);
+    const savedPosition = sessionStorage.getItem('scrollPosition');
+    if (scrollRef.current && savedPosition) {
+      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem('scrollPosition');
     }
   }, []);
+
+  const { data: session, isPending } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
+  });
+
+  const { data: isClubMember, isPending: isPendingToCheckingClubMember } = useQuery({
+    queryKey: ['isClubMember', clubId],
+    queryFn: () => checkIsClubMember(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
+  });
 
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
-
-  const { data: myClubs } = useQuery({
-    queryKey: ['myClubs'],
-    queryFn: fetchMyClubs,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.LIST_FETCH_FAILED),
-  });
-
-  const handleNavigationOpen = () => {
-    if (!myClubs || myClubs.length <= 1) return;
-
-    if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open navigation' }));
-    } else {
-      setIsBottomSheetOpen((prev) => !prev);
-    }
-  };
-
-  const goToSelectedClub = (selectedClubId: string) => {
-    router.replace(`/club/${selectedClubId}`);
-    bottomSheetCloseRef.current?.();
-  };
 
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {
@@ -68,86 +63,86 @@ function ClubPage() {
     router.push('/coming-soon');
   };
 
+  const handleApplicationButton = () => {
+    if (!session?.user) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open login modal' }));
+        return;
+      }
+
+      setIsLoginModalOpen(true);
+    } else if (!isClubMember) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'application for club' }));
+      }
+      // TODO: 가입 로직
+    }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-background px-[20px] pt-[75px]">
+    <div ref={scrollRef} className="scrollbar-hide relative flex min-h-screen flex-col overflow-y-auto bg-white">
       <Header>
         <BackButton />
-        <button
-          type="button"
-          className="ml-[44px] flex cursor-pointer items-center gap-[8px]"
-          onClick={handleNavigationOpen}
-        >
-          <div className="text-bold16">{clubInfo?.name}</div>
-          {(myClubs?.length as number) > 1 && <BottomArrowIcon />}
-        </button>
-        <div className="flex items-center gap-[20px]">
-          <button type="button" onClick={goToCommingSoon}>
-            <BellIcon />
-          </button>
+        {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
           <button type="button" onClick={goToCommingSoon}>
             <MessageIcon />
           </button>
-        </div>
+        )}
       </Header>
 
-      <ClubProfile />
-      <AnnouncementButton />
-      <BoardSummary />
-
-      <div
-        className={`fixed ${isWebView ? 'bottom-[30px]' : 'bottom-[90px]'} left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]`}
-      >
-        <button
-          type="button"
-          className="absolute right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"
-          onClick={() => {
-            setIsWriteModalOpen((prev) => !prev);
+      {clubInfo?.background ? (
+        <Image
+          src={clubInfo?.background}
+          alt="배경"
+          width={600}
+          height={321}
+          style={{
+            objectFit: 'cover',
+            width: '100%',
+            height: '321px',
           }}
-        >
-          {isWriteModalOpen ? <XIcon3 /> : <PencilIcon />}
-        </button>
+        />
+      ) : (
+        <div className="h-[321px] w-full bg-secondary" />
+      )}
+
+      <div className="absolute top-[258px] flex w-full flex-col px-[20px]">
+        <ClubProfile setIsMembersModalOpen={setIsMembersModalOpen} />
+
+        {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember ? (
+          <AnnouncementButton />
+        ) : (
+          <button
+            type="button"
+            className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
+            onClick={handleApplicationButton}
+          >
+            가입 신청
+          </button>
+        )}
+
+        <Board scrollRef={scrollRef} />
       </div>
+      {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
+        <div className="fixed bottom-[30px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">
+          <button
+            type="button"
+            className="absolute right-[20px] z-50 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-primary"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open write modal' }));
+                return;
+              }
+              setIsWriteModalOpen((prev) => !prev);
+            }}
+          >
+            {isWriteModalOpen ? <XIcon3 /> : <PencilIcon />}
+          </button>
+        </div>
+      )}
 
       {isWriteModalOpen && <WriteModal onClose={() => setIsWriteModalOpen(false)} />}
-
-      {isBottomSheetOpen && (
-        <BottomSheet
-          setIsBottomSheetOpen={setIsBottomSheetOpen}
-          onRequestClose={(closeFn) => {
-            bottomSheetCloseRef.current = closeFn;
-          }}
-        >
-          <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
-          <div className="scrollbar-hide mb-[20px] flex max-h-[228px] w-full flex-col overflow-y-scroll px-[20px]">
-            {myClubs?.map(
-              (club) =>
-                club.id !== clubId && (
-                  <button
-                    key={club.id}
-                    type="button"
-                    className="text-bold16 flex h-[76px] min-h-[76px] w-full flex-row items-center gap-[24px] border-b border-b-gray0"
-                    onClick={() => goToSelectedClub(club.id)}
-                  >
-                    <Image
-                      src={club.logo}
-                      alt="로고"
-                      width={50}
-                      height={50}
-                      style={{
-                        objectFit: 'cover',
-                        width: '50px',
-                        height: '50px',
-                        borderRadius: '50%',
-                        border: '1px solid #F9F9F9',
-                      }}
-                    />
-                    {club.name}
-                  </button>
-                ),
-            )}
-          </div>
-        </BottomSheet>
-      )}
+      {isMembersModalOpen && <MembersModal onClose={() => setIsMembersModalOpen(false)} />}
     </div>
   );
 }

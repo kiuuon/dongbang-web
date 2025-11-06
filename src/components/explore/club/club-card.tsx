@@ -1,14 +1,19 @@
 import Image from 'next/image';
 
 import { ClubType } from '@/types/club-type';
+import { useRouter } from 'next/router';
 
 function ClubCard({ club }: { club: ClubType }) {
+  const router = useRouter();
+
   return (
     <div className="relative flex items-center">
       <button
         type="button"
         className="relative z-10 flex w-full rounded-[8px] border-b-gray0 bg-white px-[10px] pb-[9px] pt-[20px] shadow-[0_0_12px_0_rgba(0,0,0,0.08)]"
-        onClick={() => {}}
+        onClick={() => {
+          router.push(`/club/${club.id}`);
+        }}
       >
         <div className="mr-[20px] min-w-[60px]">
           <Image
@@ -29,7 +34,7 @@ function ClubCard({ club }: { club: ClubType }) {
           <div className="flex w-full justify-between">
             <div className="mr-[10px] flex flex-col">
               <div className="text-bold16 mb-[6px] text-start">{club.name}</div>
-              <div className="text-regular12 mb-[15px] text-start">{club.description}</div>
+              <div className="text-regular12 mb-[15px] text-start">{club.bio}</div>
             </div>
           </div>
           <div className="flex gap-[4px]">

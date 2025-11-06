@@ -22,12 +22,14 @@ export interface FeedType {
   like_count: number;
   taggedUsers: {
     user: {
+      id: string;
       name: string;
       avatar: string;
     };
   }[];
   taggedClubs: {
     club: {
+      id: string;
       name: string;
       logo: string;
     };

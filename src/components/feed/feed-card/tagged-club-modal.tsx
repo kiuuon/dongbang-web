@@ -1,13 +1,30 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-function TaggedClubModal({ taggedClubs }: { taggedClubs: { club: { name: string; logo: string } }[] }) {
+function TaggedClubModal({
+  taggedClubs,
+  onClose,
+}: {
+  taggedClubs: { club: { id: string; name: string; logo: string } }[];
+  onClose: () => void;
+}) {
+  const router = useRouter();
+
   return (
     <div className="flex w-full flex-col items-center px-[20px]">
       <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1" />
       <div className="text-bold14 mb-[27px]">피드에 태그된 동아리</div>
       <div className="scrollbar-hide mb-[20px] flex max-h-[190px] w-full flex-col gap-[10px] overflow-y-scroll">
         {taggedClubs.map(({ club }) => (
-          <button key={club.logo} type="button" className="flex w-full items-center gap-[29px]">
+          <button
+            key={club.logo}
+            type="button"
+            className="flex w-full items-center gap-[29px]"
+            onClick={() => {
+              router.push(`/club/${club.id}`);
+              onClose();
+            }}
+          >
             <Image
               src={club.logo}
               alt="로고"

@@ -35,10 +35,8 @@ function Tab() {
         </div>
       </Link>
       <Link href="/club" replace className="flex flex-col items-center gap-[3px]">
-        <ClubIcon color={router.pathname.startsWith('/club') ? '#F9A825' : '#989898'} />
-        <div className={`text-regular10 ${router.pathname.startsWith('/club') ? 'text-primary' : 'text-gray2'}`}>
-          동아리
-        </div>
+        <ClubIcon color={router.pathname === '/club' ? '#F9A825' : '#989898'} />
+        <div className={`text-regular10 ${router.pathname === '/club' ? 'text-primary' : 'text-gray2'}`}>동아리</div>
       </Link>
       <Link href="/interact" replace className="flex flex-col items-center gap-[3px]">
         <InteractIcon color={router.pathname === '/interact' ? '#F9A825' : '#989898'} />

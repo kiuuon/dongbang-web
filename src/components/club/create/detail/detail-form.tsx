@@ -140,6 +140,7 @@ function DetailForm() {
 
         <div className="relative">
           <div className="absolute top-[-53px] flex w-full flex-col gap-[20px] px-[20px]">
+            {/* club profile */}
             <div className="flex flex-col rounded-[8px] bg-white px-[12px] pb-[8px] pt-[12px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.15)]">
               <div className="flex gap-[14px]">
                 <Controller
@@ -149,7 +150,7 @@ function DetailForm() {
                   render={({ field }) => <LogoInput onChange={field.onChange} />}
                 />
                 <div className="flex flex-col justify-center">
-                  <div className="text-bold24 whitespace-nowrap">{name}</div>
+                  <div className="text-bold24">{name}</div>
                   {clubType === 'campus' && (
                     <div className="text-regular14 flex items-center gap-[3px] text-gray3">
                       <LocationMarkerIcon />
@@ -169,7 +170,9 @@ function DetailForm() {
               </div>
 
               <div className="flex flex-col items-start">
-                <div className="text-regular12 text-gray2">{desciptionType === 'bio' ? bio : description}</div>
+                <div className="text-regular12 whitespace-pre-line text-gray2">
+                  {desciptionType === 'bio' ? bio : description}
+                </div>
                 <button
                   type="button"
                   className="text-bold12 text-primary"
@@ -186,6 +189,7 @@ function DetailForm() {
               </div>
             </div>
 
+            {/* tag input */}
             <Controller
               name="tags"
               control={control}

@@ -22,8 +22,8 @@ export const getSignUpInfoSchema = (
     nickname: yup
       .string()
       .required('사용자명을 입력하세요')
-      .matches(/^[a-z0-9._]{2,8}$/, '2~8글자 이내의 소문자, 숫자, 밑줄(_), 마침표(.)만 입력하세요')
-      .test('isUniqueNickname', '이미 사용중인 닉네임입니다', () => !isDuplicate)
+      .matches(/^[a-z0-9._]{2,16}$/, '2~16글자 이내의 소문자, 숫자, 밑줄(_), 마침표(.)만 입력하세요')
+      .test('isUniqueNickname', '이미 사용중인 사용자명입니다', () => !isDuplicate)
       .test('isValidNickname', '중복 체크를 해주세요', () => isSameCheck),
   });
 
@@ -51,10 +51,5 @@ export const campusClubInfoSchema = yup.object().shape({
 export const clubDetailSchema = yup.object().shape({
   logo: yup.mixed<File>().required('로고를 선택하세요'),
   background: yup.mixed<File>().notRequired(),
-  // activity: yup
-  //   .array()
-  //   .min(1, '활동 사진을 선택하세요')
-  //   .max(5, '최대 5장 이하로 업로드 해주세요')
-  //   .required('활동 사진을 선택하세요'),
   tags: yup.array().required('태그를 추가하세요'),
 });

@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
 import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import PlusPersonIcon from '@/icons/plus-person-icon';
-import PencilIcon2 from '@/icons/pencil-icon2';
 import FeedIcon from '@/icons/feed-icon';
 import PersonIcon2 from '@/icons/person-icon2';
 import EditIcon from '@/icons/edit-icon';
@@ -19,14 +17,6 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     queryFn: () => fetchMyRole(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
-
-  const [isWebView, setIsWebView] = useState(true);
-
-  useEffect(() => {
-    if (!window.ReactNativeWebView) {
-      setIsWebView(false);
-    }
-  }, []);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -60,15 +50,15 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     router.push(`/feed/write/${clubId}`);
   };
 
-  const goToRecruitPage = () => {
+  const goToMembersManagePage = () => {
     if (window.ReactNativeWebView) {
       onClose();
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to recruit page' }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to members manage page' }));
       return;
     }
 
     onClose();
-    router.push(`/club/${clubId}/recruit`);
+    router.push(`/club/${clubId}/members/manage`);
   };
 
   return (
@@ -83,29 +73,17 @@ function WriteModal({ onClose }: { onClose: () => void }) {
         }
       }}
     >
-      <div
-        className={`absolute ${isWebView ? 'bottom-[110px]' : 'bottom-[170px]'} right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]`}
-      >
-        <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
-          <PencilIcon2 />
-          게시글 작성
-        </button>
+      <div className="absolute bottom-[110px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
         <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={writeFeed}>
           <FeedIcon />
           피드 작성
         </button>
       </div>
-      {role === 'president' && (
-        <div
-          className={`absolute ${isWebView ? 'bottom-[219px]' : 'bottom-[279px]'} bottom-[249px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]`}
-        >
-          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToRecruitPage}>
-            <PlusPersonIcon />
-            부원 모집하기
-          </button>
-          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
+      {(role === 'president' || role === 'officer') && (
+        <div className="absolute bottom-[179px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToMembersManagePage}>
             <PersonIcon2 />
-            부원 관리하기
+            부원 관리
           </button>
           <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
             <EditIcon color="#F9A825" />

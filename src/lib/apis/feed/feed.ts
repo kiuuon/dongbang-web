@@ -80,7 +80,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
       author:User(id, name, nickname, avatar),
       club:Club(name, logo),
       taggedUsers:Feed_User(user:User(name, avatar)),
-      taggedClubs:Feed_Club(club:Club(name, logo))
+      taggedClubs:Feed_Club(club:Club(id, name, logo))
     `);
 
     if (error) {
@@ -122,7 +122,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
     const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
-        '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+        '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
       .order('created_at', { ascending: false })
@@ -165,7 +165,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
   const { data: feeds, error: fetchFeedError } = await supabase
     .from('Feed')
     .select(
-      '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(name, logo))',
+      '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(name, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
     )
     .order('created_at', { ascending: false })
     .range(start, end);
@@ -254,8 +254,8 @@ export async function searchFeeds(keyword: string, page: number) {
       *,
       author:User(id, name, nickname, avatar),
       club:Club(name, logo),
-      taggedUsers:Feed_User(user:User(name, avatar)),
-      taggedClubs:Feed_Club(club:Club(name, logo))
+      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedClubs:Feed_Club(club:Club(id, name, logo))
     `);
 
   if (error) {
@@ -297,9 +297,9 @@ export async function fetchFeedsByAuthor(userId: string, page: number) {
       `
       *,
       author:User(id, name, nickname, avatar),
-      club:Club(name, logo),
-      taggedUsers:Feed_User(user:User(name, avatar)),
-      taggedClubs:Feed_Club(club:Club(name, logo))
+      club:Club(id, name, logo),
+      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedClubs:Feed_Club(club:Club(id, name, logo))
     `,
     )
     .eq('author_id', userId)
@@ -323,14 +323,28 @@ export async function fetchFeedsTaggedUser(userId: string, page: number) {
       *,
       author:User(id, name, nickname, avatar),
       Feed_User!inner(user_id),
-      club:Club(name, logo),
+      club:Club(id, name, logo),
       taggedUsers:Feed_User(user:User(name, avatar)),
-      taggedClubs:Feed_Club(club:Club(name, logo))
+      taggedClubs:Feed_Club(club:Club(id, name, logo))
     `,
     )
     .eq('Feed_User.user_id', userId)
     .order('created_at', { ascending: false })
     .range(start, end);
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function fetchFeedsByClub(clubId: string, page: number) {
+  const PAGE_SIZE = 15;
+
+  const { data, error } = await supabase.rpc('fetch_feeds_by_club', {
+    p_club_id: clubId,
+    p_limit_count: PAGE_SIZE,
+    p_offset_count: page * PAGE_SIZE,
+  });
 
   if (error) throw error;
 

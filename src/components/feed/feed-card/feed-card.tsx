@@ -96,7 +96,13 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       }
       setIsTaggedClubModalOpen(true);
     } else {
-      // TODO: 클럽 소개 페이지로 이동하는 로직
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ type: 'event', action: 'go to club page', payload: feed.club_id }),
+        );
+        return;
+      }
+      router.push(`/club/${feed.club_id}`);
     }
   };
 
@@ -341,7 +347,7 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       )}
       {isTaggedClubModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedClubModalOpen}>
-          <TaggedClubModal taggedClubs={feed.taggedClubs} />
+          <TaggedClubModal taggedClubs={feed.taggedClubs} onClose={() => setIsTaggedClubModalOpen(false)} />
         </BottomSheet>
       )}
       {isTaggedUserModalOpen && (

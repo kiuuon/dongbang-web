@@ -70,7 +70,7 @@ function InfoForm() {
     setDescription(data.description);
 
     if (clubType === 'union') {
-      setTags(['union', defaultLocation, defaultCategory]);
+      setTags(['연합동아리', defaultLocation, defaultCategory]);
     } else {
       setTags([user?.University.name, defaultCampusClubType, defaultCategory]);
     }
