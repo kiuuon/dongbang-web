@@ -10,6 +10,24 @@ function BackButton() {
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'back button click' }));
       return;
     }
+
+    const ref = document.referrer;
+
+    if (window.history.length === 0) {
+      router.replace('/');
+      return;
+    }
+
+    if (!ref) {
+      router.replace('/');
+      return;
+    }
+
+    if (!ref.startsWith(process.env.NEXT_PUBLIC_SITE_URL as string)) {
+      router.replace('/');
+      return;
+    }
+
     router.back();
   };
 
