@@ -158,7 +158,24 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
   return (
     <div className="mb-[16px] flex flex-row justify-between">
       <div className="flex flex-row gap-[12px]">
-        <div>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                  type: 'event',
+                  action: 'go to profile page',
+                  payload: reply.author_id,
+                }),
+              );
+              return;
+            }
+
+            router.push(`/profile/${reply.author_id}`);
+          }}
+          className="flex items-start"
+        >
           {reply.author.avatar ? (
             <Image
               src={reply.author.avatar}
@@ -186,11 +203,29 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
               }}
             />
           )}
-        </div>
+        </button>
 
         <div className="flex flex-col gap-[4px]">
           <div className="flex items-center gap-[6px]">
-            <div className="text-bold14">{reply.author.name}</div>
+            <button
+              type="button"
+              onClick={() => {
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: 'event',
+                      action: 'go to profile page',
+                      payload: reply.author_id,
+                    }),
+                  );
+                  return;
+                }
+                router.push(`/profile/${reply.author_id}`);
+              }}
+              className="text-bold14"
+            >
+              {reply.author.name}
+            </button>
             <div className="text-regular10 text-gray2">{getTimeAgo(reply.created_at)}</div>
           </div>
           <div className="text-regular14">{reply.content}</div>

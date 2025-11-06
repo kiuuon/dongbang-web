@@ -1,27 +1,26 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchUserId } from '@/lib/apis/auth';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { fetchFeedsByAuthor } from '@/lib/apis/feed/feed';
 import profileViewTypeStore from '@/stores/profile-view-type-store';
 import FeedCard from '../feed/feed-card/feed-card';
 
-function AuthoredFeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function AuthoredFeedSection({
+  userId,
+  scrollRef,
+}: {
+  userId: string;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
+}) {
   const router = useRouter();
   const viewType = profileViewTypeStore((state) => state.viewType);
 
   const observerElement = useRef(null);
-
-  const { data: userId } = useQuery({
-    queryKey: ['userId'],
-    queryFn: fetchUserId,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
-  });
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     initialPageParam: 0,

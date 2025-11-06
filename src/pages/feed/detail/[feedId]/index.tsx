@@ -409,7 +409,7 @@ function FeedDetailPage() {
       )}
       {isTaggedUserModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedUserModalOpen}>
-          <TaggedUserModal tagedUsers={feed.taggedUsers} />
+          <TaggedUserModal tagedUsers={feed.taggedUsers} onClose={() => setIsTaggedClubModalOpen(false)} />
         </BottomSheet>
       )}
       {isInteractModalOpen && (

@@ -54,7 +54,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
-                      // TODO: profile page로 이동
+                      router.push(`/profile/${member.userId}`);
                     }}
                   >
                     {member.avatar ? (

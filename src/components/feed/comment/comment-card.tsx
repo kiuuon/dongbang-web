@@ -202,7 +202,23 @@ export default function CommentCard({
         className={`relative mb-[16px] flex flex-row justify-between ${reply === comment.id ? 'before:absolute before:-bottom-[8px] before:-top-[8px] before:left-1/2 before:-z-10 before:w-screen before:-translate-x-1/2 before:bg-background before:content-[""]' : ''} `}
       >
         <div className="flex flex-row gap-[12px]">
-          <div>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({
+                    type: 'event',
+                    action: 'go to profile page',
+                    payload: comment.author_id,
+                  }),
+                );
+                return;
+              }
+              router.push(`/profile/${comment.author_id}`);
+            }}
+            className="flex items-start"
+          >
             {comment.author.avatar ? (
               <Image
                 src={comment.author.avatar}
@@ -230,11 +246,30 @@ export default function CommentCard({
                 }}
               />
             )}
-          </div>
+          </button>
 
           <div className="flex flex-col gap-[4px]">
             <div className="flex items-center gap-[6px]">
-              <div className="text-bold14">{comment.author.name}</div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'event',
+                        action: 'go to profile page',
+                        payload: comment.author_id,
+                      }),
+                    );
+                    return;
+                  }
+
+                  router.push(`/profile/${comment.author_id}`);
+                }}
+                className="text-bold14"
+              >
+                {comment.author.name}
+              </button>
               <div className="text-regular10 text-gray2">{getTimeAgo(comment.created_at)}</div>
             </div>
             <div className="text-regular14">{comment.content}</div>

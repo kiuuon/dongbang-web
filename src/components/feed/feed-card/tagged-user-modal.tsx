@@ -1,13 +1,30 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
-function TaggedUserModal({ tagedUsers }: { tagedUsers: { user: { name: string; avatar: string } }[] }) {
+function TaggedUserModal({
+  tagedUsers,
+  onClose,
+}: {
+  tagedUsers: { user: { id: string; name: string; avatar: string } }[];
+  onClose: () => void;
+}) {
+  const router = useRouter();
+
   return (
     <div className="flex w-full flex-col items-center px-[20px]">
       <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1" />
       <div className="text-bold14 mb-[27px]">피드에 태그된 사람</div>
       <div className="scrollbar-hide mb-[20px] flex max-h-[190px] w-full flex-col gap-[10px] overflow-y-scroll">
         {tagedUsers.map(({ user }) => (
-          <button key={user.name} type="button" className="flex w-full items-center gap-[29px]">
+          <button
+            key={user.name}
+            type="button"
+            className="flex w-full items-center gap-[29px]"
+            onClick={() => {
+              router.push(`/profile/${user.id}`);
+              onClose();
+            }}
+          >
             {user.avatar ? (
               <Image
                 src={user.avatar}

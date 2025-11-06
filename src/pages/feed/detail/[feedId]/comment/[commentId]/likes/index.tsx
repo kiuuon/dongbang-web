@@ -26,7 +26,24 @@ function CommentLikesPage() {
         <div />
       </Header>
       {feedLikedUsers?.map((user) => (
-        <button key={user.name} type="button" className="flex w-full items-center gap-[29px]">
+        <button
+          key={user.name}
+          type="button"
+          className="flex w-full items-center gap-[29px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                  type: 'event',
+                  action: 'go to profile page',
+                  payload: user.id,
+                }),
+              );
+              return;
+            }
+            router.push(`/profile/${user.id}`);
+          }}
+        >
           {user.avatar ? (
             <Image
               src={user.avatar}

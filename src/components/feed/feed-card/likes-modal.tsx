@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFeedLikedUsers } from '@/lib/apis/feed/like';
@@ -6,6 +7,8 @@ import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 
 function LikesModal({ feedId }: { feedId: string }) {
+  const router = useRouter();
+
   const { data: feedLikedUsers } = useQuery({
     queryKey: ['feedLikedUsers', feedId],
     queryFn: () => fetchFeedLikedUsers(feedId),
@@ -18,7 +21,14 @@ function LikesModal({ feedId }: { feedId: string }) {
       <div className="text-bold14 mb-[27px]">좋아요</div>
       <div className="scrollbar-hide mb-[20px] flex max-h-[66vh] w-full flex-col gap-[10px] overflow-y-scroll">
         {feedLikedUsers?.map((user) => (
-          <button key={user.name} type="button" className="flex w-full items-center gap-[29px]">
+          <button
+            key={user.name}
+            type="button"
+            className="flex w-full items-center gap-[29px]"
+            onClick={() => {
+              router.push(`/profile/${user.id}`);
+            }}
+          >
             {user.avatar ? (
               <Image
                 src={user.avatar}

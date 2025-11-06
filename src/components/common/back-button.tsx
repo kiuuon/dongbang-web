@@ -11,24 +11,11 @@ function BackButton() {
       return;
     }
 
-    const ref = document.referrer;
-
-    if (window.history.length === 0) {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
       router.replace('/');
-      return;
     }
-
-    if (!ref) {
-      router.replace('/');
-      return;
-    }
-
-    if (!ref.startsWith(process.env.NEXT_PUBLIC_SITE_URL as string)) {
-      router.replace('/');
-      return;
-    }
-
-    router.back();
   };
 
   return (
