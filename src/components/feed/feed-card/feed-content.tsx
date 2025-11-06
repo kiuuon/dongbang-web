@@ -1,20 +1,17 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 
 import exploreStore from '@/stores/explore-store';
 
 function FeedContent({ content }: { content: string }) {
   const router = useRouter();
-  const hiddenRef = useRef<HTMLDivElement>(null);
-  const visibleRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(true);
+  const [showMore, setShowMore] = useState(false);
 
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const setKeyword = exploreStore((state) => state.setKeyword);
   const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
-
-  const cleanedContent = content.replace(/[\s\n]+$/, '');
 
   const clickHashtag = (tag: string) => {
     if (window.ReactNativeWebView) {
@@ -61,19 +58,36 @@ function FeedContent({ content }: { content: string }) {
     });
   };
 
-  useEffect(() => {
-    const hiddenEl = hiddenRef.current;
-    const visibleEl = visibleRef.current;
+  const checkOverflow = useCallback(() => {
+    const el = previewRef.current;
+    if (!el) return;
 
-    if (!visibleEl || !hiddenEl) return;
+    const hasNewline = content.includes('\n');
+    const overflowX = el.scrollWidth > el.clientWidth;
+    const overflowY = el.scrollHeight > el.clientHeight;
 
-    setIsOverflowing(hiddenEl.scrollHeight > visibleEl.clientHeight);
+    setShowMore(hasNewline || overflowX || overflowY);
   }, [content]);
 
+  // content가 변할 때 체크
+  useEffect(() => {
+    checkOverflow();
+  }, [content, checkOverflow]);
+
+  // 화면 사이즈가 변할 때 체크
+  useEffect(() => {
+    const ro = new ResizeObserver(checkOverflow);
+    if (previewRef.current) ro.observe(previewRef.current);
+    return () => ro.disconnect();
+  }, [checkOverflow]);
+
+  // 다시 접을 때 체크
+  useEffect(() => {
+    if (!isExpanded) checkOverflow();
+  }, [isExpanded, checkOverflow]);
+
   const handleToggle = () => {
-    if (isOverflowing) {
-      setIsExpanded((prev) => !prev);
-    }
+    setIsExpanded((prev) => !prev);
   };
 
   return (
@@ -89,27 +103,19 @@ function FeedContent({ content }: { content: string }) {
         }
       }}
     >
-      <div
-        ref={hiddenRef}
-        className="whitespace-pre-line, invisible absolute left-0 top-0 w-[600px]"
-        style={{ visibility: 'hidden', pointerEvents: 'none', position: 'absolute' }}
-      >
-        {renderContentWithHashtags(cleanedContent)}
-      </div>
-
-      {isExpanded || !isOverflowing ? (
-        <div className="whitespace-pre-line">{renderContentWithHashtags(cleanedContent)}</div>
+      {isExpanded ? (
+        <div className="whitespace-pre-line break-words">{renderContentWithHashtags(content)}</div>
       ) : (
         <div className="flex items-center">
-          <div
-            ref={visibleRef}
-            className="line-clamp-1 overflow-hidden whitespace-pre-line"
-            style={{ maxWidth: 'calc(100% - 50px)' }}
-          >
-            {renderContentWithHashtags(cleanedContent)}
+          <div ref={previewRef} className="line-clamp-1 overflow-hidden whitespace-pre-line break-words">
+            {renderContentWithHashtags(content)}
           </div>
-          {content.split('\n')[0].length === 1 && <span className="text-regular14">...</span>}
-          <span className="text-regular14 ml-[5px] text-primary">더 보기</span>
+
+          {showMore && (
+            <button type="button" className="ml-2 whitespace-nowrap text-primary">
+              더보기
+            </button>
+          )}
         </div>
       )}
     </div>
