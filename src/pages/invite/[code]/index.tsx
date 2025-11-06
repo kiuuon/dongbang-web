@@ -42,6 +42,7 @@ function InvitePage() {
   const { data: isClubMember, isPending: isPendingToCheckingClubMember } = useQuery({
     queryKey: ['isClubMember', club?.id],
     queryFn: () => checkIsClubMember(club?.id),
+    enabled: !!club?.id,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
   });
 
