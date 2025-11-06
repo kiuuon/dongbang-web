@@ -83,7 +83,7 @@ function FeedPage() {
       return null;
     }
 
-    if (myClubs?.length === 0) {
+    if (clubType === 'my' && myClubs?.length === 0) {
       return <JoinClubPrompt />;
     }
 
