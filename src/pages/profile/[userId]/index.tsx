@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
@@ -102,6 +103,16 @@ function ProfilePage() {
     // TODO: 신고하기
   };
 
+  const copyProfileLinkToClipboard = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/profile/${userId}`;
+      await navigator.clipboard.writeText(url);
+      toast.success('프로필 링크가 클립보드에 복사되었습니다!');
+    } catch (error) {
+      toast.error('프로필 링크 복사에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   if (isPending) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -192,7 +203,11 @@ function ProfilePage() {
         >
           소속 동아리
         </button>
-        <button type="button" className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0">
+        <button
+          type="button"
+          className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0"
+          onClick={copyProfileLinkToClipboard}
+        >
           프로필 공유
         </button>
       </div>

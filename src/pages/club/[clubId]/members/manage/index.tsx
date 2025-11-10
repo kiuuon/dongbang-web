@@ -14,7 +14,7 @@ import ShareIcon from '@/icons/share-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 
-function RecruitPage() {
+function MembersManagePage() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
   const queryClient = useQueryClient();
@@ -127,4 +127,4 @@ function RecruitPage() {
   );
 }
 
-export default RecruitPage;
+export default MembersManagePage;
