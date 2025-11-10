@@ -19,6 +19,11 @@ function ClubCard({ club }: { club: ClubType }) {
     if (role === 'president') {
       return '회장';
     }
+
+    if (role === 'officer') {
+      return '임원';
+    }
+
     if (role === 'member') {
       return '부원';
     }

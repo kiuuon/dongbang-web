@@ -121,6 +121,30 @@ export async function fetchMyClubs() {
   return clubs;
 }
 
+export async function fetchClubsByUserId(userId: string) {
+  const { data: clubData, error: fetchClubDataError } = await supabase
+    .from('Club_User')
+    .select('club_id')
+    .eq('user_id', userId);
+
+  if (fetchClubDataError) {
+    throw fetchClubDataError;
+  }
+
+  const clubIds = clubData?.map((club) => club.club_id) || [];
+
+  const { data: clubs, error: fetchClubsError } = await supabase
+    .from('Club')
+    .select('*, role:Club_User(role)')
+    .in('id', clubIds);
+
+  if (fetchClubsError) {
+    throw fetchClubsError;
+  }
+
+  return clubs;
+}
+
 export async function fetchMyRole(clubId: string) {
   const userId = await fetchUserId();
   const { data, error } = await supabase
