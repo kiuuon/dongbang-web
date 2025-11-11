@@ -350,3 +350,20 @@ export async function fetchFeedsByClub(clubId: string, page: number) {
 
   return data;
 }
+
+export async function checkIsMyFeed(feedId: string) {
+  const userId = await fetchUserId();
+
+  if (!userId) return false;
+
+  const { data, error } = await supabase
+    .from('Feed')
+    .select('id')
+    .eq('id', feedId)
+    .eq('author_id', userId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return !!data;
+}

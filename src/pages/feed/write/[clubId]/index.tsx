@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { upload } from '@/lib/apis/image';
 import { writeFeed } from '@/lib/apis/feed/feed';
-import { fetchClubInfo } from '@/lib/apis/club';
+import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon from '@/icons/toggle-icon';
@@ -33,6 +33,18 @@ function WriteFeedPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const { data: isClubMember, isPending } = useQuery({
+    queryKey: ['isClubMember', clubId],
+    queryFn: () => checkIsClubMember(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
+  });
+
+  useEffect(() => {
+    if (!isClubMember) {
+      router.replace('/');
+    }
+  }, [isClubMember, router]);
 
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
@@ -124,6 +136,10 @@ function WriteFeedPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  if (isPending) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen min-h-screen flex-col justify-between px-[20px] pt-[68px]">

@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
+import Head from 'next/head';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -18,10 +19,13 @@ const queryClient = new QueryClient();
 
 const REQUIRES_LOGIN_PATHS: (string | RegExp)[] = [
   /^\/club\/create(\/.*)?$/,
-  /^\/club\/[^/]+\/recruit/,
-  /^\/feed\/[^/]+\/write/,
+  /^\/club\/[^/]+\/edit/,
+  /^\/club\/[^/]+\/members\/manage/,
+  /^\/feed\/write\/[^/]+/,
+  /^\/feed\/edit\/[^/]+/,
   '/feed/my',
   '/feed/campus',
+  '/profile/edit',
 ];
 
 function requiresLoginPath(pathname: string) {
@@ -193,6 +197,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="scrollbar-hide m-auto max-w-[600px] overflow-scroll shadow-lg">
+        <Head>
+          <title>동방</title>
+        </Head>
         <Component {...pageProps} />
         {isOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
         {!isWebView && tabPage.includes(pathname) && <Tab />}

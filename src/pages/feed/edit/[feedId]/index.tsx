@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { upload } from '@/lib/apis/image';
-import { editFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { checkIsMyFeed, editFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon from '@/icons/toggle-icon';
@@ -34,6 +34,18 @@ function EditFeedPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const { data: isMyFeed, isPending } = useQuery({
+    queryKey: ['isMyFeed', feedId],
+    queryFn: () => checkIsMyFeed(feedId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.AUTHOR_CHECK_FAILED),
+  });
+
+  useEffect(() => {
+    if (!isMyFeed) {
+      router.replace('/');
+    }
+  }, [isMyFeed, router]);
 
   const { data: feed } = useQuery({
     queryKey: ['feedDetail', feedId],
@@ -150,6 +162,10 @@ function EditFeedPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  if (isPending) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen min-h-screen flex-col justify-between px-[20px] pt-[68px]">

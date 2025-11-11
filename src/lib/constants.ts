@@ -37,6 +37,7 @@ const ERROR_MESSAGE = {
     WRITE_FAILED: '피드 작성에 실패했습니다. 다시 시도해주세요.',
     EDIT_FAILED: '피드 수정에 실패했습니다. 다시 시도해주세요.',
     DELETE_FAILED: '피드 삭제에 실패했습니다. 다시 시도해주세요.',
+    AUTHOR_CHECK_FAILED: '내 글인지 확인을 실패했습니다. 다시 시도해주세요.',
   },
   HASHTAG: {
     FETCH_FAILED: '해시태그를 불러오는 데 실패했습니다. 다시 시도해주세요.',

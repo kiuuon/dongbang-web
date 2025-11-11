@@ -153,15 +153,20 @@ export async function fetchClubsByUserId(userId: string) {
 
 export async function fetchMyRole(clubId: string) {
   const userId = await fetchUserId();
+
   const { data, error } = await supabase
     .from('Club_User')
     .select('role')
     .eq('user_id', userId)
     .eq('club_id', clubId)
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw error;
+  }
+
+  if (!data) {
+    return null;
   }
 
   return data?.role;

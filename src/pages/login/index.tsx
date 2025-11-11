@@ -1,6 +1,7 @@
-import KakaoLoginButton from '@/components/login/KakaoLoginButton';
-import DongBangIcon2 from '@/icons/dongbang-icon2';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+
+import KakaoLoginButton from '@/components/login/KakaoLoginButton';
 
 function LoginPage() {
   const router = useRouter();
@@ -34,9 +35,7 @@ function LoginPage() {
 
             <div className="flex flex-col items-center justify-between gap-[6px] pt-[136px]">
               <div>
-                <div className="text-regular12 flex items-end gap-[2px] text-gray2">
-                  <DongBangIcon2 /> ongbang
-                </div>
+                <Image src="/images/logo.png" alt="동방 로고" width={100} height={30} />
                 <div className="text-bold20">
                   대학 동아리의 <br /> SNS 허브
                 </div>
