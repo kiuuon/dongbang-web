@@ -13,8 +13,8 @@ import FeedCard from '@/components/feed/feed-card/feed-card';
 
 function FeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
-  const { clubId } = router.query;
-  const viewType = clubPageStore((state) => state.viewType);
+  const { clubId } = router.query as { clubId: string };
+  const viewType = clubPageStore((state) => state.viewType[clubId] ?? 'grid');
 
   const observerElement = useRef(null);
 

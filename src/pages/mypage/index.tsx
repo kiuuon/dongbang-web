@@ -9,7 +9,7 @@ import { fetchSession, fetchUserId } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import profileViewTypeStore from '@/stores/profile-view-type-store';
+import myPageStore from '@/stores/mypage-store';
 import CogIcon from '@/icons/cog-icon';
 import GridIcon from '@/icons/grid-icon';
 import ListIcon from '@/icons/list-icon';
@@ -22,10 +22,10 @@ import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 function MyPage() {
   const router = useRouter();
 
-  const viewType = profileViewTypeStore((state) => state.viewType);
-  const setViewType = profileViewTypeStore((state) => state.setViewType);
-  const selectedFeedType = profileViewTypeStore((state) => state.selectedFeedType);
-  const setSelectedFeedType = profileViewTypeStore((state) => state.setSelectedFeedType);
+  const viewType = myPageStore((state) => state.viewType);
+  const setViewType = myPageStore((state) => state.setViewType);
+  const selectedFeedType = myPageStore((state) => state.selectedFeedType);
+  const setSelectedFeedType = myPageStore((state) => state.setSelectedFeedType);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -265,8 +265,12 @@ function MyPage() {
           </div>
         </div>
 
-        {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId as string} scrollRef={scrollRef} />}
-        {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId as string} scrollRef={scrollRef} />}
+        {selectedFeedType === 'authored' && (
+          <AuthoredFeedSection userId={userId as string} viewType={viewType} scrollRef={scrollRef} />
+        )}
+        {selectedFeedType === 'tagged' && (
+          <TaggedFeedSection userId={userId as string} viewType={viewType} scrollRef={scrollRef} />
+        )}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import { fetchSession } from '@/lib/apis/auth';
 import { fetchUserById } from '@/lib/apis/user';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import profileViewTypeStore from '@/stores/profile-view-type-store';
+import profilePageStore from '@/stores/profile-page-store';
 import loginModalStore from '@/stores/login-modal-store';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import GridIcon from '@/icons/grid-icon';
@@ -25,11 +25,13 @@ import ReportIcon2 from '@/icons/report-icon2';
 
 function ProfilePage() {
   const router = useRouter();
-  const { userId } = router.query;
-  const viewType = profileViewTypeStore((state) => state.viewType);
-  const setViewType = profileViewTypeStore((state) => state.setViewType);
-  const selectedFeedType = profileViewTypeStore((state) => state.selectedFeedType);
-  const setSelectedFeedType = profileViewTypeStore((state) => state.setSelectedFeedType);
+  const { userId } = router.query as { userId: string };
+
+  const viewType = profilePageStore((state) => state.viewType[userId] ?? 'grid');
+  const selectedFeedType = profilePageStore((state) => state.selectedFeedType[userId] ?? 'authored');
+  const setViewType = profilePageStore((state) => state.setViewType);
+  const setSelectedFeedType = profilePageStore((state) => state.setSelectedFeedType);
+
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -219,30 +221,34 @@ function ProfilePage() {
             <button
               type="button"
               className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
-              onClick={() => setSelectedFeedType('authored')}
+              onClick={() => setSelectedFeedType(userId, 'authored')}
             >
               <FeedIcon2 isActive={selectedFeedType === 'authored'} />
             </button>
             <button
               type="button"
               className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
-              onClick={() => setSelectedFeedType('tagged')}
+              onClick={() => setSelectedFeedType(userId, 'tagged')}
             >
               <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
             </button>
           </div>
           <div className="flex gap-[27px] pb-[5px]">
-            <button type="button" onClick={() => setViewType('grid')}>
+            <button type="button" onClick={() => setViewType(userId, 'grid')}>
               <GridIcon isActive={viewType === 'grid'} />
             </button>
-            <button type="button" onClick={() => setViewType('list')}>
+            <button type="button" onClick={() => setViewType(userId, 'list')}>
               <ListIcon isActive={viewType === 'list'} />
             </button>
           </div>
         </div>
 
-        {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId as string} scrollRef={scrollRef} />}
-        {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId as string} scrollRef={scrollRef} />}
+        {selectedFeedType === 'authored' && (
+          <AuthoredFeedSection userId={userId} viewType={viewType} scrollRef={scrollRef} />
+        )}
+        {selectedFeedType === 'tagged' && (
+          <TaggedFeedSection userId={userId} viewType={viewType} scrollRef={scrollRef} />
+        )}
 
         {isClubsModalOpen && <ClubsModal onClose={() => setIsClubsModalOpen(false)} />}
 
