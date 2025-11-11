@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { campusClubInfoSchema } from '@/lib/validationSchema';
 
 import { fetchUser } from '@/lib/apis/user';
+import { fetchClubInfo } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import clubInfoStore from '@/stores/club-info-store';
@@ -16,7 +17,7 @@ import LocationInput from './location-input';
 
 function InfoForm() {
   const router = useRouter();
-  const { clubType } = router.query;
+  const { clubId } = router.query;
   const setClubCampusType = clubInfoStore((state) => state.setCampusClubType);
   const setName = clubInfoStore((state) => state.setName);
   const setCategory = clubInfoStore((state) => state.setCategory);
@@ -33,14 +34,20 @@ function InfoForm() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
 
+  const { data: clubInfo } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
+  });
+
   const {
     control,
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm({
     defaultValues: {
-      clubType: clubType as string,
       campusClubType: clubInfoStore.getState().campusClubType ?? '',
       name: clubInfoStore.getState().name ?? '',
       category: clubInfoStore.getState().category ?? '',
@@ -48,9 +55,29 @@ function InfoForm() {
       bio: clubInfoStore.getState().bio ?? '',
       description: clubInfoStore.getState().description ?? '',
     },
+
     mode: 'onBlur',
     resolver: yupResolver(campusClubInfoSchema),
   });
+
+  useEffect(() => {
+    if (clubInfo) {
+      setDefaultCampusClubType(clubInfo.detail_type);
+      setClubCampusType(clubInfo.detail_type);
+      setName(clubInfo.name);
+      setCategory(clubInfo.category);
+      setLocation(clubInfo.location);
+      setBio(clubInfo.bio);
+      setDescription(clubInfo.description);
+      setTags(clubInfo.tags);
+      setValue('campusClubType', clubInfo.detail_type, { shouldValidate: true });
+      setValue('name', clubInfo.name, { shouldValidate: true });
+      setValue('category', clubInfo.category, { shouldValidate: true });
+      setValue('location', clubInfo.location, { shouldValidate: true });
+      setValue('bio', clubInfo.bio, { shouldValidate: true });
+      setValue('description', clubInfo.description, { shouldValidate: true });
+    }
+  }, [clubInfo, setClubCampusType, setName, setCategory, setLocation, setBio, setDescription, setTags, setValue]);
 
   const onSubmit = (data: {
     campusClubType?: string | undefined;
@@ -60,14 +87,14 @@ function InfoForm() {
     bio: string;
     description: string;
   }) => {
-    setClubCampusType(data.campusClubType);
+    setClubCampusType(defaultCampusClubType);
     setName(data.name);
     setCategory(data.category);
     setLocation(data.location);
     setBio(data.bio);
     setDescription(data.description);
 
-    if (clubType === 'union') {
+    if (clubInfo?.type === 'union') {
       setTags(['연합동아리', data.location as string, data.category]);
     } else {
       setTags([user?.University.name, defaultCampusClubType, data.category]);
@@ -86,7 +113,7 @@ function InfoForm() {
             bio: data.bio,
             description: data.description,
             tags:
-              clubType === 'union'
+              clubInfo?.type === 'union'
                 ? ['연합동아리', data.location as string, data.category]
                 : [user?.University.name, defaultCampusClubType, data.category],
           },
@@ -95,18 +122,17 @@ function InfoForm() {
       return;
     }
 
-    router.push(`/club/create/${clubType}/detail`);
+    router.push(`/club/${clubId}/edit/detail`);
   };
 
   return (
     <form className="flex h-full min-h-[calc(100vh-92px)] flex-col justify-between" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-[16px]">
         <div className="mb-[8px] mt-[24px] flex flex-col">
-          {clubType === 'campus' && (
+          {clubInfo?.type === 'campus' && (
             <Controller
               name="campusClubType"
               control={control}
-              defaultValue=""
               render={({ field }) => (
                 <CampusClubTypeInput
                   value={field.value}
@@ -142,7 +168,7 @@ function InfoForm() {
         />
         {errors.category && <p className="text-regular10 mt-[8px] text-error">{errors.category.message}</p>}
         <div>
-          {clubType === 'campus' ? (
+          {clubInfo?.type === 'campus' ? (
             <div className="flex flex-col gap-[10px]">
               <label htmlFor="name" className="text-bold12">
                 학교 내 동아리 위치

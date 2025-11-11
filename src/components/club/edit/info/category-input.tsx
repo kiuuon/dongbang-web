@@ -20,7 +20,7 @@ function CategoryInput({ value, onChange }: { value: string; onChange: (value: s
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (categoryInputRef.current && !categoryInputRef.current.contains(target)) {
-        // setIsOpen(false);
+        setIsOpen(false);
       }
     };
 
@@ -143,6 +143,7 @@ function CategoryInput({ value, onChange }: { value: string; onChange: (value: s
                     onClick={() => {
                       if (item === '기타') {
                         onChange(item);
+
                         setIsOpen(false);
                       } else {
                         setSelectedTopCategory(item);

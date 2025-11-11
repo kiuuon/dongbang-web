@@ -24,7 +24,7 @@ export interface NewClubType {
   bio: string;
   description: string;
   tags: string[];
-  logo: string;
+  logo: File | string;
   background: string | null;
   detail_type: string | null;
 }

@@ -124,11 +124,11 @@ function InfoForm() {
       setPreview(user.avatar);
       setIsDuplicate(false);
       setIsSameCheck(true);
-      setValue('name', user.name);
-      setValue('gender', user.gender);
-      setValue('university', user.University.name);
-      setValue('major', user.major);
-      setValue('nickname', user.nickname);
+      setValue('name', user.name, { shouldValidate: true });
+      setValue('gender', user.gender, { shouldValidate: true });
+      setValue('university', user.University.name, { shouldValidate: true });
+      setValue('major', user.major, { shouldValidate: true });
+      setValue('nickname', user.nickname, { shouldValidate: true });
     }
   }, [user, setValue]);
 

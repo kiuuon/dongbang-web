@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { clubDetailSchema } from '@/lib/validationSchema';
 
 import { upload } from '@/lib/apis/image';
-import { createClub } from '@/lib/apis/club';
-import { handleMutationError } from '@/lib/utils';
+import { editClubInfo, fetchClubInfo } from '@/lib/apis/club';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import clubInfoStore from '@/stores/club-info-store';
 import { NewClubType } from '@/types/club-type';
@@ -20,8 +20,9 @@ import TagInput from '../info/tag-input';
 
 function DetailForm() {
   const router = useRouter();
-  const { clubType } = router.query;
+  const { clubId } = router.query;
   const uuid = crypto.randomUUID();
+  const queryClient = useQueryClient();
   const clubCampusType = clubInfoStore((state) => state.campusClubType);
   const name = clubInfoStore((state) => state.name);
   const category = clubInfoStore((state) => state.category);
@@ -31,6 +32,14 @@ function DetailForm() {
   const tags = clubInfoStore((state) => state.tags);
   const [isLoading, setIsLoading] = useState(false);
   const [desciptionType, setDescriptionType] = useState('bio');
+  const [logoPreview, setLogoPreview] = useState('');
+  const [backgroundPreview, setBackgroundPreview] = useState('');
+
+  const { data: clubInfo } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
+  });
 
   const {
     control,
@@ -46,8 +55,13 @@ function DetailForm() {
   });
 
   useEffect(() => {
-    setValue('tags', tags);
-  }, [tags, setValue]);
+    if (clubInfo) {
+      setLogoPreview(clubInfo.logo);
+      setBackgroundPreview(clubInfo.background);
+      setValue('logo', '', { shouldValidate: true });
+      setValue('tags', tags, { shouldValidate: true });
+    }
+  }, [clubInfo, tags, setValue]);
 
   const { mutateAsync: uploadLogo } = useMutation({
     mutationFn: ({ file, fileName }: { file: File | string; fileName: string }) => upload(file, fileName, 'club-image'),
@@ -60,9 +74,10 @@ function DetailForm() {
       handleMutationError(error, ERROR_MESSAGE.IMAGE.BACKGROUND_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 
-  const { mutate: handleCreateClub } = useMutation({
-    mutationFn: async (body: NewClubType) => createClub(body),
+  const { mutate: handleEditClub } = useMutation({
+    mutationFn: async (body: NewClubType) => editClubInfo(body, clubId as string),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['club', clubId] });
       clubInfoStore.setState({
         campusClubType: undefined,
         name: '',
@@ -74,16 +89,28 @@ function DetailForm() {
       });
       router.push('/club');
     },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CREATE_FAILED, () => setIsLoading(false)),
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.EDIT_FAILED, () => setIsLoading(false)),
   });
 
   const onSubmit = async (data: { logo: File | string; background?: File | null; tags: string[] }) => {
     try {
       setIsLoading(true);
-      const logoFileName = `logo/${uuid}.png`;
-      const { publicUrl: logo } = await uploadLogo({ file: data.logo, fileName: logoFileName });
+
+      let logo: string = '';
+
+      if (logoPreview === clubInfo?.logo) {
+        logo = logoPreview;
+      } else if (data.logo) {
+        const logoFileName = `logo/${uuid}.png`;
+        const uploadResult = await uploadLogo({ file: data.logo, fileName: logoFileName });
+        logo = uploadResult.publicUrl;
+      }
 
       let background: string | null = null;
+
+      if (backgroundPreview === clubInfo?.background) {
+        background = backgroundPreview;
+      }
 
       if (data.background) {
         setIsLoading(true);
@@ -93,7 +120,7 @@ function DetailForm() {
       }
 
       const body = {
-        type: router.query.clubType as string,
+        type: clubInfo.type,
         detail_type: clubCampusType || null,
         name,
         category,
@@ -109,7 +136,7 @@ function DetailForm() {
         window.ReactNativeWebView.postMessage(
           JSON.stringify({
             type: 'event',
-            action: 'create club',
+            action: 'edit club',
             payload: {
               type: router.query.clubType as string,
               logo,
@@ -119,7 +146,7 @@ function DetailForm() {
           }),
         );
       } else {
-        handleCreateClub(body);
+        handleEditClub(body);
       }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -134,7 +161,13 @@ function DetailForm() {
           name="background"
           control={control}
           defaultValue={undefined}
-          render={({ field }) => <BackgroundInput onChange={field.onChange} />}
+          render={({ field }) => (
+            <BackgroundInput
+              onChange={field.onChange}
+              backgroundPreview={backgroundPreview}
+              setBackgroundPreview={setBackgroundPreview}
+            />
+          )}
         />
         {errors.background && <p className="text-regular10 mt-[8px] text-error">{errors.background.message}</p>}
 
@@ -147,11 +180,13 @@ function DetailForm() {
                   name="logo"
                   control={control}
                   defaultValue={undefined}
-                  render={({ field }) => <LogoInput onChange={field.onChange} />}
+                  render={({ field }) => (
+                    <LogoInput onChange={field.onChange} logoPreview={logoPreview} setLogoPreview={setLogoPreview} />
+                  )}
                 />
                 <div className="flex flex-col justify-center">
                   <div className="text-bold24">{name}</div>
-                  {clubType === 'campus' && (
+                  {clubInfo?.type === 'campus' && (
                     <div className="text-regular14 flex items-center gap-[3px] text-gray3">
                       <LocationMarkerIcon />
                       {location}
@@ -162,7 +197,7 @@ function DetailForm() {
 
               <div className="my-[8px] flex flex-wrap gap-[8px]">
                 <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">
-                  {clubType === 'campus' ? '교내' : '연합'}
+                  {clubInfo?.type === 'campus' ? '교내' : '연합'}
                 </div>
                 {tags.map((tag) => (
                   <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">{tag}</div>
@@ -195,7 +230,7 @@ function DetailForm() {
               control={control}
               render={({ field }) => <TagInput value={field.value} onChange={field.onChange} />}
             />
-            <SubmitButton disabled={!isValid || isSubmitting}>개설하기</SubmitButton>
+            <SubmitButton disabled={!isValid || isSubmitting}>수정하기</SubmitButton>
           </div>
         </div>
       </div>

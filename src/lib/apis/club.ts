@@ -12,6 +12,12 @@ export async function createClub(body: NewClubType) {
   if (error) throw error;
 }
 
+export async function editClubInfo(body: NewClubType, clubId: string) {
+  const { error } = await supabase.from('Club').update([body]).eq('id', clubId);
+
+  if (error) throw error;
+}
+
 export async function fetchClubs(keyword: string, filters: Filters, page: number) {
   const PAGE_SIZE = 10;
 

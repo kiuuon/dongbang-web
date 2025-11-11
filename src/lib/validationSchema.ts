@@ -49,7 +49,7 @@ export const campusClubInfoSchema = yup.object().shape({
 });
 
 export const clubDetailSchema = yup.object().shape({
-  logo: yup.mixed<File>().required('로고를 선택하세요'),
+  logo: yup.mixed<File | string>().required('로고를 선택하세요'),
   background: yup.mixed<File>().notRequired(),
   tags: yup.array().required('태그를 추가하세요'),
 });

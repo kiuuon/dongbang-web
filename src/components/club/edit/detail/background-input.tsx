@@ -1,14 +1,14 @@
 import CameraIcon from '@/icons/camera-icon';
 import XIcon7 from '@/icons/x-icon7';
 
-function AvatarInput({
+function BackgroundInput({
   onChange,
-  preview,
-  setPreview,
+  backgroundPreview,
+  setBackgroundPreview,
 }: {
   onChange: (value: File | null) => void;
-  preview: string;
-  setPreview: React.Dispatch<React.SetStateAction<string>>;
+  backgroundPreview: string;
+  setBackgroundPreview: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -18,7 +18,7 @@ function AvatarInput({
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        setPreview(reader.result);
+        setBackgroundPreview(reader.result);
       }
     };
     reader.readAsDataURL(file);
@@ -26,16 +26,16 @@ function AvatarInput({
 
   const handleRemove = () => {
     onChange(null);
-    setPreview('');
+    setBackgroundPreview('');
   };
 
   return (
     <div>
-      {preview ? (
+      {backgroundPreview ? (
         <div
-          className="relative h-[64px] w-[64px] min-w-[64px] rounded-full"
+          className="relative h-[321px] w-full"
           style={{
-            backgroundImage: `url(${preview})`,
+            backgroundImage: `url(${backgroundPreview})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -43,7 +43,7 @@ function AvatarInput({
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute right-[-1] top-[-1] z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white"
+            className="absolute right-[5px] top-[10px] z-10 flex h-[20px] w-[20px] items-center justify-center rounded-full bg-white"
           >
             <XIcon7 />
           </button>
@@ -51,7 +51,7 @@ function AvatarInput({
       ) : (
         <label
           htmlFor="file-upload"
-          className="relative flex h-[64px] w-[64px] min-w-[64px] cursor-pointer flex-col items-center justify-center rounded-full bg-gray0"
+          className="relative flex h-[321px] w-full min-w-[64px] cursor-pointer flex-col items-center justify-center bg-secondary"
         >
           <input
             id="file-upload"
@@ -67,4 +67,4 @@ function AvatarInput({
   );
 }
 
-export default AvatarInput;
+export default BackgroundInput;

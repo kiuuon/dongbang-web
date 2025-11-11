@@ -25,6 +25,7 @@ const ERROR_MESSAGE = {
     INVITE_LINK_CREATE_FAILED: '초대 링크 발급에 실패했습니다. 다시 시도해주세요.',
     INVITE_LINK_DELETE_FAILED: '초대 링크 삭제에 실패했습니다. 다시 시도해주세요.',
     CREATE_FAILED: '동아리 개설에 실패했습니다. 다시 시도해주세요.',
+    EDIT_FAILED: '동아리 정보 수정에 실패했습니다. 다시 시도해주세요.',
     JOIN_FAILED: '동아리 가입에 실패했습니다. 다시 시도해주세요.',
   },
   UNIVERSITY: {
@@ -48,7 +49,7 @@ const ERROR_MESSAGE = {
   },
   IMAGE: {
     LOGO_UPLOAD_FAILED: '로고 업로드에 실패했습니다. 다시 시도해주세요.',
-    ACTIVITY_UPLOAD_FAILED: '활동 사진 업로드에 실패했습니다. 다시 시도해주세요.',
+    BACKGROUND_UPLOAD_FAILED: '배경 사진 업로드에 실패했습니다. 다시 시도해주세요.',
     PHOTO_UPLOAD_FAILED: '사진 업로드에 실패했습니다. 다시 시도해주세요.',
     AVATAR_UPLOAD_FAILED: '프로필 사진 업로드에 실패했습니다. 다시 시도해주세요.',
   },

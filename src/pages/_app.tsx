@@ -117,7 +117,7 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'clubFeedList',
             });
-          } else if (action === 'set club detail in create club page') {
+          } else if (action === 'set club detail in create/edit club page') {
             const { clubCampusType, name, category, location, bio, description, tags } = payload;
             setCampusClubType(clubCampusType);
             setName(name);

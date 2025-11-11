@@ -32,13 +32,13 @@ function WriteModal({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const goToCommingSoon = () => {
+  const editClubInfo = () => {
     if (window.ReactNativeWebView) {
       onClose();
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to coming soon page' }));
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to club edit page' }));
       return;
     }
-    router.push('/coming-soon');
+    router.push(`/club/${clubId}/edit/info`);
   };
 
   const writeFeed = () => {
@@ -85,7 +85,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
             <PersonIcon2 />
             부원 관리
           </button>
-          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToCommingSoon}>
+          <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={editClubInfo}>
             <EditIcon color="#F9A825" />
             동아리 소개 수정
           </button>
