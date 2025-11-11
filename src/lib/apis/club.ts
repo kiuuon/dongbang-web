@@ -208,9 +208,11 @@ export async function fetchClubMembers(clubId: string) {
   }));
 }
 
-export async function joinClub(clubId: string) {
+export async function joinClub(clubId: string, code: string) {
   const userId = await fetchUserId();
-  const { error } = await supabase.from('Club_User').insert([{ club_id: clubId, user_id: userId, role: 'member' }]);
+  const { error } = await supabase
+    .from('Club_User')
+    .insert([{ club_id: clubId, user_id: userId, role: 'member', invite_code: code }]);
 
   if (error) throw error;
 }

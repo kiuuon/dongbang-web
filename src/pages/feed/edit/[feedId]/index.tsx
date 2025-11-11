@@ -35,17 +35,21 @@ function EditFeedPage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const { data: isMyFeed, isPending } = useQuery({
+  const {
+    data: isMyFeed,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['isMyFeed', feedId],
     queryFn: () => checkIsMyFeed(feedId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.AUTHOR_CHECK_FAILED),
   });
 
   useEffect(() => {
-    if (!isMyFeed) {
+    if (isSuccess && !isMyFeed) {
       router.replace('/');
     }
-  }, [isMyFeed, router]);
+  }, [isMyFeed, router, isSuccess]);
 
   const { data: feed } = useQuery({
     queryKey: ['feedDetail', feedId],
