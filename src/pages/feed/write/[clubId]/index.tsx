@@ -34,17 +34,21 @@ function WriteFeedPage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const { data: isClubMember, isPending } = useQuery({
+  const {
+    data: isClubMember,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['isClubMember', clubId],
     queryFn: () => checkIsClubMember(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (!isClubMember) {
+    if (isSuccess && !isClubMember) {
       router.replace('/');
     }
-  }, [isClubMember, router]);
+  }, [isClubMember, router, isSuccess]);
 
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],

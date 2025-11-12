@@ -4,13 +4,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchMyRole } from '@/lib/apis/club';
+import { fetchApplicants, fetchMyRole } from '@/lib/apis/club';
 import { fetchInviteCode, createInviteCode, deleteInviteCode } from '@/lib/apis/invite';
 import { generateBase62Code, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import DuplicateIcon from '@/icons/duplicate-icon';
 import TrashIcon from '@/icons/trash-icon';
 import ShareIcon from '@/icons/share-icon';
+import UserGroupIcon from '@/icons/user-group-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 
@@ -29,6 +30,12 @@ function MembersManagePage() {
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
+  });
+
+  const { data: applications } = useQuery({
+    queryKey: ['applications', clubId],
+    queryFn: () => fetchApplicants(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
   });
 
   const { mutate: handleCreateCode } = useMutation({
@@ -84,14 +91,11 @@ function MembersManagePage() {
     <div className="flex h-screen flex-col gap-[20px] px-[20px] pt-[64px]">
       <Header>
         <BackButton />
+        <div className="text-bold16 ml-[10px] w-full">부원 관리</div>
       </Header>
-      <div className="flex flex-col gap-[9px]">
-        <h1 className="text-regular20 h-[24px]">모집 설정</h1>
-        <p className="text-regular16 h-[19px] text-gray2">동아리 모집 과정을 관리하세요</p>
-      </div>
       <div>
         {code ? (
-          <div className="flex w-full flex-row justify-between rounded-[9px] pb-[21px] pl-[26px] pr-[32px] pt-[22px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]">
+          <div className="flex w-full flex-row justify-between rounded-[9px] border border-gray0 pb-[21px] pl-[26px] pr-[32px] pt-[22px]">
             <span
               role="button"
               tabIndex={0}
@@ -115,13 +119,34 @@ function MembersManagePage() {
         ) : (
           <button
             type="button"
-            className="flex w-full flex-row gap-[7px] rounded-[9px] px-[24px] pb-[21px] pt-[22px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]"
+            className="flex w-full flex-row gap-[7px] rounded-[9px] border border-gray0 px-[24px] pb-[21px] pt-[22px]"
             onClick={issueInvitationLink}
           >
             <ShareIcon />
             <p>초대 코드 발급</p>
           </button>
         )}
+
+        <button
+          type="button"
+          className="mt-[16px] flex w-full flex-row justify-between rounded-[9px] border border-gray0 pb-[21px] pl-[24px] pr-[30px] pt-[22px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to application page' }),
+              );
+              return;
+            }
+
+            router.push(`/club/${clubId}/members/manage/application`);
+          }}
+        >
+          <div className="flex gap-[7px]">
+            <UserGroupIcon />
+            <p>신청 현황 보기</p>
+          </div>
+          <div>{applications?.length}명</div>
+        </button>
       </div>
     </div>
   );

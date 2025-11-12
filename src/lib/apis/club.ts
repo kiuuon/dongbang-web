@@ -110,7 +110,8 @@ export async function fetchMyClubs() {
   const { data: clubData, error: fetchClubDataError } = await supabase
     .from('Club_User')
     .select('club_id')
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .is('deleted_at', null);
 
   if (fetchClubDataError) {
     throw fetchClubDataError;
@@ -131,7 +132,8 @@ export async function fetchClubsByUserId(userId: string) {
   const { data: clubData, error: fetchClubDataError } = await supabase
     .from('Club_User')
     .select('club_id')
-    .eq('user_id', userId);
+    .eq('user_id', userId)
+    .is('deleted_at', null);
 
   if (fetchClubDataError) {
     throw fetchClubDataError;
@@ -142,7 +144,8 @@ export async function fetchClubsByUserId(userId: string) {
   const { data: clubs, error: fetchClubsError } = await supabase
     .from('Club')
     .select('*, role:Club_User(role)')
-    .in('id', clubIds);
+    .in('id', clubIds)
+    .is('role.deleted_at', null);
 
   if (fetchClubsError) {
     throw fetchClubsError;
@@ -159,6 +162,7 @@ export async function fetchMyRole(clubId: string) {
     .select('role')
     .eq('user_id', userId)
     .eq('club_id', clubId)
+    .is('deleted_at', null)
     .maybeSingle();
 
   if (error) {
@@ -186,7 +190,8 @@ export async function fetchClubMembers(clubId: string) {
   const { data, error } = (await supabase
     .from('Club_User')
     .select('user_id, User(name, nickname, avatar), role')
-    .eq('club_id', clubId)) as unknown as {
+    .eq('club_id', clubId)
+    .is('deleted_at', null)) as unknown as {
     data: {
       user_id: string;
       role: string;
@@ -227,9 +232,145 @@ export async function checkIsClubMember(clubId: string) {
     .select('club_id')
     .eq('club_id', clubId)
     .eq('user_id', userId)
+    .is('deleted_at', null)
     .maybeSingle();
 
   if (error) throw error;
 
   return !!data;
+}
+
+export async function fetchMyApply(clubId: string) {
+  const userId = await fetchUserId();
+
+  if (!userId) return false;
+
+  const { data, error } = await supabase
+    .from('club_applications')
+    .select('id, status')
+    .eq('user_id', userId)
+    .eq('club_id', clubId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return data;
+}
+
+export async function fetchApplicants(clubId: string) {
+  const { data, error } = await supabase
+    .from('club_applications')
+    .select(
+      `
+      status,
+      created_at,
+      user:User (
+        id,
+        name,
+        nickname,
+        avatar
+      )
+    `,
+    )
+    .eq('club_id', clubId)
+    .in('status', ['pending'])
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function applyToClub(clubId: string) {
+  const userId = await fetchUserId();
+
+  const { data: existing, error: fetchError } = await supabase
+    .from('club_applications')
+    .select('id, status')
+    .eq('user_id', userId)
+    .eq('club_id', clubId)
+    .maybeSingle();
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  if (!existing) {
+    const { error } = await supabase.from('club_applications').insert({
+      user_id: userId,
+      club_id: clubId,
+      status: 'pending',
+    });
+
+    if (error) {
+      throw error;
+    }
+  } else if (existing.status === 'cancelled' || existing.status === 'rejected') {
+    const { error } = await supabase.from('club_applications').update({ status: 'pending' }).eq('id', existing.id);
+
+    if (error) {
+      throw error;
+    }
+  }
+}
+
+export async function cancelApplication(clubId: string) {
+  const userId = await fetchUserId();
+
+  const { error } = await supabase
+    .from('club_applications')
+    .update({
+      status: 'cancelled',
+    })
+    .eq('user_id', userId)
+    .eq('club_id', clubId)
+    .eq('status', 'pending');
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function approveApplication(clubId: string, approvedIds: string[]) {
+  const newMembers = approvedIds.map((userId) => ({
+    club_id: clubId,
+    user_id: userId,
+    role: 'member',
+  }));
+
+  const { error: InsertError } = await supabase.from('Club_User').insert(newMembers);
+
+  if (InsertError) {
+    throw InsertError;
+  }
+
+  const { error } = await supabase
+    .from('club_applications')
+    .update({ status: 'approved' })
+    .in('user_id', approvedIds)
+    .eq('club_id', clubId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function rejectApplication(clubId: string, rejectedIds: string[]) {
+  const { error } = await supabase
+    .from('club_applications')
+    .update({ status: 'rejected' })
+    .in('user_id', rejectedIds)
+    .eq('club_id', clubId);
+
+  if (error) {
+    throw error;
+  }
 }

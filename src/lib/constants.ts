@@ -27,6 +27,11 @@ const ERROR_MESSAGE = {
     CREATE_FAILED: '동아리 개설에 실패했습니다. 다시 시도해주세요.',
     EDIT_FAILED: '동아리 정보 수정에 실패했습니다. 다시 시도해주세요.',
     JOIN_FAILED: '동아리 가입에 실패했습니다. 다시 시도해주세요.',
+    APPLY_FETCH_FAILED: '동아리 가입 신청을 불러오는데 실패했습니다. 다시 시도해주세요.',
+    APPLY_FAILED: '동아리 가입 신청에 실패했습니다. 다시 시도해주세요.',
+    CANCEL_APPLICATION_FAILED: '동아리 가입 신청 취소에 실패했습니다. 다시 시도해주세요.',
+    APPROVE_FAILED: '동아리 가입 승인에 실패했습니다. 다시 시도해주세요.',
+    REJECTED_FAILED: '동아리 가입 거절에 실패했습니다. 다시 시도해주세요.',
   },
   UNIVERSITY: {
     LIST_FETCH_FAILED: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',

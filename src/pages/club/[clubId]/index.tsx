@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club';
-import { handleQueryError } from '@/lib/utils';
+import { applyToClub, cancelApplication, checkIsClubMember, fetchClubInfo, fetchMyApply } from '@/lib/apis/club';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import MessageIcon from '@/icons/message-icon';
@@ -22,6 +22,7 @@ import MembersModal from '@/components/club/[clubId]/members-modal';
 function ClubPage() {
   const router = useRouter();
   const { clubId } = router.query;
+  const queryClient = useQueryClient();
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
@@ -55,6 +56,28 @@ function ClubPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 
+  const { data: myApply } = useQuery({
+    queryKey: ['myApply', clubId],
+    queryFn: () => fetchMyApply(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
+  });
+
+  const { mutate: handleApplyToClub } = useMutation({
+    mutationFn: async () => applyToClub(clubId as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myApply', clubId] });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.APPLY_FAILED),
+  });
+
+  const { mutate: handleCancelApplication } = useMutation({
+    mutationFn: async () => cancelApplication(clubId as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myApply', clubId] });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CANCEL_APPLICATION_FAILED),
+  });
+
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {
       window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to coming soon page' }));
@@ -73,9 +96,18 @@ function ClubPage() {
       setIsLoginModalOpen(true);
     } else if (!isClubMember) {
       if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'application for club' }));
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'apply to club' }));
       }
-      // TODO: 가입 로직
+      handleApplyToClub();
+    }
+  };
+
+  const handleCancelApplicationButton = () => {
+    if (!isClubMember) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'cancel application' }));
+      }
+      handleCancelApplication();
     }
   };
 
@@ -109,15 +141,24 @@ function ClubPage() {
       <div className="absolute top-[258px] flex w-full flex-col px-[20px]">
         <ClubProfile setIsMembersModalOpen={setIsMembersModalOpen} />
 
+        {/* eslint-disable-next-line no-nested-ternary */}
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember ? (
           <AnnouncementButton />
-        ) : (
+        ) : !myApply || myApply.status === 'cancelled' || myApply.status === 'rejected' ? (
           <button
             type="button"
             className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
             onClick={handleApplicationButton}
           >
             가입 신청
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-gray0 text-black"
+            onClick={handleCancelApplicationButton}
+          >
+            가입 취소
           </button>
         )}
 

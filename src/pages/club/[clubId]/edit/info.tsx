@@ -15,17 +15,21 @@ function Info() {
   const router = useRouter();
   const { clubId } = router.query;
 
-  const { data: role, isPending } = useQuery({
+  const {
+    data: role,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (!role || (role !== 'officer' && role !== 'president')) {
+    if (isSuccess && (!role || (role !== 'officer' && role !== 'president'))) {
       router.replace('/');
     }
-  }, [role, router]);
+  }, [role, router, isSuccess]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {

@@ -99,6 +99,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
           .select('role')
           .eq('user_id', feed.author_id)
           .eq('club_id', feed.club_id)
+          .is('deleted_at', null)
           .maybeSingle();
 
         if (fetchRoleError) {
@@ -143,6 +144,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
           .select('role')
           .eq('user_id', feed.author_id)
           .eq('club_id', feed.club_id)
+          .is('deleted_at', null)
           .maybeSingle();
 
         if (fetchRoleError) {
@@ -185,6 +187,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
         .select('role')
         .eq('user_id', feed.author_id)
         .eq('club_id', feed.club_id)
+        .is('deleted_at', null)
         .maybeSingle();
 
       if (fetchRoleError) {
@@ -228,6 +231,7 @@ export async function fetchFeedDetail(feedId: string) {
     .select('role')
     .eq('user_id', feed.author_id)
     .eq('club_id', feed.club_id)
+    .is('deleted_at', null)
     .maybeSingle();
 
   if (fetchRoleError) {
