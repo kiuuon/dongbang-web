@@ -16,16 +16,16 @@ export async function writeFeed(
   const userId = await fetchUserId();
 
   const { error } = await supabase.rpc('write_feed_transaction', {
-    photos,
-    title,
-    content,
-    is_nickname_visible: isNicknameVisible,
-    is_private: isPrivate,
-    club_id: clubId,
-    club_type: clubType,
-    author_id: userId,
-    selected_members: selectedMembers,
-    selected_clubs: selectedClubs,
+    p_photos: photos,
+    p_title: title,
+    p_content: content,
+    p_is_nickname_visible: isNicknameVisible,
+    p_is_private: isPrivate,
+    p_club_id: clubId,
+    p_club_type: clubType,
+    p_author_id: userId,
+    p_selected_members: selectedMembers,
+    p_selected_clubs: selectedClubs,
   });
 
   if (error) {

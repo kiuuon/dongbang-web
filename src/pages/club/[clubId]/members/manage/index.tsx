@@ -14,6 +14,7 @@ import ShareIcon from '@/icons/share-icon';
 import UserGroupIcon from '@/icons/user-group-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import MemberBoard from '@/components/club/[clubId]/members/manage/member-board';
 
 function MembersManagePage() {
   const router = useRouter();
@@ -129,7 +130,7 @@ function MembersManagePage() {
 
         <button
           type="button"
-          className="mt-[16px] flex w-full flex-row justify-between rounded-[9px] border border-gray0 pb-[21px] pl-[24px] pr-[30px] pt-[22px]"
+          className="mb-[29px] mt-[16px] flex w-full flex-row justify-between rounded-[9px] border border-gray0 pb-[21px] pl-[24px] pr-[30px] pt-[22px]"
           onClick={() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
@@ -147,6 +148,8 @@ function MembersManagePage() {
           </div>
           <div>{applications?.length}명</div>
         </button>
+
+        <MemberBoard />
       </div>
     </div>
   );

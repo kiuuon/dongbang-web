@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
 import FeedIcon from '@/icons/feed-icon';
 import PersonIcon2 from '@/icons/person-icon2';
 import EditIcon from '@/icons/edit-icon';
@@ -79,7 +80,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
           피드 작성
         </button>
       </div>
-      {(role === 'president' || role === 'officer') && (
+      {hasPermission(role, 'manage_membership') && (
         <div className="absolute bottom-[179px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
           <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToMembersManagePage}>
             <PersonIcon2 />

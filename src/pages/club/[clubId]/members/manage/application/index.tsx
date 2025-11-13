@@ -87,7 +87,23 @@ function MembersManageApplicationPage() {
         <div className="flex flex-col gap-[12px]">
           {applications?.map(({ user }: any) => (
             <div className="flex items-center justify-between rounded-[9px] bg-white py-[13px] pl-[18px] pr-[12px] shadow-[0_1px_24px_0_rgba(0,0,0,0.08)]">
-              <div className="flex items-center gap-[18px]">
+              <button
+                type="button"
+                className="flex items-center gap-[18px]"
+                onClick={() => {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'event',
+                        action: 'go to profile page',
+                        payload: user.id,
+                      }),
+                    );
+                    return;
+                  }
+                  router.push(`/profile/${user.id}`);
+                }}
+              >
                 {user.avatar ? (
                   <Image
                     src={user.avatar}
@@ -115,11 +131,11 @@ function MembersManageApplicationPage() {
                     }}
                   />
                 )}
-                <div className="flex flex-col">
+                <div className="flex flex-col text-start">
                   <div className="text-bold14 h-[17px]">{user.name}</div>
                   <div className="text-regular12 h-[14px] text-gray2">{user.nickname}</div>
                 </div>
-              </div>
+              </button>
 
               <div className="flex gap-[22px]">
                 <button

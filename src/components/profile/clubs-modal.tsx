@@ -43,6 +43,15 @@ function ClubsModal({ onClose }: { onClose: () => void }) {
     if (role === 'member') {
       return '부원';
     }
+
+    if (role === 'on_leave') {
+      return '휴학생';
+    }
+
+    if (role === 'graduate') {
+      return '졸업생';
+    }
+
     return '';
   };
 

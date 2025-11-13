@@ -215,9 +215,12 @@ export async function fetchClubMembers(clubId: string) {
 
 export async function joinClub(clubId: string, code: string) {
   const userId = await fetchUserId();
-  const { error } = await supabase
-    .from('Club_User')
-    .insert([{ club_id: clubId, user_id: userId, role: 'member', invite_code: code }]);
+
+  const { error } = await supabase.rpc('join_club', {
+    p_club_id: clubId,
+    p_invite_code: code,
+    p_user_id: userId,
+  });
 
   if (error) throw error;
 }
@@ -340,27 +343,14 @@ export async function cancelApplication(clubId: string) {
 }
 
 export async function approveApplication(clubId: string, approvedIds: string[]) {
-  const newMembers = approvedIds.map((userId) => ({
-    club_id: clubId,
-    user_id: userId,
-    role: 'member',
-  }));
+  const { error } = await supabase.rpc('approve_applications', {
+    p_club_id: clubId,
+    p_approved_ids: approvedIds,
+  });
 
-  const { error: InsertError } = await supabase.from('Club_User').insert(newMembers);
+  if (error) throw error;
 
-  if (InsertError) {
-    throw InsertError;
-  }
-
-  const { error } = await supabase
-    .from('club_applications')
-    .update({ status: 'approved' })
-    .in('user_id', approvedIds)
-    .eq('club_id', clubId);
-
-  if (error) {
-    throw error;
-  }
+  return true;
 }
 
 export async function rejectApplication(clubId: string, rejectedIds: string[]) {
@@ -373,4 +363,87 @@ export async function rejectApplication(clubId: string, rejectedIds: string[]) {
   if (error) {
     throw error;
   }
+}
+
+export async function fetchClubMember(clubId: string, userId: string) {
+  const { data, error } = (await supabase
+    .from('Club_User')
+    .select(
+      `
+      role,
+      info:User (
+        id,
+        name,
+        nickname,
+        avatar
+      )
+    `,
+    )
+    .eq('club_id', clubId)
+    .eq('user_id', userId)
+    .is('deleted_at', null)) as unknown as {
+    data: {
+      role: string;
+      info: { id: string; name: string; nickname: string; avatar: string };
+    }[];
+    error: Error | null;
+  };
+
+  if (error) throw error;
+
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  return data[0];
+}
+
+export async function changeMemberRole(
+  clubId: string,
+  userId: string,
+  newRole: 'president' | 'officer' | 'member' | 'on_leave' | 'graduate',
+) {
+  const { error } = await supabase
+    .from('Club_User')
+    .update({ role: newRole })
+    .eq('club_id', clubId)
+    .eq('user_id', userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function transferPresident(clubId: string, targetUserId: string) {
+  const userId = await fetchUserId();
+
+  const { error: promoteError } = await supabase
+    .from('Club_User')
+    .update({ role: 'president' })
+    .eq('club_id', clubId)
+    .eq('user_id', targetUserId);
+
+  if (promoteError) throw promoteError;
+
+  // B. 현재 회장을 officer 로 변경
+  const { error: demoteError } = await supabase
+    .from('Club_User')
+    .update({ role: 'officer' })
+    .eq('club_id', clubId)
+    .eq('user_id', userId);
+
+  if (demoteError) throw demoteError;
+}
+
+export async function expelMember(clubId: string, userId: string, expelReason: string | null) {
+  const { error } = await supabase
+    .from('Club_User')
+    .update({
+      deleted_at: new Date().toISOString(),
+      expel_reason: expelReason,
+    })
+    .eq('club_id', clubId)
+    .eq('user_id', userId);
+
+  if (error) throw error;
 }

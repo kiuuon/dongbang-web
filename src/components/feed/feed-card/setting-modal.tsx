@@ -3,9 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { fetchUserId } from '@/lib/apis/auth';
-import { deleteFeed } from '@/lib/apis/feed/feed';
+import { deleteFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { fetchMyRole } from '@/lib/apis/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
 import EditIcon from '@/icons/edit-icon';
 import DeleteIcon from '@/icons/delete-icon';
 import ExternalLinkIcon from '@/icons/external-link-icon';
@@ -20,6 +22,19 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     queryKey: ['userId'],
     queryFn: fetchUserId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
+  });
+
+  const { data: feed } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
+  });
+
+  const { data: role, isPending } = useQuery({
+    queryKey: ['myRole', feed?.club_id],
+    queryFn: () => fetchMyRole(feed?.club_id),
+    enabled: !!feed?.club_id,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   const { mutate: handleDeleteFeed } = useMutation({
@@ -67,20 +82,24 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     }
   };
 
+  if (isPending) return null;
+
   return (
     <div className="flex w-full flex-col items-center px-[20px]">
       <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1" />
-      {authorId === userId ? (
+      {authorId === userId || hasPermission(role, 'delete_club_feed') ? (
         <div className="mb-[30px] w-full rounded-[8px] bg-background">
-          <button
-            type="button"
-            className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
-            onClick={clickEditButton}
-          >
-            <EditIcon color="black" />
-            수정
-          </button>
-          <div className="h-[1px] w-full bg-gray0" />
+          {authorId === userId && (
+            <button
+              type="button"
+              className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
+              onClick={clickEditButton}
+            >
+              <EditIcon color="black" />
+              수정
+            </button>
+          )}
+          {authorId === userId && <div className="h-[1px] w-full bg-gray0" />}
           <button
             type="button"
             className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
