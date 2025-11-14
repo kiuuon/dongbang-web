@@ -54,11 +54,6 @@ function FeedPage() {
   });
 
   useEffect(() => {
-    // 피드 부분만 스크롤이 가능하도록 전체 스크롤은 막기
-    document.body.style.overflow = 'hidden';
-  }, []);
-
-  useEffect(() => {
     const target = observerElement.current;
     if (!target) return undefined;
 
@@ -114,7 +109,7 @@ function FeedPage() {
       </Head>
       <div
         ref={scrollRef}
-        className={`scrollbar-hide flex h-screen flex-col overflow-y-scroll px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
+        className={`scrollbar-hide flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
       >
         <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
         {getContent()}

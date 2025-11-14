@@ -34,7 +34,8 @@ function FeedHeader({
   });
 
   useEffect(() => {
-    const container = scrollRef.current;
+    const container = document.scrollingElement || document.documentElement;
+
     if (!container) return undefined;
 
     const handleScroll = () => {
@@ -49,9 +50,9 @@ function FeedHeader({
       lastScrollY.current = currentY;
     };
 
-    container.addEventListener('scroll', handleScroll);
+    document.addEventListener('scroll', handleScroll);
 
-    return () => container.removeEventListener('scroll', handleScroll);
+    return () => document.removeEventListener('scroll', handleScroll);
   }, [scrollRef]);
 
   const handleNavigationOpen = () => {

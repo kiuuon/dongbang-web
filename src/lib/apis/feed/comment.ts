@@ -38,13 +38,10 @@ export async function fetchRootComment(feedId: string, page: number) {
 }
 
 export async function addRootComment(feedId: string, content: string) {
-  const userId = await fetchUserId();
-
-  const { error } = await supabase.from('Comment').insert({
-    feed_id: feedId,
-    parent_id: null,
-    author_id: userId,
-    content,
+  const { error } = await supabase.rpc('write_comment', {
+    p_feed_id: feedId,
+    p_parent_id: null,
+    p_content: content,
   });
 
   if (error) throw error;
@@ -77,13 +74,10 @@ export async function fetchReplyComment(feedId: string, parentId: string, page: 
 }
 
 export async function addReplyComment(feedId: string, parentId: string, content: string) {
-  const userId = await fetchUserId();
-
-  const { error } = await supabase.from('Comment').insert({
-    feed_id: feedId,
-    parent_id: parentId,
-    author_id: userId,
-    content,
+  const { error } = await supabase.rpc('write_comment', {
+    p_feed_id: feedId,
+    p_parent_id: parentId,
+    p_content: content,
   });
 
   if (error) throw error;
@@ -123,11 +117,8 @@ export async function fetchMyCommentLike(commentId: string) {
 }
 
 export async function addCommentLike(commentId: string) {
-  const userId = await fetchUserId();
-
   const { error } = await supabase.from('Comment_Like').insert({
     comment_id: commentId,
-    user_id: userId,
   });
 
   if (error) throw error;

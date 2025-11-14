@@ -214,12 +214,8 @@ export async function fetchClubMembers(clubId: string) {
 }
 
 export async function joinClub(clubId: string, code: string) {
-  const userId = await fetchUserId();
-
   const { error } = await supabase.rpc('join_club', {
-    p_club_id: clubId,
     p_invite_code: code,
-    p_user_id: userId,
   });
 
   if (error) throw error;
@@ -308,7 +304,6 @@ export async function applyToClub(clubId: string) {
 
   if (!existing) {
     const { error } = await supabase.from('club_applications').insert({
-      user_id: userId,
       club_id: clubId,
       status: 'pending',
     });
@@ -436,14 +431,11 @@ export async function transferPresident(clubId: string, targetUserId: string) {
 }
 
 export async function expelMember(clubId: string, userId: string, expelReason: string | null) {
-  const { error } = await supabase
-    .from('Club_User')
-    .update({
-      deleted_at: new Date().toISOString(),
-      expel_reason: expelReason,
-    })
-    .eq('club_id', clubId)
-    .eq('user_id', userId);
+  const { error } = await supabase.rpc('expel_member', {
+    p_club_id: clubId,
+    p_user_id: userId,
+    p_expel_reason: expelReason,
+  });
 
   if (error) throw error;
 }

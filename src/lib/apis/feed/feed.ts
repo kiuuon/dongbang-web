@@ -13,8 +13,6 @@ export async function writeFeed(
   selectedMembers: string[],
   selectedClubs: string[],
 ) {
-  const userId = await fetchUserId();
-
   const { error } = await supabase.rpc('write_feed_transaction', {
     p_photos: photos,
     p_title: title,
@@ -23,14 +21,11 @@ export async function writeFeed(
     p_is_private: isPrivate,
     p_club_id: clubId,
     p_club_type: clubType,
-    p_author_id: userId,
     p_selected_members: selectedMembers,
     p_selected_clubs: selectedClubs,
   });
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }
 
 export async function editFeed(

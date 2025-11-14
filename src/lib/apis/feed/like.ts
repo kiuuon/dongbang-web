@@ -2,11 +2,8 @@ import { fetchUserId } from '../auth';
 import { supabase } from '../supabaseClient';
 
 export async function addFeedLike(feedId: string) {
-  const userId = await fetchUserId();
-
   const { error } = await supabase.from('Feed_Like').insert({
     feed_id: feedId,
-    user_id: userId,
   });
 
   if (error) throw error;
