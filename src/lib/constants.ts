@@ -54,6 +54,7 @@ const ERROR_MESSAGE = {
     FETCH_FAILED: '해시태그를 불러오는 데 실패했습니다. 다시 시도해주세요.',
   },
   COMMENT: {
+    FETCH_FAILED: '댓글을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     COUNT_FETCH_FAILED: '댓글 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
     LIST_FETCH_FAILED: '댓글 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     WRITE_FAILED: '댓글 작성에 실패했습니다. 다시 시도해주세요.',

@@ -217,6 +217,8 @@ export async function fetchFeedDetail(feedId: string) {
     .eq('id', feedId)
     .single();
 
+  if (!feed) return null;
+
   if (error) {
     throw error;
   }

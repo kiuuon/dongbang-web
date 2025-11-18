@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
@@ -99,91 +98,82 @@ function FeedPage() {
   };
 
   return (
-    <>
-      <Head>
-        {data?.pages.map((page) =>
-          page?.map((feed) =>
-            feed.photos.map((photo: string) => <link key={photo} rel="preload" as="image" href={photo} />),
-          ),
-        )}
-      </Head>
-      <div
-        ref={scrollRef}
-        className={`scrollbar-hide flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
-      >
-        <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
-        {getContent()}
+    <div
+      ref={scrollRef}
+      className={`scrollbar-hide flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
+    >
+      <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
+      {getContent()}
 
-        {hasNextPage && (
-          <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
-            <ClipLoader size={30} color="#F9A825" />
+      {hasNextPage && (
+        <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">
+          <ClipLoader size={30} color="#F9A825" />
+        </div>
+      )}
+
+      {isBottomSheetOpen && (
+        <BottomSheet
+          setIsBottomSheetOpen={setIsBottomSheetOpen}
+          onRequestClose={(closeFn) => {
+            bottomSheetCloseRef.current = closeFn;
+          }}
+        >
+          <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
+          <div className="flex w-full flex-col px-[20px]">
+            {clubType !== 'my' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => {
+                  if (session?.user) {
+                    goToSelectedClubType('my');
+                  } else {
+                    setIsBottomSheetOpen(false);
+                    setIsLoginModalOpen(true);
+                  }
+                }}
+              >
+                내 동아리
+              </button>
+            )}
+            {clubType !== 'campus' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => {
+                  if (session?.user) {
+                    goToSelectedClubType('campus');
+                  } else {
+                    setIsBottomSheetOpen(false);
+                    setIsLoginModalOpen(true);
+                  }
+                }}
+              >
+                교내 동아리
+              </button>
+            )}
+            {clubType !== 'union' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('union')}
+              >
+                연합 동아리
+              </button>
+            )}
+            {clubType !== 'all' && (
+              <button
+                type="button"
+                className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
+                onClick={() => goToSelectedClubType('all')}
+              >
+                모든 동아리
+              </button>
+            )}
           </div>
-        )}
-
-        {isBottomSheetOpen && (
-          <BottomSheet
-            setIsBottomSheetOpen={setIsBottomSheetOpen}
-            onRequestClose={(closeFn) => {
-              bottomSheetCloseRef.current = closeFn;
-            }}
-          >
-            <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1 px-[20px]" />
-            <div className="flex w-full flex-col px-[20px]">
-              {clubType !== 'my' && (
-                <button
-                  type="button"
-                  className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => {
-                    if (session?.user) {
-                      goToSelectedClubType('my');
-                    } else {
-                      setIsBottomSheetOpen(false);
-                      setIsLoginModalOpen(true);
-                    }
-                  }}
-                >
-                  내 동아리
-                </button>
-              )}
-              {clubType !== 'campus' && (
-                <button
-                  type="button"
-                  className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => {
-                    if (session?.user) {
-                      goToSelectedClubType('campus');
-                    } else {
-                      setIsBottomSheetOpen(false);
-                      setIsLoginModalOpen(true);
-                    }
-                  }}
-                >
-                  교내 동아리
-                </button>
-              )}
-              {clubType !== 'union' && (
-                <button
-                  type="button"
-                  className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => goToSelectedClubType('union')}
-                >
-                  연합 동아리
-                </button>
-              )}
-              {clubType !== 'all' && (
-                <button
-                  type="button"
-                  className="text-bold16 flex h-[66px] w-full items-center border-b border-b-gray0"
-                  onClick={() => goToSelectedClubType('all')}
-                >
-                  모든 동아리
-                </button>
-              )}
-            </div>
-          </BottomSheet>
-        )}
-      </div>
-    </>
+        </BottomSheet>
+      )}
+    </div>
   );
 }
 

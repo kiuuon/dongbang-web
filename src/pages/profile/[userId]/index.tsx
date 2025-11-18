@@ -7,7 +7,7 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchUserById } from '@/lib/apis/user';
-import { handleQueryError } from '@/lib/utils';
+import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import profilePageStore from '@/stores/profile-page-store';
 import loginModalStore from '@/stores/login-modal-store';
@@ -16,12 +16,13 @@ import GridIcon from '@/icons/grid-icon';
 import ListIcon from '@/icons/list-icon';
 import FeedIcon2 from '@/icons/feed-icon2';
 import TaggedFeedIcon from '@/icons/tagged-feed-icon';
+import ReportIcon2 from '@/icons/report-icon2';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 import AuthoredFeedSection from '@/components/profile/authored-feed-section';
 import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 import ClubsModal from '@/components/profile/clubs-modal';
-import ReportIcon2 from '@/icons/report-icon2';
 
 function ProfilePage() {
   const router = useRouter();
@@ -42,6 +43,8 @@ function ProfilePage() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+  const isValid = isValidUUID(userId);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -84,8 +87,13 @@ function ProfilePage() {
   const { data: user, isPending } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
+
+  if (!isValid || (!user && !isPending)) {
+    return <AccessDeniedPage title="사용자를 찾을 수 없어요." content="존재하지 않는 사용자입니다." />;
+  }
 
   const report = () => {
     if (!session?.user) {

@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { applyToClub, cancelApplication, checkIsClubMember, fetchClubInfo, fetchMyApply } from '@/lib/apis/club';
-import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import MessageIcon from '@/icons/message-icon';
@@ -18,6 +18,7 @@ import ClubProfile from '@/components/club/[clubId]/club-profile';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
 import Board from '@/components/club/[clubId]/board/board';
 import MembersModal from '@/components/club/[clubId]/members-modal';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 
 function ClubPage() {
   const router = useRouter();
@@ -29,6 +30,8 @@ function ClubPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
+
+  const isValid = isValidUUID(clubId as string);
 
   useEffect(() => {
     const savedPosition = sessionStorage.getItem('scrollPosition');
@@ -44,21 +47,24 @@ function ClubPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
+  const { data: clubInfo, isPending: isClubInfoPending } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    enabled: isValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
+  });
+
   const { data: isClubMember, isPending: isPendingToCheckingClubMember } = useQuery({
     queryKey: ['isClubMember', clubId],
     queryFn: () => checkIsClubMember(clubId as string),
+    enabled: !!clubInfo,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
-  });
-
-  const { data: clubInfo } = useQuery({
-    queryKey: ['club', clubId],
-    queryFn: () => fetchClubInfo(clubId as string),
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 
   const { data: myApply } = useQuery({
     queryKey: ['myApply', clubId],
     queryFn: () => fetchMyApply(clubId as string),
+    enabled: !!clubInfo,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
   });
 
@@ -77,6 +83,10 @@ function ClubPage() {
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CANCEL_APPLICATION_FAILED),
   });
+
+  if (!isValid || (!clubInfo && !isClubInfoPending)) {
+    return <AccessDeniedPage title="동아리를 찾을 수 없어요." content="존재하지 않는 동아리입니다." />;
+  }
 
   const goToCommingSoon = () => {
     if (window.ReactNativeWebView) {

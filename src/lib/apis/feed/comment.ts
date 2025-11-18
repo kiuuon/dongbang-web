@@ -11,6 +11,16 @@ export async function fetchFeedCommentCount(feedId: string) {
   return data.comment_count as number;
 }
 
+export async function fetchComment(commentId: string) {
+  const { data, error } = await supabase.from('Comment').select().eq('id', commentId).maybeSingle();
+
+  if (error) throw error;
+
+  if (!data) return null;
+
+  return data;
+}
+
 export async function fetchRootComment(feedId: string, page: number) {
   const PAGE_SIZE = 20;
   const start = page * PAGE_SIZE;

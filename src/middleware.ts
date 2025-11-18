@@ -35,5 +35,17 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  const validFeedTypes = ['my', 'campus', 'union', 'all'];
+
+  const feedMatch = pathname.match(/^\/feed\/([^/]+)$/);
+
+  if (feedMatch) {
+    const clubType = feedMatch[1];
+
+    if (!validFeedTypes.includes(clubType)) {
+      return NextResponse.redirect(new URL('all', req.url));
+    }
+  }
+
   return NextResponse.next();
 }

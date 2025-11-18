@@ -10,7 +10,7 @@ import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
 import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
-import { formatKoreanDate, handleMutationError, handleQueryError } from '@/lib/utils';
+import { formatKoreanDate, handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import exploreStore from '@/stores/explore-store';
@@ -21,6 +21,7 @@ import LikesIcon from '@/icons/likes-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import BottomSheet from '@/components/common/bottom-sheet';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 import CommentSection from '@/components/feed/comment/comment-section';
 import TaggedClubModal from '@/components/feed/feed-card/tagged-club-modal';
 import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
@@ -44,33 +45,39 @@ function FeedDetailPage() {
   const setSelectedHashtag = exploreStore((state) => state.setSelectedHashtag);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
+  const isValid = isValidUUID(feedId);
+
   const { data: session } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
+  const { data: feed, isPending } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
+    enabled: isValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
+  });
+
   const { data: isLike } = useQuery({
     queryKey: ['isLike', feedId],
     queryFn: () => fetchMyFeedLike(feedId),
+    enabled: !!feed,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
   const { data: likeCount } = useQuery({
     queryKey: ['likeCount', feedId],
     queryFn: () => fetchFeedLikeCount(feedId),
+    enabled: !!feed,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.COUNT_FETCH_FAILED),
-  });
-
-  const { data: feed, isPending } = useQuery({
-    queryKey: ['feedDetail', feedId],
-    queryFn: () => fetchFeedDetail(feedId as string),
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
   });
 
   const { data: commentCount } = useQuery({
     queryKey: ['commentCount', feedId],
     queryFn: () => fetchFeedCommentCount(feed.id),
+    enabled: !!feed,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.COUNT_FETCH_FAILED),
   });
 
@@ -101,6 +108,10 @@ function FeedDetailPage() {
   useEffect(() => {
     sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
   }, [router]);
+
+  if (!isValid || (!feed && !isPending)) {
+    return <AccessDeniedPage title="피드를 찾을 수 없어요." content="존재하지 않거나 비공개된 피드입니다." />;
+  }
 
   if (isPending) {
     return (

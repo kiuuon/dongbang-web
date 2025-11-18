@@ -157,6 +157,8 @@ export async function fetchClubsByUserId(userId: string) {
 export async function fetchMyRole(clubId: string) {
   const userId = await fetchUserId();
 
+  if (!userId) return null;
+
   const { data, error } = await supabase
     .from('Club_User')
     .select('role')
@@ -177,11 +179,13 @@ export async function fetchMyRole(clubId: string) {
 }
 
 export async function fetchClubInfo(clubId: string) {
-  const { data, error } = await supabase.from('Club').select('*').eq('id', clubId).single();
+  const { data, error } = await supabase.from('Club').select('*').eq('id', clubId).maybeSingle();
 
   if (error) {
     throw error;
   }
+
+  if (!data) return null;
 
   return data;
 }

@@ -2,21 +2,45 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchCommentLikedUsers } from '@/lib/apis/feed/comment';
-import { handleQueryError } from '@/lib/utils';
+import { fetchFeedDetail } from '@/lib/apis/feed/feed';
+import { fetchComment, fetchCommentLikedUsers } from '@/lib/apis/feed/comment';
+import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import BackButton from '@/components/common/back-button';
 import Header from '@/components/layout/header';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 
 function CommentLikesPage() {
   const router = useRouter();
-  const { commentId } = router.query;
+  const { feedId, commentId } = router.query;
+
+  const isFeedValid = isValidUUID(feedId as string);
+  const isCommentValid = isValidUUID(commentId as string);
+
+  const { data: feed, isPending: isFeedPending } = useQuery({
+    queryKey: ['feedDetail', feedId],
+    queryFn: () => fetchFeedDetail(feedId as string),
+    enabled: isFeedValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
+  });
+
+  const { data: comment, isPending: isCommentPending } = useQuery({
+    queryKey: ['commentDetail', commentId],
+    queryFn: () => fetchComment(commentId as string),
+    enabled: isCommentValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.FETCH_FAILED),
+  });
 
   const { data: feedLikedUsers } = useQuery({
     queryKey: ['commentLikedUsers', commentId],
     queryFn: () => fetchCommentLikedUsers(commentId as string),
+    enabled: !!comment,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.USERS_FETCH_FAILED),
   });
+
+  if (!isFeedValid || (!feed && !isFeedPending) || !isCommentValid || (!comment && !isCommentPending)) {
+    return <AccessDeniedPage title="좋아요 목록을 볼 수 없어요." content="확인할 수 없는 댓글입니다." />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col gap-[10px] px-[20px] pb-[30px] pt-[80px]">

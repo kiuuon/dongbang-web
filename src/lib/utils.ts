@@ -25,6 +25,10 @@ export function generateBase62Code(length: number): string {
   return code;
 }
 
+export function isValidUUID(value: string) {
+  return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(value);
+}
+
 export function handleQueryError(error: any, message: string) {
   if (window.ReactNativeWebView) {
     window.ReactNativeWebView.postMessage(
