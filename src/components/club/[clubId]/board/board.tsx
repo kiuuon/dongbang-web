@@ -5,6 +5,7 @@ import GridIcon from '@/icons/grid-icon';
 import ListIcon from '@/icons/list-icon';
 import FeedSection from './feed-section';
 import InteractSection from './interact-section';
+import IquirySection from './inquiry-section';
 
 function BoardSummary({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
@@ -33,19 +34,29 @@ function BoardSummary({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement
           >
             교류
           </button>
-        </div>
-        <div className="flex gap-[27px] pb-[5px]">
-          <button type="button" onClick={() => setViewType(clubId, 'grid')}>
-            <GridIcon isActive={viewType === 'grid'} />
+          <button
+            type="button"
+            className={`flex w-[75px] items-center justify-center ${selectedTab === 'inquiry' && 'border-b border-b-primary'} pb-[5px]`}
+            onClick={() => setSelectedTab(clubId, 'inquiry')}
+          >
+            문의
           </button>
-          <button type="button" onClick={() => setViewType(clubId, 'list')}>
-            <ListIcon isActive={viewType === 'list'} />
-          </button>
         </div>
+        {selectedTab === 'feed' && (
+          <div className="flex gap-[27px] pb-[5px]">
+            <button type="button" onClick={() => setViewType(clubId, 'grid')}>
+              <GridIcon isActive={viewType === 'grid'} />
+            </button>
+            <button type="button" onClick={() => setViewType(clubId, 'list')}>
+              <ListIcon isActive={viewType === 'list'} />
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedTab === 'feed' && <FeedSection scrollRef={scrollRef} />}
       {selectedTab === 'interact' && <InteractSection />}
+      {selectedTab === 'inquiry' && <IquirySection />}
     </div>
   );
 }

@@ -35,6 +35,9 @@ const ERROR_MESSAGE = {
     REJECTED_FAILED: '동아리 가입 거절에 실패했습니다. 다시 시도해주세요.',
     CHANGE_MEMBER_ROLE_FAILED: '역할 변경에 실패했습니다. 다시 시도해주세요',
     EXPEL_MEMBER_FAILED: '멤버 추방에 실패했습니다. 다시 시도해주세요',
+    WRITE_INQUIRY_FAILED: '문의 작성에 실패했습니다. 다시 시도해주세요',
+    DELETE_INQUIRY_FAILED: '문의 삭제에 실패했습니다. 다시 시도해주세요',
+    FETCH_INQUIRY_FAILED: '문의를 불러오는 데 실패했습니다. 다시 시도해주세요',
   },
   UNIVERSITY: {
     LIST_FETCH_FAILED: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
