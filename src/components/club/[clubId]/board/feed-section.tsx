@@ -11,7 +11,7 @@ import { FeedType } from '@/types/feed-type';
 import clubPageStore from '@/stores/club-page-store';
 import FeedCard from '@/components/feed/feed-card/feed-card';
 
-function FeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function FeedSection() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
   const viewType = clubPageStore((state) => state.viewType[clubId] ?? 'grid');
@@ -66,10 +66,10 @@ function FeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement 
                     );
                     return;
                   }
-                  router.push({
-                    pathname: `/feed/detail/${feed.id}`,
-                    query: { scroll: scrollRef.current?.scrollTop || 0 },
-                  });
+
+                  sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
+                  router.push(`/feed/detail/${feed.id}`);
                 }}
               >
                 <Image
@@ -87,9 +87,7 @@ function FeedSection({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement 
       )}
       {viewType === 'list' && (
         <div className="w-full overflow-x-hidden">
-          {data?.pages.map((page) =>
-            page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />),
-          )}
+          {data?.pages.map((page) => page.map((feed: FeedType) => <FeedCard key={feed.id} feed={feed} />))}
         </div>
       )}
       {hasNextPage && (

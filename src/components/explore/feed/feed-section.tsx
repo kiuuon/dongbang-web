@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
@@ -9,16 +10,19 @@ import { FeedType } from '@/types/feed-type';
 import FeedCard from './feed-card';
 
 function FeedSection({ keyword }: { keyword: string }) {
+  const router = useRouter();
   const observerElement = useRef(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
     if (scrollRef.current && savedPosition) {
       scrollRef.current.scrollTop = parseInt(savedPosition, 10);
-      sessionStorage.removeItem('scrollPosition');
+      sessionStorage.removeItem(key);
     }
-  }, []);
+  }, [router]);
 
   const { data, fetchNextPage, hasNextPage, isPending } = useInfiniteQuery({
     initialPageParam: 0,

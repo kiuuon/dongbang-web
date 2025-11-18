@@ -16,7 +16,6 @@ import NotFeed from '@/components/feed/not-feed';
 import FeedCard from '@/components/feed/feed-card/feed-card';
 
 function FeedPage() {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const observerElement = useRef(null);
   const router = useRouter();
   const { clubType } = router.query;
@@ -25,12 +24,14 @@ function FeedPage() {
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollRef.current && savedPosition) {
-      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
-      sessionStorage.removeItem('scrollPosition');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
     }
-  }, []);
+  }, [router]);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -89,7 +90,7 @@ function FeedPage() {
       );
     }
 
-    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />));
+    return data?.pages.map((page) => page?.map((feed) => <FeedCard key={feed.id} feed={feed} />));
   };
 
   const goToSelectedClubType = (selectedClubType: string) => {
@@ -99,10 +100,9 @@ function FeedPage() {
 
   return (
     <div
-      ref={scrollRef}
       className={`scrollbar-hide flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
     >
-      <FeedHeader scrollRef={scrollRef} setIsBottomSheetOpen={setIsBottomSheetOpen} />
+      <FeedHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
 
       {hasNextPage && (

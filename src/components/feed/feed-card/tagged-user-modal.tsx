@@ -21,6 +21,8 @@ function TaggedUserModal({
             type="button"
             className="flex w-full items-center gap-[29px]"
             onClick={() => {
+              sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
               router.push(`/profile/${user.id}`);
               onClose();
             }}

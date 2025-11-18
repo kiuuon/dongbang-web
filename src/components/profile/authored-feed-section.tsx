@@ -9,15 +9,7 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import { fetchFeedsByAuthor } from '@/lib/apis/feed/feed';
 import FeedCard from '../feed/feed-card/feed-card';
 
-function AuthoredFeedSection({
-  userId,
-  viewType,
-  scrollRef,
-}: {
-  userId: string;
-  viewType: string;
-  scrollRef: React.RefObject<HTMLDivElement | null>;
-}) {
+function AuthoredFeedSection({ userId, viewType }: { userId: string; viewType: string }) {
   const router = useRouter();
 
   const observerElement = useRef(null);
@@ -70,10 +62,9 @@ function AuthoredFeedSection({
                     );
                     return;
                   }
-                  router.push({
-                    pathname: `/feed/detail/${feed.id}`,
-                    query: { scroll: scrollRef.current?.scrollTop || 0 },
-                  });
+                  sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
+                  router.push(`/feed/detail/${feed.id}`);
                 }}
               >
                 <Image
@@ -91,7 +82,7 @@ function AuthoredFeedSection({
       )}
       {viewType === 'list' && (
         <div className="flex w-full flex-col">
-          {data?.pages.map((page) => page.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />))}
+          {data?.pages.map((page) => page.map((feed) => <FeedCard key={feed.id} feed={feed} />))}
         </div>
       )}
       {hasNextPage && (

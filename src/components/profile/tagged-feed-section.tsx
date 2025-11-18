@@ -9,15 +9,7 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import { fetchFeedsTaggedUser } from '@/lib/apis/feed/feed';
 import FeedCard from '../feed/feed-card/feed-card';
 
-function TaggedFeedSection({
-  userId,
-  viewType,
-  scrollRef,
-}: {
-  userId: string;
-  viewType: string;
-  scrollRef: React.RefObject<HTMLDivElement | null>;
-}) {
+function TaggedFeedSection({ userId, viewType }: { userId: string; viewType: string }) {
   const router = useRouter();
 
   const observerElement = useRef(null);
@@ -70,10 +62,9 @@ function TaggedFeedSection({
                     );
                     return;
                   }
-                  router.push({
-                    pathname: `/feed/detail/${feed.id}`,
-                    query: { scroll: scrollRef.current?.scrollTop || 0 },
-                  });
+                  sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
+                  router.push(`/feed/detail/${feed.id}`);
                 }}
               >
                 <Image
@@ -90,9 +81,7 @@ function TaggedFeedSection({
         </div>
       )}
       {viewType === 'list' && (
-        <div>
-          {data?.pages.map((page) => page.map((feed) => <FeedCard key={feed.id} feed={feed} scrollRef={scrollRef} />))}
-        </div>
+        <div>{data?.pages.map((page) => page.map((feed) => <FeedCard key={feed.id} feed={feed} />))}</div>
       )}
       {hasNextPage && (
         <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">

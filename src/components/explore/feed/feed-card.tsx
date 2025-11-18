@@ -22,7 +22,9 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
       type="button"
       className="flex flex-col"
       onClick={() => {
-        router.push({ pathname: `/feed/detail/${feed.id}`, query: { scroll: scrollRef.current?.scrollTop || 0 } });
+        sessionStorage.setItem(`scroll:${router.asPath}`, `${scrollRef.current?.scrollTop || 0}`);
+
+        router.push(`/feed/detail/${feed.id}`);
       }}
     >
       <div className="flex items-center gap-[4px]">

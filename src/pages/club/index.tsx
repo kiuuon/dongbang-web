@@ -31,19 +31,24 @@ function ClubListPage() {
   const [isWebView, setIsWebView] = useState(true);
 
   useEffect(() => {
-    // 리스트 부분만 스크롤이 가능하도록 전체 스크롤은 막기
-    document.body.style.overflow = 'hidden';
-  }, []);
-
-  useEffect(() => {
     if (!window.ReactNativeWebView) {
       setIsWebView(false);
     }
   }, []);
 
+  useEffect(() => {
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
+    }
+  }, [router]);
+
   return (
     <div
-      className={`${myClubs?.length !== 0 && 'bg-background pt-[100px]'} flex h-screen flex-col gap-[16px] px-[20px] ${isWebView ? 'pb-[25px]' : 'pb-[95px]'} scrollbar-hide overflow-y-scroll`}
+      className={`${myClubs?.length !== 0 && 'bg-background pt-[100px]'} flex min-h-screen flex-col gap-[16px] px-[20px] ${isWebView ? 'pb-[25px]' : 'pb-[95px]'}`}
     >
       <Header>
         <div className="text-bold16">내 동아리 리스트</div>

@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ClubType } from '@/types/club-type';
 import { useRouter } from 'next/router';
 
-function ClubCard({ club }: { club: ClubType }) {
+function ClubCard({ club, scrollRef }: { club: ClubType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
   const router = useRouter();
 
   return (
@@ -12,6 +12,8 @@ function ClubCard({ club }: { club: ClubType }) {
         type="button"
         className="relative z-10 flex w-full rounded-[8px] border-b-gray0 bg-white px-[10px] pb-[9px] pt-[20px] shadow-[0_0_12px_0_rgba(0,0,0,0.08)]"
         onClick={() => {
+          sessionStorage.setItem(`scroll:${router.asPath}`, `${scrollRef.current?.scrollTop || 0}`);
+
           router.push(`/club/${club.id}`);
         }}
       >

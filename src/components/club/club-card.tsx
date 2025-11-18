@@ -50,6 +50,9 @@ function ClubCard({ club }: { club: ClubType }) {
       );
       return;
     }
+
+    sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
     router.push(`/club/${club.id}`);
   };
 

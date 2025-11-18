@@ -35,8 +35,6 @@ function ProfilePage() {
 
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const [isWebView, setIsWebView] = useState(true);
   const [isClubsModalOpen, setIsClubsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
@@ -71,12 +69,14 @@ function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollRef.current && savedPosition) {
-      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
-      sessionStorage.removeItem('scrollPosition');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
     }
-  }, []);
+  }, [router]);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -132,10 +132,7 @@ function ProfilePage() {
   }
 
   return (
-    <div
-      ref={scrollRef}
-      className={`scrollbar-hide h-screen overflow-y-auto p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}
-    >
+    <div className={`min-h-screen p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}>
       <Header>
         <BackButton />
         <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
@@ -251,12 +248,8 @@ function ProfilePage() {
           </div>
         </div>
 
-        {selectedFeedType === 'authored' && (
-          <AuthoredFeedSection userId={userId} viewType={viewType} scrollRef={scrollRef} />
-        )}
-        {selectedFeedType === 'tagged' && (
-          <TaggedFeedSection userId={userId} viewType={viewType} scrollRef={scrollRef} />
-        )}
+        {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId} viewType={viewType} />}
+        {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId} viewType={viewType} />}
 
         {isClubsModalOpen && <ClubsModal onClose={() => setIsClubsModalOpen(false)} />}
 

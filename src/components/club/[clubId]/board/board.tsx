@@ -7,7 +7,7 @@ import FeedSection from './feed-section';
 import InteractSection from './interact-section';
 import IquirySection from './inquiry-section';
 
-function BoardSummary({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function BoardSummary() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
 
@@ -54,7 +54,7 @@ function BoardSummary({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement
         )}
       </div>
 
-      {selectedTab === 'feed' && <FeedSection scrollRef={scrollRef} />}
+      {selectedTab === 'feed' && <FeedSection />}
       {selectedTab === 'interact' && <InteractSection />}
       {selectedTab === 'inquiry' && <IquirySection />}
     </div>

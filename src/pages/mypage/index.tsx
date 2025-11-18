@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
@@ -27,8 +27,6 @@ function MyPage() {
   const selectedFeedType = myPageStore((state) => state.selectedFeedType);
   const setSelectedFeedType = myPageStore((state) => state.setSelectedFeedType);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const [isWebView, setIsWebView] = useState(true);
 
   useEffect(() => {
@@ -38,12 +36,14 @@ function MyPage() {
   }, []);
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollRef.current && savedPosition) {
-      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
-      sessionStorage.removeItem('scrollPosition');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
     }
-  }, []);
+  }, [router]);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -144,10 +144,7 @@ function MyPage() {
   }
 
   return (
-    <div
-      ref={scrollRef}
-      className={`scrollbar-hide h-screen overflow-y-auto p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}
-    >
+    <div className={`min-h-screen p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}>
       <Header>
         <div />
         <button type="button">
@@ -265,12 +262,8 @@ function MyPage() {
           </div>
         </div>
 
-        {selectedFeedType === 'authored' && (
-          <AuthoredFeedSection userId={userId as string} viewType={viewType} scrollRef={scrollRef} />
-        )}
-        {selectedFeedType === 'tagged' && (
-          <TaggedFeedSection userId={userId as string} viewType={viewType} scrollRef={scrollRef} />
-        )}
+        {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId as string} viewType={viewType} />}
+        {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId as string} viewType={viewType} />}
       </div>
     </div>
   );

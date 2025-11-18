@@ -106,7 +106,13 @@ function FeedDetailPage() {
   });
 
   useEffect(() => {
-    sessionStorage.setItem('scrollPosition', (router.query.scroll as string) || '0');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
+    }
   }, [router]);
 
   if (!isValid || (!feed && !isPending)) {
@@ -185,6 +191,9 @@ function FeedDetailPage() {
         );
         return;
       }
+
+      sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
       router.push(`/club/${feed.club_id}`);
     }
   };
@@ -213,7 +222,7 @@ function FeedDetailPage() {
   };
 
   return (
-    <div className="scrollbar-hide h-screen overflow-y-scroll px-[20px] pb-[47px] pt-[75px]">
+    <div className="min-h-screen px-[20px] pb-[47px] pt-[75px]">
       <Header>
         <BackButton />
         <button

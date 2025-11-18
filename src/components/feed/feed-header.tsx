@@ -9,13 +9,7 @@ import BottomArrowIcon from '@/icons/bottom-arrow-icon';
 import BellIcon from '@/icons/bell-icon';
 import MessageIcon from '@/icons/message-icon';
 
-function FeedHeader({
-  scrollRef,
-  setIsBottomSheetOpen,
-}: {
-  scrollRef: React.RefObject<HTMLDivElement | null>;
-  setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   const router = useRouter();
   const { clubType } = router.query;
   const clubTypeName = {
@@ -53,7 +47,7 @@ function FeedHeader({
     document.addEventListener('scroll', handleScroll);
 
     return () => document.removeEventListener('scroll', handleScroll);
-  }, [scrollRef]);
+  }, []);
 
   const handleNavigationOpen = () => {
     if (window.ReactNativeWebView) {

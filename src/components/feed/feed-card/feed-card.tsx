@@ -24,7 +24,7 @@ import InteractModal from './interact-modal';
 import SettingModal from './setting-modal';
 import LikesModal from './likes-modal';
 
-function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObject<HTMLDivElement | null> }) {
+function FeedCard({ feed }: { feed: FeedType }) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const [page, setPage] = useState(0);
@@ -102,6 +102,9 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
         );
         return;
       }
+
+      sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
       router.push(`/club/${feed.club_id}`);
     }
   };
@@ -302,10 +305,10 @@ function FeedCard({ feed, scrollRef }: { feed: FeedType; scrollRef: React.RefObj
                 );
                 return;
               }
-              router.push({
-                pathname: `/feed/detail/${feed.id}`,
-                query: { scroll: scrollRef.current?.scrollTop || 0 },
-              });
+
+              sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
+              router.push(`/feed/detail/${feed.id}`);
             }}
           >
             <CommentsIcon />

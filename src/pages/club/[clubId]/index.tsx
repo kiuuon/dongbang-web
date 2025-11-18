@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -27,19 +27,19 @@ function ClubPage() {
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const isValid = isValidUUID(clubId as string);
 
   useEffect(() => {
-    const savedPosition = sessionStorage.getItem('scrollPosition');
-    if (scrollRef.current && savedPosition) {
-      scrollRef.current.scrollTop = parseInt(savedPosition, 10);
-      sessionStorage.removeItem('scrollPosition');
+    const key = `scroll:${router.asPath}`;
+
+    const savedPosition = sessionStorage.getItem(key);
+    if (document.scrollingElement && savedPosition) {
+      document.scrollingElement.scrollTop = parseInt(savedPosition, 10);
+      sessionStorage.removeItem(key);
     }
-  }, []);
+  }, [router]);
 
   const { data: session, isPending } = useQuery({
     queryKey: ['session'],
@@ -122,7 +122,7 @@ function ClubPage() {
   };
 
   return (
-    <div ref={scrollRef} className="scrollbar-hide relative flex min-h-screen flex-col overflow-y-auto bg-white">
+    <div className="relative flex min-h-screen flex-col bg-white">
       <Header>
         <BackButton />
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
@@ -172,7 +172,7 @@ function ClubPage() {
           </button>
         )}
 
-        <Board scrollRef={scrollRef} />
+        <Board />
       </div>
       {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
         <div className="fixed bottom-[30px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">
