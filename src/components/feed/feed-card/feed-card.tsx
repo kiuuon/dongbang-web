@@ -7,7 +7,7 @@ import { useKeenSlider } from 'keen-slider/react';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
-import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
+import { fetchFeedLikeCount, fetchMyFeedLike, toggleFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
@@ -59,22 +59,13 @@ function FeedCard({ feed }: { feed: FeedType }) {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.COUNT_FETCH_FAILED),
   });
 
-  const { mutate: addLike } = useMutation({
-    mutationFn: () => addFeedLike(feed.id),
+  const { mutate: handleToggleFeedLike } = useMutation({
+    mutationFn: () => toggleFeedLike(feed.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
       queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
     },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
-  });
-
-  const { mutate: removeLike } = useMutation({
-    mutationFn: () => removeFeedLike(feed.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
-      queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
-    },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
   });
 
   const maxIndicatorShiftX = Math.max(feed.photos.length - 5, 0) * 13;
@@ -125,11 +116,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
       return;
     }
 
-    if (isLike) {
-      removeLike();
-    } else {
-      addLike();
-    }
+    handleToggleFeedLike();
   };
 
   return (

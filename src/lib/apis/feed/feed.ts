@@ -53,7 +53,7 @@ export async function editFeed(
 }
 
 export async function deleteFeed(feedId: string) {
-  const { error } = await supabase.from('Feed').delete().eq('id', feedId);
+  const { error } = await supabase.rpc('delete_feed', { p_feed_id: feedId });
 
   if (error) throw error;
 }
@@ -121,6 +121,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
         '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(start, end);
 
@@ -215,6 +216,7 @@ export async function fetchFeedDetail(feedId: string) {
     `,
     )
     .eq('id', feedId)
+    .is('deleted_at', null)
     .single();
 
   if (!feed) return null;
@@ -304,6 +306,7 @@ export async function fetchFeedsByAuthor(userId: string, page: number) {
     `,
     )
     .eq('author_id', userId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(start, end);
 
@@ -330,6 +333,7 @@ export async function fetchFeedsTaggedUser(userId: string, page: number) {
     `,
     )
     .eq('Feed_User.user_id', userId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(start, end);
 

@@ -9,7 +9,7 @@ import { ClipLoader } from 'react-spinners';
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { fetchFeedCommentCount } from '@/lib/apis/feed/comment';
-import { addFeedLike, fetchFeedLikeCount, fetchMyFeedLike, removeFeedLike } from '@/lib/apis/feed/like';
+import { fetchFeedLikeCount, fetchMyFeedLike, toggleFeedLike } from '@/lib/apis/feed/like';
 import { formatKoreanDate, handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
@@ -81,22 +81,13 @@ function FeedDetailPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.COUNT_FETCH_FAILED),
   });
 
-  const { mutate: addLike } = useMutation({
-    mutationFn: () => addFeedLike(feedId),
+  const { mutate: handleToggleFeedLike } = useMutation({
+    mutationFn: () => toggleFeedLike(feed.id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
-      queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
     },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
-  });
-
-  const { mutate: removeLike } = useMutation({
-    mutationFn: () => removeFeedLike(feedId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likeCount', feedId] });
-      queryClient.invalidateQueries({ queryKey: ['isLike', feedId] });
-    },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
   });
 
   const [sliderRef] = useKeenSlider({
@@ -214,11 +205,7 @@ function FeedDetailPage() {
       return;
     }
 
-    if (isLike) {
-      removeLike();
-    } else {
-      addLike();
-    }
+    handleToggleFeedLike();
   };
 
   return (

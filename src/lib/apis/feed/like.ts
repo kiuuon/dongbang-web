@@ -1,20 +1,14 @@
 import { fetchUserId } from '../auth';
 import { supabase } from '../supabaseClient';
 
-export async function addFeedLike(feedId: string) {
-  const { error } = await supabase.from('Feed_Like').insert({
-    feed_id: feedId,
+export async function toggleFeedLike(feedId: string) {
+  const { error } = await supabase.rpc('toggle_feed_like', {
+    p_feed_id: feedId,
   });
 
-  if (error) throw error;
-}
-
-export async function removeFeedLike(feedId: string) {
-  const userId = await fetchUserId();
-
-  const { error } = await supabase.from('Feed_Like').delete().eq('feed_id', feedId).eq('user_id', userId);
-
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
 }
 
 export async function fetchFeedLikeCount(feedId: string) {
@@ -37,6 +31,7 @@ export async function fetchMyFeedLike(feedId: string) {
     .select('id')
     .eq('feed_id', feedId)
     .eq('user_id', userId)
+    .is('deleted_at', null)
     .maybeSingle();
 
   if (error) throw error;
@@ -63,6 +58,7 @@ export async function fetchFeedLikedUsers(feedId: string): Promise<LikedUser[] |
     `,
     )
     .eq('feed_id', feedId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false });
 
   if (error) throw error;

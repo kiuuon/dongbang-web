@@ -4,13 +4,7 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
-import {
-  addCommentLike,
-  deleteComment,
-  fetchMyCommentLike,
-  fetchReplyComment,
-  removeCommentLike,
-} from '@/lib/apis/feed/comment';
+import { deleteComment, fetchMyCommentLike, fetchReplyComment, toggleCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
@@ -108,22 +102,13 @@ export default function CommentCard({
     },
   });
 
-  const { mutate: addLike } = useMutation({
-    mutationFn: () => addCommentLike(comment.id),
+  const { mutate: handleToggleFeedLike } = useMutation({
+    mutationFn: () => toggleCommentLike(comment.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
     },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
-  });
-
-  const { mutate: removeLike } = useMutation({
-    mutationFn: () => removeCommentLike(comment.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
-      queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
-    },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
   });
 
   const { mutate: handleDeleteComment } = useMutation({
@@ -151,11 +136,7 @@ export default function CommentCard({
       return;
     }
 
-    if (isLike) {
-      removeLike();
-    } else {
-      addLike();
-    }
+    handleToggleFeedLike();
   };
 
   const report = () => {

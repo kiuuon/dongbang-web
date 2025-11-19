@@ -119,6 +119,7 @@ export async function fetchMyCommentLike(commentId: string) {
     .select('*')
     .eq('comment_id', commentId)
     .eq('user_id', userId)
+    .is('deleted_at', null)
     .maybeSingle();
 
   if (error) throw error;
@@ -126,18 +127,10 @@ export async function fetchMyCommentLike(commentId: string) {
   return !!data;
 }
 
-export async function addCommentLike(commentId: string) {
-  const { error } = await supabase.from('Comment_Like').insert({
-    comment_id: commentId,
+export async function toggleCommentLike(commentId: string) {
+  const { error } = await supabase.rpc('toggle_comment_like', {
+    p_comment_id: commentId,
   });
-
-  if (error) throw error;
-}
-
-export async function removeCommentLike(commentId: string) {
-  const userId = await fetchUserId();
-
-  const { error } = await supabase.from('Comment_Like').delete().eq('comment_id', commentId).eq('user_id', userId);
 
   if (error) throw error;
 }
@@ -161,6 +154,7 @@ export async function fetchCommentLikedUsers(commentId: string): Promise<LikedUs
     `,
     )
     .eq('comment_id', commentId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false });
 
   if (error) throw error;

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
-import { addCommentLike, deleteComment, fetchMyCommentLike, removeCommentLike } from '@/lib/apis/feed/comment';
+import { deleteComment, fetchMyCommentLike, toggleCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
@@ -67,22 +67,13 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
-  const { mutate: addLike } = useMutation({
-    mutationFn: () => addCommentLike(reply.id),
+  const { mutate: handleToggleFeedLike } = useMutation({
+    mutationFn: () => toggleCommentLike(reply.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', reply.id] });
       queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
     },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.ADD_FAILED),
-  });
-
-  const { mutate: removeLike } = useMutation({
-    mutationFn: () => removeCommentLike(reply.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['isCommentLike', reply.id] });
-      queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
-    },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.DELETE_FAILED),
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
   });
 
   const { mutate: handleDeleteComment } = useMutation({
@@ -110,11 +101,7 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
       return;
     }
 
-    if (isLike) {
-      removeLike();
-    } else {
-      addLike();
-    }
+    handleToggleFeedLike();
   };
 
   const report = () => {

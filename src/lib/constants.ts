@@ -70,8 +70,7 @@ const ERROR_MESSAGE = {
     USERS_FETCH_FAILED: '좋아요 유저 리스트를 불러오는 데 실패했습니다. 다시 시도해주세요.',
     COUNT_FETCH_FAILED: '좋아요 수를 불러오는 데 실패했습니다. 다시 시도해주세요.',
     MY_LIKE_FETCH_FAILED: '내 좋아요 여부를 불러오는 데 실패했습니다. 다시 시도해주세요.',
-    ADD_FAILED: '좋아요 추가에 실패했습니다. 다시 시도해주세요.',
-    DELETE_FAILED: '좋아요 삭제에 실패했습니다. 다시 시도해주세요.',
+    TOGGLE_FAILED: '좋아요 추가/삭제에 실패했습니다. 다시 시도해주세요.',
   },
   FEEDBACK: {
     SEND_FAILED: '피드백 전송에 실패했습니다. 다시 시도해주세요.',
