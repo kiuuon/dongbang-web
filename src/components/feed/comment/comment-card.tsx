@@ -22,12 +22,12 @@ export default function CommentCard({
   comment,
   reply,
   setReply,
-  inputRef,
+  textareaRef,
 }: {
   comment: CommentType;
   reply: string;
   setReply: any;
-  inputRef: any;
+  textareaRef: any;
 }) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -266,7 +266,7 @@ export default function CommentCard({
                 } else {
                   setReply('');
                 }
-                inputRef.current?.focus();
+                textareaRef.current?.focus();
               }}
             >
               답글 달기

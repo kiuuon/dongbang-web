@@ -18,7 +18,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const observerElement = useRef(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const bottomCommentRef = useRef<HTMLDivElement>(null);
   const bottomReplyRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -46,6 +46,12 @@ function CommentSection({ feed }: { feed: FeedType }) {
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.LIST_FETCH_FAILED),
   });
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [isCommentCountPending, isRootCommentListPending]);
 
   useEffect(() => {
     const target = observerElement.current;
@@ -105,19 +111,28 @@ function CommentSection({ feed }: { feed: FeedType }) {
       <div className="flex w-full justify-center">
         <ClipLoader size={30} color="#F9A825" />
         <div className="fixed bottom-0 left-1/2 z-10 w-screen max-w-[600px] -translate-x-1/2 border-t border-t-gray0 bg-white p-[8px]">
-          <input
-            ref={inputRef}
+          <textarea
+            ref={textareaRef}
+            rows={1}
             value={inputValue}
-            className="text-regular16 w-full rounded-[10px] border border-gray0 py-[8px] pl-[16px] pr-[40px] outline-none placeholder:text-gray2"
+            className="text-regular14 leading box-border w-full resize-none overflow-hidden rounded-[8px] border border-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
             placeholder="댓글을 입력해주세요."
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+              }
+            }}
             onChange={(event) => {
               setInputValue(event.target.value);
+              if (!textareaRef.current) return;
+              textareaRef.current.style.height = 'auto';
+              textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
             }}
           />
           {inputValue !== '' && (
             <button
               type="button"
-              className="absolute bottom-0 right-[16px] top-0"
+              className="absolute bottom-[21px] right-[15px]"
               onClick={() => {
                 if (!session?.user) {
                   if (window.ReactNativeWebView) {
@@ -162,7 +177,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                     comment={comment}
                     reply={reply}
                     setReply={setReply}
-                    inputRef={inputRef}
+                    textareaRef={textareaRef}
                   />
                   <div
                     ref={(el) => {
@@ -182,19 +197,28 @@ function CommentSection({ feed }: { feed: FeedType }) {
       )}
       <div ref={bottomCommentRef} />
       <div className="fixed bottom-0 left-1/2 z-10 w-screen max-w-[600px] -translate-x-1/2 border-t border-t-gray0 bg-white p-[8px]">
-        <input
-          ref={inputRef}
+        <textarea
+          ref={textareaRef}
+          rows={1}
           value={inputValue}
-          className="text-regular16 w-full rounded-[10px] border border-gray0 py-[8px] pl-[16px] pr-[40px] outline-none placeholder:text-gray2"
+          className="text-regular14 leading box-border w-full resize-none overflow-hidden rounded-[8px] border border-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
           placeholder="댓글을 입력해주세요."
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+            }
+          }}
           onChange={(event) => {
             setInputValue(event.target.value);
+            if (!textareaRef.current) return;
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
           }}
         />
         {inputValue !== '' && (
           <button
             type="button"
-            className="absolute bottom-0 right-[16px] top-0"
+            className="absolute bottom-[21px] right-[15px]"
             onClick={() => {
               if (!session?.user) {
                 if (window.ReactNativeWebView) {
