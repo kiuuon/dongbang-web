@@ -12,7 +12,12 @@ export async function fetchFeedCommentCount(feedId: string) {
 }
 
 export async function fetchComment(commentId: string) {
-  const { data, error } = await supabase.from('Comment').select().eq('id', commentId).maybeSingle();
+  const { data, error } = await supabase
+    .from('Comment')
+    .select()
+    .eq('id', commentId)
+    .is('deleted_at', null)
+    .maybeSingle();
 
   if (error) throw error;
 
@@ -36,6 +41,7 @@ export async function fetchRootComment(feedId: string, page: number) {
     )
     .eq('feed_id', feedId)
     .is('parent_id', null)
+    .is('deleted_at', null)
     .order('created_at', { ascending: true })
     .range(start, end);
 
@@ -72,6 +78,7 @@ export async function fetchReplyComment(feedId: string, parentId: string, page: 
     )
     .eq('feed_id', feedId)
     .eq('parent_id', parentId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: true })
     .range(start, end);
 
@@ -94,7 +101,9 @@ export async function addReplyComment(feedId: string, parentId: string, content:
 }
 
 export async function deleteComment(commentId: string) {
-  const { error } = await supabase.from('Comment').delete().eq('id', commentId);
+  const { error } = await supabase.rpc('delete_comment', {
+    p_comment_id: commentId,
+  });
 
   if (error) throw error;
 }
