@@ -215,14 +215,14 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
             </button>
             <div className="text-regular10 text-gray2">{getTimeAgo(reply.created_at)}</div>
           </div>
-          <div className="text-regular14">{reply.content}</div>
+          <div className="text-regular14 break-all">{reply.content}</div>
           <button type="button" className="text-regular12 text-start text-gray3">
             답글 달기
           </button>
         </div>
       </div>
 
-      <div className="relative flex flex-col gap-[4px]">
+      <div className="relative ml-[12px] flex flex-col gap-[4px]">
         <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
           <MoreHorizontalIcon />
         </button>

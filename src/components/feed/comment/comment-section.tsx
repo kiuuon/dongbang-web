@@ -51,7 +51,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
     if (textareaRef.current) {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [isCommentCountPending, isRootCommentListPending]);
+  }, [isCommentCountPending, isRootCommentListPending, data]);
 
   useEffect(() => {
     const target = observerElement.current;
@@ -80,6 +80,10 @@ function CommentSection({ feed }: { feed: FeedType }) {
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feed.id] });
       setInputValue('');
 
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+
       setTimeout(() => {
         bottomCommentRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -102,6 +106,10 @@ function CommentSection({ feed }: { feed: FeedType }) {
 
       setInputValue('');
       setReply('');
+
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.WRITE_FAILED),
   });
