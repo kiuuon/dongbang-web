@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 
 import LeftArrowIcon from '@/icons/left-arrow-icon';
 
-function BackButton() {
+function BackButton({ color = '#000' }: { color?: string }) {
   const router = useRouter();
 
   const handleBackButtonClick = () => {
@@ -20,7 +20,7 @@ function BackButton() {
 
   return (
     <button type="button" className="h-[24px] w-[24px]" onClick={handleBackButtonClick}>
-      <LeftArrowIcon />
+      <LeftArrowIcon color={color} />
     </button>
   );
 }

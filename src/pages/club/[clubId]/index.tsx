@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
@@ -15,15 +15,14 @@ import {
 import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
-import MessageIcon from '@/icons/message-icon';
 import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
 import MembersIcon from '@/icons/members-icon';
-import Header from '@/components/layout/header';
-import BackButton from '@/components/common/back-button';
+import ReportIcon2 from '@/icons/report-icon2';
 import AccessDeniedPage from '@/components/common/access-denied-page';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
+import ClubHeader from '@/components/club/[clubId]/club-header';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
 import Board from '@/components/club/[clubId]/board/board';
 import MembersModal from '@/components/club/[clubId]/members-modal';
@@ -38,6 +37,9 @@ function ClubPage() {
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const isValid = isValidUUID(clubId as string);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
 
   useEffect(() => {
     const key = `scroll:${router.asPath}`;
@@ -106,14 +108,6 @@ function ClubPage() {
     return <AccessDeniedPage title="동아리를 찾을 수 없어요." content="존재하지 않는 동아리입니다." />;
   }
 
-  const goToCommingSoon = () => {
-    if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to coming soon page' }));
-      return;
-    }
-    router.push('/coming-soon');
-  };
-
   const handleApplicationButton = () => {
     if (!session?.user) {
       if (window.ReactNativeWebView) {
@@ -139,32 +133,47 @@ function ClubPage() {
     }
   };
 
+  const report = () => {
+    if (!session?.user) {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'event',
+            action: 'open login modal',
+          }),
+        );
+        return;
+      }
+
+      setIsLoginModalOpen(true);
+    }
+
+    // TODO: 신고하기
+  };
+
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
-      <Header>
-        <BackButton />
-        {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
-          <button type="button" onClick={goToCommingSoon}>
-            <MessageIcon />
-          </button>
-        )}
-      </Header>
+      <ClubHeader dropdownRef={dropdownRef} setIsDropDownOpen={setIsDropDownOpen} />
 
-      {clubInfo?.background ? (
-        <Image
-          src={clubInfo?.background}
-          alt="배경"
-          width={600}
-          height={321}
-          style={{
-            objectFit: 'cover',
-            width: '100%',
-            height: '321px',
-          }}
-        />
-      ) : (
-        <div className="h-[321px] w-full bg-secondary" />
-      )}
+      <div className="relative w-full">
+        {clubInfo?.background ? (
+          <Image
+            src={clubInfo?.background}
+            alt="배경"
+            width={600}
+            height={321}
+            style={{
+              objectFit: 'cover',
+              width: '100%',
+              height: '321px',
+            }}
+          />
+        ) : (
+          <div className="h-[321px] w-full bg-secondary" />
+        )}
+
+        <div className="to-transparent pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10" />
+      </div>
 
       <div className="absolute top-[280px] flex w-full items-end justify-between pl-[32px] pr-[20px]">
         {clubInfo ? (
@@ -249,6 +258,18 @@ function ClubPage() {
 
       {isWriteModalOpen && <WriteModal onClose={() => setIsWriteModalOpen(false)} />}
       {isMembersModalOpen && <MembersModal onClose={() => setIsMembersModalOpen(false)} />}
+
+      {isDropDownOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute right-[16px] top-[64px] z-10 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
+        >
+          <button type="button" className="flex w-full items-center gap-[9px]" onClick={report}>
+            <ReportIcon2 />
+            <span className="text-regular16 whitespace-nowrap text-error">신고</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
