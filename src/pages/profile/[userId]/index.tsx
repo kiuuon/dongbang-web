@@ -84,14 +84,18 @@ function ProfilePage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
-  const { data: user, isPending } = useQuery({
+  const {
+    data: user,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['user', userId],
     queryFn: () => fetchUserById(userId as string),
     enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
 
-  if (!isValid || (!user && !isPending)) {
+  if ((userId && !isValid) || (isSuccess && !user && !isPending)) {
     return <AccessDeniedPage title="사용자를 찾을 수 없어요." content="존재하지 않는 사용자입니다." />;
   }
 

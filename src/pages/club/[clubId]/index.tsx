@@ -47,7 +47,11 @@ function ClubPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
-  const { data: clubInfo, isPending: isClubInfoPending } = useQuery({
+  const {
+    data: clubInfo,
+    isPending: isClubInfoPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
     enabled: isValid,
@@ -84,7 +88,7 @@ function ClubPage() {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CANCEL_APPLICATION_FAILED),
   });
 
-  if (!isValid || (!clubInfo && !isClubInfoPending)) {
+  if ((clubId && !isValid) || (isSuccess && !clubInfo && !isClubInfoPending)) {
     return <AccessDeniedPage title="동아리를 찾을 수 없어요." content="존재하지 않는 동아리입니다." />;
   }
 

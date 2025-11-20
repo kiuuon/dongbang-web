@@ -270,6 +270,10 @@ function CommentSection({ feed }: { feed: FeedType }) {
               <button
                 type="button"
                 className="flex items-center gap-[12px] p-[8px]"
+                onMouseDown={(e) => {
+                  // textarea blur 막기
+                  e.preventDefault();
+                }}
                 onClick={() => {
                   handleSelect(user);
                 }}

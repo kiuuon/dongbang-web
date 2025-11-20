@@ -17,14 +17,22 @@ function CommentLikesPage() {
   const isFeedValid = isValidUUID(feedId as string);
   const isCommentValid = isValidUUID(commentId as string);
 
-  const { data: feed, isPending: isFeedPending } = useQuery({
+  const {
+    data: feed,
+    isPending: isFeedPending,
+    isSuccess: isFeedSuccess,
+  } = useQuery({
     queryKey: ['feedDetail', feedId],
     queryFn: () => fetchFeedDetail(feedId as string),
     enabled: isFeedValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.DETAIL_FETCH_FAILED),
   });
 
-  const { data: comment, isPending: isCommentPending } = useQuery({
+  const {
+    data: comment,
+    isPending: isCommentPending,
+    isSuccess: isCommentSuccess,
+  } = useQuery({
     queryKey: ['commentDetail', commentId],
     queryFn: () => fetchComment(commentId as string),
     enabled: isCommentValid,
@@ -38,7 +46,12 @@ function CommentLikesPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.USERS_FETCH_FAILED),
   });
 
-  if (!isFeedValid || (!feed && !isFeedPending) || !isCommentValid || (!comment && !isCommentPending)) {
+  if (
+    (feedId && !isFeedValid) ||
+    (isFeedSuccess && !feed && !isFeedPending) ||
+    (commentId && !isCommentValid) ||
+    (isCommentSuccess && !comment && !isCommentPending)
+  ) {
     return <AccessDeniedPage title="좋아요 목록을 볼 수 없어요." content="확인할 수 없는 댓글입니다." />;
   }
 

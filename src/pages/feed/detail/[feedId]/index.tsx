@@ -53,7 +53,11 @@ function FeedDetailPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
-  const { data: feed, isPending } = useQuery({
+  const {
+    data: feed,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['feedDetail', feedId],
     queryFn: () => fetchFeedDetail(feedId as string),
     enabled: isValid,
@@ -106,7 +110,7 @@ function FeedDetailPage() {
     }
   }, [router]);
 
-  if (!isValid || (!feed && !isPending)) {
+  if ((feedId && !isValid) || (isSuccess && !feed && !isPending)) {
     return <AccessDeniedPage title="피드를 찾을 수 없어요." content="존재하지 않거나 비공개된 피드입니다." />;
   }
 
