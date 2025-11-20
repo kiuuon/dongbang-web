@@ -13,6 +13,7 @@ const ERROR_MESSAGE = {
     INFO_FETCH_FAILED: '사용자 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
     SIGN_UP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
     NICKNAME_DUPLICATE_CHECK_FAILED: '닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.',
+    LIST_FETCH_FAILED: '유저 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
   },
   CLUB: {
     INFO_FETCH_FAILED: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',

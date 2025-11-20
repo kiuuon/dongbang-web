@@ -14,6 +14,7 @@ import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
 import LikesIcon3 from '@/icons/likes-icon3';
 import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
+import MentionRenderer from './mention-renderer';
 
 export default function ReplyCard({ reply, parentId }: { reply: CommentType; parentId: string }) {
   const queryClient = useQueryClient();
@@ -215,7 +216,9 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
             </button>
             <div className="text-regular10 text-gray2">{getTimeAgo(reply.created_at)}</div>
           </div>
-          <div className="text-regular14 break-all">{reply.content}</div>
+          <div className="text-regular14 break-all">
+            <MentionRenderer text={reply.content} />
+          </div>
           <button type="button" className="text-regular12 text-start text-gray3">
             답글 달기
           </button>

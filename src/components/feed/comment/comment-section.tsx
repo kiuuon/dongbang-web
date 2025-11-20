@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
+import { fetchUserListByMention } from '@/lib/apis/user';
 import { addReplyComment, addRootComment, fetchFeedCommentCount, fetchRootComment } from '@/lib/apis/feed/comment';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import useDebounce from '@/hooks/useDebounce';
 import loginModalStore from '@/stores/login-modal-store';
 import { FeedType } from '@/types/feed-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
@@ -16,6 +19,11 @@ function CommentSection({ feed }: { feed: FeedType }) {
   const [inputValue, setInputValue] = useState('');
   const [reply, setReply] = useState('');
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
+
+  const [keyword, setKeyword] = useState('');
+  const debouncedKeyword = useDebounce(keyword, 300);
+
+  const [isActive, setIsActive] = useState(false);
 
   const observerElement = useRef(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -45,6 +53,13 @@ function CommentSection({ feed }: { feed: FeedType }) {
     queryFn: ({ pageParam }) => fetchRootComment(feed.id, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.LIST_FETCH_FAILED),
+  });
+
+  const { data: mentionUsers = [] } = useQuery({
+    queryKey: ['mentionSearch', debouncedKeyword],
+    enabled: isActive && debouncedKeyword.length > 0,
+    queryFn: () => fetchUserListByMention(debouncedKeyword),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.LIST_FETCH_FAILED),
   });
 
   useEffect(() => {
@@ -114,6 +129,55 @@ function CommentSection({ feed }: { feed: FeedType }) {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.WRITE_FAILED),
   });
 
+  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = event.target.value;
+    const cursor = event.target.selectionStart;
+
+    const before = text.slice(0, cursor);
+
+    const match = before.match(/(?:^|\s)@([\w가-힣]*)$/);
+
+    if (match) {
+      setIsActive(true);
+      setKeyword(match[1]);
+    } else {
+      setIsActive(false);
+      setKeyword('');
+    }
+
+    setInputValue(text);
+
+    if (!textareaRef.current) return;
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  };
+
+  const handleSelect = (user: { name: string; nickname: string; avatar: string }) => {
+    if (!textareaRef.current) return;
+
+    const cursor = textareaRef.current.selectionStart;
+    const before = inputValue.slice(0, cursor);
+    const after = inputValue.slice(cursor);
+
+    const newBefore = before.replace(
+      /(?:^|\s)@[\w가-힣]*$/,
+      (match) => `${match.startsWith(' ') ? ' ' : ''}@${user.nickname} `,
+    );
+
+    const newValue = newBefore + after;
+    setInputValue(newValue);
+
+    const newCursor = newBefore.length;
+    requestAnimationFrame(() => {
+      textareaRef.current!.selectionStart = newCursor;
+      textareaRef.current!.selectionEnd = newCursor;
+      textareaRef.current!.focus();
+    });
+
+    setIsActive(false);
+    setKeyword('');
+  };
+
   if (isCommentCountPending || isRootCommentListPending) {
     return (
       <div className="flex w-full justify-center">
@@ -130,12 +194,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                 event.preventDefault();
               }
             }}
-            onChange={(event) => {
-              setInputValue(event.target.value);
-              if (!textareaRef.current) return;
-              textareaRef.current.style.height = 'auto';
-              textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-            }}
+            onChange={handleInput}
           />
           {inputValue !== '' && (
             <button
@@ -204,54 +263,100 @@ function CommentSection({ feed }: { feed: FeedType }) {
         </div>
       )}
       <div ref={bottomCommentRef} />
-      <div className="fixed bottom-0 left-1/2 z-10 w-screen max-w-[600px] -translate-x-1/2 border-t border-t-gray0 bg-white p-[8px]">
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={inputValue}
-          className="text-regular14 leading box-border w-full resize-none overflow-hidden rounded-[8px] border border-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
-          placeholder="댓글을 입력해주세요."
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-            }
-          }}
-          onChange={(event) => {
-            setInputValue(event.target.value);
-            if (!textareaRef.current) return;
-            textareaRef.current.style.height = 'auto';
-            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-          }}
-        />
-        {inputValue !== '' && (
-          <button
-            type="button"
-            className="absolute bottom-[21px] right-[15px]"
-            onClick={() => {
-              if (!session?.user) {
-                if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(
-                    JSON.stringify({
-                      type: 'event',
-                      action: 'open login modal',
-                    }),
-                  );
-                  return;
-                }
-
-                setIsLoginModalOpen(true);
-                return;
-              }
-              if (reply === '') {
-                hanldeAddRootComment();
-              } else {
-                hanldeAddReplyComment();
+      <div className="fixed bottom-0 left-1/2 z-10 flex w-screen max-w-[600px] -translate-x-1/2 flex-col">
+        {isActive && mentionUsers.length > 0 && (
+          <div className="flex w-full flex-col gap-[4px] border-t border-t-gray0 bg-white p-[8px]">
+            {mentionUsers.map((user) => (
+              <button
+                type="button"
+                className="flex items-center gap-[12px] p-[8px]"
+                onClick={() => {
+                  handleSelect(user);
+                }}
+              >
+                {user.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt="아바타"
+                    width={32}
+                    height={32}
+                    style={{
+                      objectFit: 'cover',
+                      width: '32px',
+                      minWidth: '32px',
+                      height: '32px',
+                      minHeight: '32px',
+                      borderRadius: '50%',
+                    }}
+                  />
+                ) : (
+                  <Image
+                    src="/images/none_avatar.png"
+                    alt="아바타"
+                    width={32}
+                    height={32}
+                    style={{
+                      objectFit: 'cover',
+                      width: '32px',
+                      minWidth: '32px',
+                      height: '32px',
+                      minHeight: '32px',
+                      borderRadius: '50%',
+                    }}
+                  />
+                )}
+                <div className="flex flex-col items-start">
+                  <div className="text-bold14 h-[17px]">{user.name}</div>
+                  <div className="text-regular12 h-[14px] text-gray2">{user.nickname}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="relative border-t border-t-gray0 bg-white p-[8px]">
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            value={inputValue}
+            className="text-regular14 leading box-border w-full resize-none overflow-hidden rounded-[8px] border border-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
+            placeholder="댓글을 입력해주세요."
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
               }
             }}
-          >
-            <RightArrowIcon6 />
-          </button>
-        )}
+            onChange={handleInput}
+          />
+          {inputValue !== '' && (
+            <button
+              type="button"
+              className="absolute bottom-[21px] right-[15px]"
+              onClick={() => {
+                if (!session?.user) {
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'event',
+                        action: 'open login modal',
+                      }),
+                    );
+                    return;
+                  }
+
+                  setIsLoginModalOpen(true);
+                  return;
+                }
+                if (reply === '') {
+                  hanldeAddRootComment();
+                } else {
+                  hanldeAddReplyComment();
+                }
+              }}
+            >
+              <RightArrowIcon6 />
+            </button>
+          )}
+        </div>
       </div>
       {hasNextPage && (
         <div ref={observerElement} className="flex h-[40px] items-center justify-center text-[32px]">

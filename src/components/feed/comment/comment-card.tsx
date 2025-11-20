@@ -17,6 +17,7 @@ import ReportIcon2 from '@/icons/report-icon2';
 import TopArrowIcon from '@/icons/top-arrow-icon';
 import BottomArrowIcon4 from '@/icons/bottom-arrow-icon4';
 import ReplyCard from './reply-card';
+import MentionRenderer from './mention-renderer';
 
 export default function CommentCard({
   comment,
@@ -260,7 +261,9 @@ export default function CommentCard({
               </button>
               <div className="text-regular10 text-gray2">{getTimeAgo(comment.created_at)}</div>
             </div>
-            <div className="text-regular14 break-all">{comment.content}</div>
+            <div className="text-regular14 break-all">
+              <MentionRenderer text={comment.content} />
+            </div>
             <button
               type="button"
               className="text-regular12 text-start text-gray3"

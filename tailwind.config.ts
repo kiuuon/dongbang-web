@@ -17,6 +17,7 @@ export default {
       tertiary_dark: '#5C4A25',
       white: '#FFFFFF',
       background: '#F9F9F9',
+      tag: '#FEF3C7',
       black: '#000000',
       gray0: '#EDF0F4',
       gray1: '#C3C3C3',
