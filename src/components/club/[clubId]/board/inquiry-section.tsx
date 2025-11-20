@@ -87,7 +87,7 @@ function IquirySection() {
   });
 
   return (
-    <div className="mt-[32px] flex h-screen w-full flex-col">
+    <div className="mt-[32px] flex min-h-screen w-full flex-col pb-[80px]">
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
           <div className="text-regular14">문의하기</div>

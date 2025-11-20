@@ -4,21 +4,29 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { applyToClub, cancelApplication, checkIsClubMember, fetchClubInfo, fetchMyApply } from '@/lib/apis/club';
+import {
+  applyToClub,
+  cancelApplication,
+  checkIsClubMember,
+  fetchClubInfo,
+  fetchClubMembers,
+  fetchMyApply,
+} from '@/lib/apis/club';
 import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import MessageIcon from '@/icons/message-icon';
 import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
+import MembersIcon from '@/icons/members-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
 import Board from '@/components/club/[clubId]/board/board';
 import MembersModal from '@/components/club/[clubId]/members-modal';
-import AccessDeniedPage from '@/components/common/access-denied-page';
 
 function ClubPage() {
   const router = useRouter();
@@ -70,6 +78,12 @@ function ClubPage() {
     queryFn: () => fetchMyApply(clubId as string),
     enabled: !!clubInfo,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
+  });
+
+  const { data: members } = useQuery({
+    queryKey: ['clubMembers', clubId],
+    queryFn: () => fetchClubMembers(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.MEMBERS_FETCH_FAILED),
   });
 
   const { mutate: handleApplyToClub } = useMutation({
@@ -152,8 +166,44 @@ function ClubPage() {
         <div className="h-[321px] w-full bg-secondary" />
       )}
 
-      <div className="absolute top-[258px] flex w-full flex-col px-[20px]">
-        <ClubProfile setIsMembersModalOpen={setIsMembersModalOpen} />
+      <div className="absolute top-[280px] flex w-full items-end justify-between pl-[32px] pr-[20px]">
+        {clubInfo ? (
+          <Image
+            src={clubInfo?.logo}
+            alt="로고"
+            width={80}
+            height={80}
+            style={{
+              objectFit: 'cover',
+              width: '80px',
+              height: '80px',
+              borderRadius: '16px',
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.15)',
+            }}
+          />
+        ) : (
+          <div className="left-[22px] top-0 h-[80px] w-[80px] rounded-[16px] border border-background bg-gray0" />
+        )}
+
+        <button
+          type="button"
+          className="text-regular12 flex items-center gap-[4px] rounded-[4px] border border-gray0 px-[8px] py-[5px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open members modal' }));
+              return;
+            }
+
+            setIsMembersModalOpen((prev) => !prev);
+          }}
+        >
+          <MembersIcon />
+          {members?.length}명
+        </button>
+      </div>
+
+      <div className="mt-[47px] flex w-full flex-col px-[20px]">
+        <ClubProfile />
 
         {/* eslint-disable-next-line no-nested-ternary */}
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember ? (
@@ -161,7 +211,7 @@ function ClubPage() {
         ) : !myApply || myApply.status === 'cancelled' || myApply.status === 'rejected' ? (
           <button
             type="button"
-            className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
+            className="text-bold12 mb-[16px] mt-[18px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
             onClick={handleApplicationButton}
           >
             가입 신청
@@ -178,6 +228,7 @@ function ClubPage() {
 
         <Board />
       </div>
+
       {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
         <div className="fixed bottom-[30px] left-0 right-0 m-auto flex w-full max-w-[600px] items-end px-[20px]">
           <button

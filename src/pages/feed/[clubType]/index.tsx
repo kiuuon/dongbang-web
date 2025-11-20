@@ -100,7 +100,7 @@ function FeedPage() {
 
   return (
     <div
-      className={`scrollbar-hide flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
+      className={`flex min-h-screen flex-col px-[20px] ${data?.pages[0] && data?.pages[0].length > 0 ? 'pb-[200px]' : ''} pt-[76px]`}
     >
       <FeedHeader setIsBottomSheetOpen={setIsBottomSheetOpen} />
       {getContent()}
