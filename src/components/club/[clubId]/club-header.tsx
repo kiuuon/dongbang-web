@@ -22,14 +22,14 @@ function ClubHeader({
   const router = useRouter();
   const { clubId } = router.query;
 
-  const [isTop, setIsTop] = useState(true);
+  const [isHeaderBackgroundWhite, setIsHeaderBackgroundWhite] = useState(true);
 
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = document.scrollingElement?.scrollTop || 0;
-      setIsTop(scrollTop === 0);
+      setIsHeaderBackgroundWhite(scrollTop > 200);
     };
 
     handleScroll();
@@ -91,20 +91,20 @@ function ClubHeader({
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-30 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between ${isTop ? '' : 'bg-white'} px-[20px]`}
+      className={`fixed left-0 right-0 top-0 z-30 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between ${isHeaderBackgroundWhite ? 'bg-white' : 'bg-transparent'} px-[20px]`}
     >
-      <BackButton color={isTop ? '#fff' : '#000'} />
+      <BackButton color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
       <div className="flex gap-[10px]">
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
           <button type="button">
-            <MessageIcon color={isTop ? '#fff' : '#000'} />
+            <MessageIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
           </button>
         )}
         <button type="button" onClick={clickShareButton}>
-          <ExternalLinkIcon color={isTop ? '#fff' : '#000'} />
+          <ExternalLinkIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
         </button>
         <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
-          <MoreVertIcon color={isTop ? '#fff' : '#000'} />
+          <MoreVertIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
         </button>
       </div>
     </header>
