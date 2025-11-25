@@ -1,11 +1,14 @@
+import { useRouter } from 'next/router';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { logout } from '@/lib/apis/auth';
 import { handleMutationError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import RightArrowIcon2 from '@/icons/right-arrow-icon2';
+import LogoutIcon from '@/icons/logout-icon';
+import ReportIcon3 from '@/icons/report-icon3';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
-import { useRouter } from 'next/router';
 
 function AccountSettingPage() {
   const queryClient = useQueryClient();
@@ -21,38 +24,109 @@ function AccountSettingPage() {
   });
 
   return (
-    <div className="h-screen p-[20px] pt-[80px]">
-      <Header>
-        <BackButton />
-      </Header>
-      <button
-        type="button"
-        className="text-bold16 mb-[20px] w-full rounded-lg bg-primary py-4 text-white"
-        onClick={() => {
-          if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(
-              JSON.stringify({ type: 'event', action: 'click edit profile button' }),
-            );
-          } else {
-            router.push('/profile/edit');
-          }
-        }}
-      >
-        프로필 수정
-      </button>
-      <button
-        type="button"
-        className="text-bold16 w-full rounded-lg bg-primary py-4 text-white"
-        onClick={() => {
-          if (window.ReactNativeWebView) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'logout' }));
-          } else {
-            mutate();
-          }
-        }}
-      >
-        로그아웃
-      </button>
+    <div className="h-screen pt-[82px]">
+      <div className="px-[20px]">
+        <Header>
+          <div className="flex items-center gap-[12px]">
+            <BackButton />
+            <div className="text-bold16">계정 관리</div>
+          </div>
+        </Header>
+      </div>
+      <div className="border-t border-gray0">
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'click edit profile button' }),
+              );
+            } else {
+              router.push('/profile/edit');
+            }
+          }}
+        >
+          프로필 편집
+          <RightArrowIcon2 />
+        </button>
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[13px] pl-[24px] pr-[20px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to profile visibility page' }),
+              );
+            } else {
+              router.push('/mypage/setting/profile-visibility');
+            }
+          }}
+        >
+          <div className="flex flex-col items-start justify-center gap-[1px]">
+            <div className="text-regular14">프로필 공개 범위 설정</div>
+            <div className="text-regular10 text-gray1">학교/학과· 이름 사용자명· 내활동 · 소속 동아리</div>
+          </div>
+          <RightArrowIcon2 />
+        </button>
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[13px] pl-[24px] pr-[20px]"
+          onClick={() => {
+            // TODO: 알림 범위 설정
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: '' }));
+            } else {
+              // TODO: 알림 범위 설정 페이지로 이동
+            }
+          }}
+        >
+          <div className="flex flex-col items-start justify-center gap-[1px]">
+            <div className="text-regular14">알림 범위 설정</div>
+            <div className="text-regular10 text-gray1">앱내 알림 범위 설정</div>
+          </div>
+          <RightArrowIcon2 />
+        </button>
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          onClick={() => {
+            // TODO: 차단 목록
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: '' }));
+            } else {
+              // router.push('/profile/edit');
+            }
+          }}
+        >
+          차단 목록
+          <RightArrowIcon2 />
+        </button>
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'logout' }));
+            } else {
+              mutate();
+            }
+          }}
+        >
+          로그아웃
+          <LogoutIcon />
+        </button>
+        <button
+          type="button"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px] text-error"
+          onClick={() => {
+            // TODO: 회원탈퇴
+          }}
+        >
+          탈퇴하기
+          <ReportIcon3 />
+        </button>
+      </div>
     </div>
   );
 }
