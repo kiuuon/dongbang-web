@@ -23,12 +23,14 @@ export default function CommentCard({
   comment,
   reply,
   setReply,
+  setInputValue,
   textareaRef,
 }: {
   comment: CommentType;
   reply: string;
   setReply: any;
-  textareaRef: any;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -288,27 +290,25 @@ export default function CommentCard({
           <button type="button" onClick={toggleLike}>
             <LikesIcon3 isActive={isLike || false} />
           </button>
-          {(comment.like_count as number) > 0 && (
-            <button
-              type="button"
-              className="text-bold12 text-gray3"
-              onClick={() => {
-                if (window.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(
-                    JSON.stringify({ type: 'event', action: 'go to comment likes page', payload: comment.id }),
-                  );
-                  return;
-                }
 
-                sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+          <button
+            type="button"
+            className="text-bold12 text-gray3"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'go to comment likes page', payload: comment.id }),
+                );
+                return;
+              }
 
-                router.push(`/feed/detail/${feedId}/comment/${comment.id}/likes`);
-              }}
-            >
-              {comment.like_count}
-            </button>
-          )}
+              sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
+              router.push(`/feed/detail/${feedId}/comment/${comment.id}/likes`);
+            }}
+          >
+            {comment.like_count}
+          </button>
           {isDropDownOpen && (
             <div
               ref={dropdownRef}
@@ -347,7 +347,17 @@ export default function CommentCard({
 
           {isReplyOpen && (
             <div className="mt-[20px]">
-              {data?.pages.map((page) => page.map((rp) => <ReplyCard key={rp.id} reply={rp} parentId={comment.id} />))}
+              {data?.pages.map((page) =>
+                page.map((rp) => (
+                  <ReplyCard
+                    key={rp.id}
+                    reply={rp}
+                    parentId={comment.id}
+                    setInputValue={setInputValue}
+                    textareaRef={textareaRef}
+                  />
+                )),
+              )}
             </div>
           )}
           {isReplyOpen && hasNextPage && (

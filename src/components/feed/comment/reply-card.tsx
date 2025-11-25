@@ -16,7 +16,17 @@ import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
 import MentionRenderer from './mention-renderer';
 
-export default function ReplyCard({ reply, parentId }: { reply: CommentType; parentId: string }) {
+export default function ReplyCard({
+  reply,
+  parentId,
+  setInputValue,
+  textareaRef,
+}: {
+  reply: CommentType;
+  parentId: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { feedId } = router.query;
@@ -219,7 +229,14 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
           <div className="text-regular14 break-all">
             <MentionRenderer text={reply.content} />
           </div>
-          <button type="button" className="text-regular12 text-start text-gray3">
+          <button
+            type="button"
+            className="text-regular12 text-start text-gray3"
+            onClick={() => {
+              setInputValue(`@${reply.author.nickname} `);
+              textareaRef.current?.focus();
+            }}
+          >
             답글 달기
           </button>
         </div>
@@ -232,24 +249,23 @@ export default function ReplyCard({ reply, parentId }: { reply: CommentType; par
         <button type="button" onClick={toggleLike}>
           <LikesIcon3 isActive={isLike || false} />
         </button>
-        {(reply.like_count as number) > 0 && (
-          <button
-            type="button"
-            className="text-bold12 text-gray3"
-            onClick={() => {
-              if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(
-                  JSON.stringify({ type: 'event', action: 'go to comment likes page', payload: reply.id }),
-                );
-                return;
-              }
 
-              router.push(`/feed/detail/${feedId}/comment/${reply.id}/likes`);
-            }}
-          >
-            {reply.like_count}
-          </button>
-        )}
+        <button
+          type="button"
+          className="text-bold12 text-gray3"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to comment likes page', payload: reply.id }),
+              );
+              return;
+            }
+
+            router.push(`/feed/detail/${feedId}/comment/${reply.id}/likes`);
+          }}
+        >
+          {reply.like_count}
+        </button>
         {isDropDownOpen && (
           <div
             ref={dropdownRef}

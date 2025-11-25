@@ -51,7 +51,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
     initialPageParam: 0,
     queryKey: ['rootCommentList', feed.id],
     queryFn: ({ pageParam }) => fetchRootComment(feed.id, pageParam),
-    getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),
+    getNextPageParam: (lastPage, allPages) => (lastPage?.length === 20 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.COMMENT.LIST_FETCH_FAILED),
   });
 
@@ -244,6 +244,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                     comment={comment}
                     reply={reply}
                     setReply={setReply}
+                    setInputValue={setInputValue}
                     textareaRef={textareaRef}
                   />
                   <div
