@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import clubPageStore from '@/stores/club-page-store';
@@ -10,6 +11,19 @@ import IquirySection from './inquiry-section';
 function BoardSummary() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isHeaderOnTop, setIsHeaderOnTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
+      setIsHeaderOnTop(top <= 60);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const viewType = clubPageStore((state) => state.viewType[clubId] ?? 'grid');
   const selectedTab = clubPageStore((state) => state.selectedTab[clubId] ?? 'feed');
@@ -18,7 +32,10 @@ function BoardSummary() {
 
   return (
     <div>
-      <div className="mb-[15px] flex w-full justify-between border-b border-b-gray0">
+      <div ref={sentinelRef} />
+      <div
+        className={`${isHeaderOnTop && 'fixed left-[20px] right-[20px] top-[60px] z-50 m-auto w-[calc(100%-40px)] max-w-[560px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+      >
         <div className="flex">
           <button
             type="button"
@@ -42,6 +59,7 @@ function BoardSummary() {
             문의
           </button>
         </div>
+
         {selectedTab === 'feed' && (
           <div className="flex gap-[27px] pb-[5px]">
             <button type="button" onClick={() => setViewType(clubId, 'grid')}>
@@ -54,9 +72,11 @@ function BoardSummary() {
         )}
       </div>
 
-      {selectedTab === 'feed' && <FeedSection />}
-      {selectedTab === 'interact' && <InteractSection />}
-      {selectedTab === 'inquiry' && <IquirySection />}
+      <div className={`${isHeaderOnTop && 'mt-[65px]'}`}>
+        {selectedTab === 'feed' && <FeedSection />}
+        {selectedTab === 'interact' && <InteractSection />}
+        {selectedTab === 'inquiry' && <IquirySection />}
+      </div>
     </div>
   );
 }
