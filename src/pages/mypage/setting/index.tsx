@@ -36,7 +36,7 @@ function AccountSettingPage() {
       <div className="border-t border-gray0">
         <button
           type="button"
-          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
           onClick={() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
@@ -89,7 +89,7 @@ function AccountSettingPage() {
         </button>
         <button
           type="button"
-          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
           onClick={() => {
             // TODO: 차단 목록
             if (window.ReactNativeWebView) {
@@ -104,7 +104,7 @@ function AccountSettingPage() {
         </button>
         <button
           type="button"
-          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px]"
+          className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
           onClick={() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'logout' }));

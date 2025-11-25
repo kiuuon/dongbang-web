@@ -18,7 +18,21 @@ export async function fetchUser() {
   return data[0];
 }
 
-export async function fetchUserById(userId: string) {
+export async function fetchUserById(userId: string, showUniversity: boolean) {
+  if (!showUniversity) {
+    const { data } = await supabase.from('User').select('id, name, nickname, avatar').eq('id', userId);
+
+    if (!data) {
+      return null;
+    }
+
+    if (data.length === 0) {
+      return null;
+    }
+
+    return data[0];
+  }
+
   const { data } = await supabase.from('User').select('*, University(name)').eq('id', userId);
 
   if (!data) {
@@ -49,4 +63,28 @@ export async function fetchUserListByNicknames(nicknames: string[]) {
   if (error) throw error;
 
   return data;
+}
+
+export async function fetchUserProfileVisibility(userId: string) {
+  const { data, error } = await supabase
+    .from('user_profile_visibility')
+    .select('show_university, show_clubs, show_feed')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function updateUserProfileVisibility(body: {
+  show_university: boolean;
+  show_clubs: boolean;
+  show_feed: boolean;
+}) {
+  const userId = await fetchUserId();
+
+  const { error } = await supabase.from('user_profile_visibility').update(body).eq('user_id', userId);
+
+  if (error) throw error;
 }

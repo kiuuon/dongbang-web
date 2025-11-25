@@ -14,6 +14,8 @@ const ERROR_MESSAGE = {
     SIGN_UP_FAILED: '회원가입에 실패했습니다. 다시 시도해주세요.',
     NICKNAME_DUPLICATE_CHECK_FAILED: '닉네임 중복 확인에 실패했습니다. 다시 시도해주세요.',
     LIST_FETCH_FAILED: '유저 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    PROFILE_VISIBILITY_FETCH_FAILED: '프로필 공개 범위 설정을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    PROFILE_VISIBILITY_UPDATE_FAILED: '프로필 공개 범위 설정을 업데이트하는 데 실패했습니다. 다시 시도해주세요.',
   },
   CLUB: {
     INFO_FETCH_FAILED: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',

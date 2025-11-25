@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchUserById } from '@/lib/apis/user';
+import { fetchUserById, fetchUserProfileVisibility } from '@/lib/apis/user';
 import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import profilePageStore from '@/stores/profile-page-store';
@@ -84,14 +84,21 @@ function ProfilePage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
+  const { data: profileVisibility, isPending: isProfileVisibilityPending } = useQuery({
+    queryKey: ['userProfileVisibility', userId],
+    queryFn: () => fetchUserProfileVisibility(userId as string),
+    enabled: !!userId,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.PROFILE_VISIBILITY_FETCH_FAILED),
+  });
+
   const {
     data: user,
     isPending,
     isSuccess,
   } = useQuery({
     queryKey: ['user', userId],
-    queryFn: () => fetchUserById(userId as string),
-    enabled: isValid,
+    queryFn: () => fetchUserById(userId as string, profileVisibility?.show_university),
+    enabled: isValid && !!profileVisibility,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
 
@@ -127,7 +134,7 @@ function ProfilePage() {
     }
   };
 
-  if (isPending) {
+  if (isPending || isProfileVisibilityPending) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <ClipLoader size={30} color="#F9A825" />
@@ -190,11 +197,11 @@ function ProfilePage() {
         <div className="text-regular14 flex flex-col gap-[4px] text-gray2">
           <div className="flex justify-between">
             <span>학교</span>
-            <span>{user?.University.name}</span>
+            {profileVisibility?.show_university && <span>{user?.University.name}</span>}
           </div>
           <div className="flex justify-between">
             <span>학과</span>
-            <span>{user?.major}</span>
+            {profileVisibility?.show_university && <span>{user?.major}</span>}
           </div>
         </div>
       </div>
@@ -203,8 +210,12 @@ function ProfilePage() {
       <div className="mb-[24px] mt-[16px] flex w-full gap-[14px]">
         <button
           type="button"
-          className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0"
+          className={`text-regular14 h-[32px] w-full rounded-[8px] bg-gray0 ${!profileVisibility?.show_clubs ? 'text-gray1' : 'text-black'}`}
           onClick={() => {
+            if (!profileVisibility?.show_clubs) {
+              return;
+            }
+
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open clubs modal' }));
             } else {
@@ -223,52 +234,56 @@ function ProfilePage() {
         </button>
       </div>
 
-      {/* 피드 */}
-      <div>
-        <div className="mb-[15px] flex w-full justify-between border-b border-b-gray0">
-          <div className="flex">
-            <button
-              type="button"
-              className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
-              onClick={() => setSelectedFeedType(userId, 'authored')}
-            >
-              <FeedIcon2 isActive={selectedFeedType === 'authored'} />
-            </button>
-            <button
-              type="button"
-              className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
-              onClick={() => setSelectedFeedType(userId, 'tagged')}
-            >
-              <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
-            </button>
-          </div>
-          <div className="flex gap-[27px] pb-[5px]">
-            <button type="button" onClick={() => setViewType(userId, 'grid')}>
-              <GridIcon isActive={viewType === 'grid'} />
-            </button>
-            <button type="button" onClick={() => setViewType(userId, 'list')}>
-              <ListIcon isActive={viewType === 'list'} />
-            </button>
-          </div>
+      {isClubsModalOpen && <ClubsModal onClose={() => setIsClubsModalOpen(false)} />}
+
+      {isDropDownOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute right-[16px] top-[64px] z-10 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
+        >
+          <button type="button" className="flex w-full items-center gap-[9px]" onClick={report}>
+            <ReportIcon2 />
+            <span className="text-regular16 whitespace-nowrap text-error">신고</span>
+          </button>
         </div>
+      )}
 
-        {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId} viewType={viewType} />}
-        {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId} viewType={viewType} />}
-
-        {isClubsModalOpen && <ClubsModal onClose={() => setIsClubsModalOpen(false)} />}
-
-        {isDropDownOpen && (
-          <div
-            ref={dropdownRef}
-            className="absolute right-[16px] top-[64px] z-10 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
-          >
-            <button type="button" className="flex w-full items-center gap-[9px]" onClick={report}>
-              <ReportIcon2 />
-              <span className="text-regular16 whitespace-nowrap text-error">신고</span>
-            </button>
+      {/* 피드 */}
+      {profileVisibility?.show_feed ? (
+        <div>
+          <div className="mb-[15px] flex w-full justify-between border-b border-b-gray0">
+            <div className="flex">
+              <button
+                type="button"
+                className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
+                onClick={() => setSelectedFeedType(userId, 'authored')}
+              >
+                <FeedIcon2 isActive={selectedFeedType === 'authored'} />
+              </button>
+              <button
+                type="button"
+                className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
+                onClick={() => setSelectedFeedType(userId, 'tagged')}
+              >
+                <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
+              </button>
+            </div>
+            <div className="flex gap-[27px] pb-[5px]">
+              <button type="button" onClick={() => setViewType(userId, 'grid')}>
+                <GridIcon isActive={viewType === 'grid'} />
+              </button>
+              <button type="button" onClick={() => setViewType(userId, 'list')}>
+                <ListIcon isActive={viewType === 'list'} />
+              </button>
+            </div>
           </div>
-        )}
-      </div>
+
+          {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId} viewType={viewType} />}
+          {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId} viewType={viewType} />}
+        </div>
+      ) : (
+        <div className="text-bold24 mt-[164px] text-center">비공개</div>
+      )}
     </div>
   );
 }
