@@ -34,7 +34,7 @@ function BoardSummary() {
     <div>
       <div ref={sentinelRef} />
       <div
-        className={`${isHeaderOnTop && 'fixed left-[20px] right-[20px] top-[60px] z-50 m-auto w-[calc(100%-40px)] max-w-[560px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+        className={`${isHeaderOnTop && 'fixed left-[20px] right-[20px] top-[60px] z-50 m-auto w-[calc(100vw-40px)] max-w-[560px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
       >
         <div className="flex">
           <button
