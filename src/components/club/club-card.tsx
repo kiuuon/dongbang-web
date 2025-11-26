@@ -6,6 +6,7 @@ import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';
+import { getRole } from '@/lib/club/service';
 
 function ClubCard({ club }: { club: ClubType }) {
   const router = useRouter();
@@ -14,30 +15,6 @@ function ClubCard({ club }: { club: ClubType }) {
     queryFn: () => fetchMyRole(club.id),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
-
-  const getRole = () => {
-    if (role === 'president') {
-      return '회장';
-    }
-
-    if (role === 'officer') {
-      return '임원';
-    }
-
-    if (role === 'member') {
-      return '부원';
-    }
-
-    if (role === 'on_leave') {
-      return '휴학생';
-    }
-
-    if (role === 'graduate') {
-      return '졸업생';
-    }
-
-    return '';
-  };
 
   const goToClub = () => {
     if (window.ReactNativeWebView) {
@@ -77,7 +54,7 @@ function ClubCard({ club }: { club: ClubType }) {
       />
       <div className="ml-[20px] flex flex-col justify-center">
         <div className="text-bold16 text-start">{club.name}</div>
-        <div className="text-bold12 mb-[6px] mt-[4px] h-[18px] text-start text-gray2">{getRole()}</div>
+        <div className="text-bold12 mb-[6px] mt-[4px] h-[18px] text-start text-gray2">{getRole(role)}</div>
         <div className="flex flex-row gap-[8px]">
           {club.tags.map(
             (tag, idx: number) =>

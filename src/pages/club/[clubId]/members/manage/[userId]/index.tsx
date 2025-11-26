@@ -7,7 +7,7 @@ import { changeMemberRole, expelMember, fetchClubMember, fetchMyRole, transferPr
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubRole } from '@/lib/club/constants';
-import { getPermissionLabels } from '@/lib/club/service';
+import { getPermissionLabels, getRole } from '@/lib/club/service';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 
@@ -111,26 +111,6 @@ function MemberManagePage() {
     return null;
   }
 
-  const getRole = (role: string) => {
-    if (role === 'president') {
-      return '회장';
-    }
-
-    if (role === 'officer') {
-      return '임원';
-    }
-
-    if (role === 'member') {
-      return '부원';
-    }
-
-    if (role === 'on_leave') {
-      return '휴학생';
-    }
-
-    return '졸업생';
-  };
-
   const changeRole = () => {
     handleChangeMemberRole();
   };
@@ -200,7 +180,7 @@ function MemberManagePage() {
           <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
             {member?.info.name}
             <span className="text-regular12 flex h-[14px] items-center text-gray2">
-              · {getRole(member?.role as string)}
+              · {getRole(member?.role as ClubRole)}
             </span>
           </div>
           <div className="text-regular12 h-[14px] text-gray2">{member?.info.nickname}</div>

@@ -185,7 +185,7 @@ function IquirySection() {
         </div>
         <div className="flex flex-col gap-[12px]">
           {data?.pages[0].length === 0 ? (
-            <div className="text-bold24 mt-[80px] flex w-full items-center justify-center">피드 없음</div>
+            <div className="text-bold24 mt-[80px] flex w-full items-center justify-center">문의 없음</div>
           ) : (
             data?.pages.map((page) =>
               page.map((inquiry: any) => (

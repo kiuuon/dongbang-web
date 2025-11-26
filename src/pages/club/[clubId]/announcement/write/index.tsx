@@ -1,15 +1,16 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { upload } from '@/lib/apis/image';
-import { writeAnnouncement } from '@/lib/apis/club';
-import { handleMutationError } from '@/lib/utils';
+import { fetchMyRole, writeAnnouncement } from '@/lib/apis/club';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
 import PhotoInput from '@/components/club/[clubId]/announcement/photo-input';
+import { hasPermission } from '@/lib/club/service';
 
 function AnnouncementWritePage() {
   const uuid = crypto.randomUUID();
@@ -24,6 +25,18 @@ function AnnouncementWritePage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
+
+  const { data: myRole } = useQuery({
+    queryKey: ['myRole', clubId],
+    queryFn: () => fetchMyRole(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
+  });
+
+  useEffect(() => {
+    if (!hasPermission(myRole, 'manage_announcement')) {
+      router.replace(`/club`);
+    }
+  }, [myRole, router, clubId]);
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'announcement-image'),
@@ -58,8 +71,6 @@ function AnnouncementWritePage() {
       let finalImages: string[] = [];
 
       if (photos.length !== 0) {
-        alert('사진을 추가해주세요.');
-
         setIsLoading(true);
 
         const orderedUrls: string[] = Array.from(previewRef.current?.children ?? []).map((child) =>

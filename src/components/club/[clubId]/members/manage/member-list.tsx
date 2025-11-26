@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { ClubRole } from '@/lib/club/constants';
+import { getRole } from '@/lib/club/service';
 
 function MemberList({
   members,
@@ -25,30 +27,6 @@ function MemberList({
     queryFn: () => fetchMyRole(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
-
-  const getRole = (role: string) => {
-    if (role === 'president') {
-      return '회장';
-    }
-
-    if (role === 'officer') {
-      return '임원';
-    }
-
-    if (role === 'member') {
-      return '부원';
-    }
-
-    if (role === 'on_leave') {
-      return '휴학생';
-    }
-
-    if (role === 'graduate') {
-      return '졸업생';
-    }
-
-    return '';
-  };
 
   return (
     <div className="flex w-full flex-col rounded-[10px] border border-gray0">
@@ -104,7 +82,7 @@ function MemberList({
               <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
                 {member.name}
                 <span className="text-regular12 flex h-[14px] items-center text-gray2">
-                  · {getRole(member.role as string)}
+                  · {getRole(member.role as ClubRole)}
                 </span>
               </div>
               <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>

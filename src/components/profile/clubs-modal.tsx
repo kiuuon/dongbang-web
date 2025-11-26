@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
 import { fetchClubsByUserId } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import Image from 'next/image';
+import { getRole } from '@/lib/club/service';
 
 function ClubsModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -29,30 +30,6 @@ function ClubsModal({ onClose }: { onClose: () => void }) {
     if (event.type === 'click' && event.target === event.currentTarget) {
       onClose();
     }
-  };
-
-  const getRole = (role: string) => {
-    if (role === 'president') {
-      return '회장';
-    }
-
-    if (role === 'officer') {
-      return '임원';
-    }
-
-    if (role === 'member') {
-      return '부원';
-    }
-
-    if (role === 'on_leave') {
-      return '휴학생';
-    }
-
-    if (role === 'graduate') {
-      return '졸업생';
-    }
-
-    return '';
   };
 
   return (

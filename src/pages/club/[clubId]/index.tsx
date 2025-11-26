@@ -214,25 +214,29 @@ function ClubPage() {
       <div className="mt-[47px] flex w-full flex-col px-[20px]">
         <ClubProfile />
 
-        {/* eslint-disable-next-line no-nested-ternary */}
-        {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember ? (
-          <AnnouncementButton />
-        ) : !myApply || myApply.status === 'cancelled' || myApply.status === 'rejected' ? (
-          <button
-            type="button"
-            className="text-bold12 mb-[16px] mt-[18px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
-            onClick={handleApplicationButton}
-          >
-            가입 신청
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-gray0 text-black"
-            onClick={handleCancelApplicationButton}
-          >
-            가입 취소
-          </button>
+        {!isPendingToCheckingClubMember && (
+          <div>
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember ? (
+              <AnnouncementButton />
+            ) : !myApply || myApply.status === 'cancelled' || myApply.status === 'rejected' ? (
+              <button
+                type="button"
+                className="text-bold12 mb-[16px] mt-[18px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-primary text-white"
+                onClick={handleApplicationButton}
+              >
+                가입 신청
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="text-bold12 mb-[19px] mt-[12px] flex h-[40px] w-full flex-row items-center justify-center rounded-[16px] bg-gray0 text-black"
+                onClick={handleCancelApplicationButton}
+              >
+                가입 취소
+              </button>
+            )}
+          </div>
         )}
 
         <Board />

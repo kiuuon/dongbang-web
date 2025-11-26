@@ -15,6 +15,7 @@ import UserGroupIcon from '@/icons/user-group-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import MemberBoard from '@/components/club/[clubId]/members/manage/member-board';
+import { hasPermission } from '@/lib/club/service';
 
 function MembersManagePage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ function MembersManagePage() {
   });
 
   useEffect(() => {
-    if (myRole === 'member') {
+    if (!hasPermission(myRole, 'manage_membership')) {
       router.replace(`/club/${clubId}`);
     }
   }, [myRole, router, clubId]);

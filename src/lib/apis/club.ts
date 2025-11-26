@@ -502,8 +502,23 @@ export async function fetchLatestAnnouncement(clubId: string) {
     .from('club_announcement')
     .select('*')
     .eq('club_id', clubId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(1);
+
+  if (error) throw error;
+
+  return data ?? null;
+}
+
+export async function fetchAnnouncement(announcementId: string, clubId: string) {
+  const { data, error } = await supabase
+    .from('club_announcement')
+    .select('*, author:User(id, name, nickname, avatar, role:Club_User(role))')
+    .eq('id', announcementId)
+    .eq('author.role.club_id', clubId)
+    .is('deleted_at', null)
+    .maybeSingle();
 
   if (error) throw error;
 
@@ -526,6 +541,7 @@ export async function fetchAnnouncements(clubId: string, page: number) {
     `,
     )
     .eq('club_id', clubId)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .range(start, end);
 
@@ -540,6 +556,14 @@ export async function writeAnnouncement(photos: string[], title: string, content
     title,
     content,
     photos,
+  });
+
+  if (error) throw error;
+}
+
+export async function deleteAnnouncement(announcementId: string) {
+  const { error } = await supabase.rpc('delete_announcement', {
+    p_announcement_id: announcementId,
   });
 
   if (error) throw error;
