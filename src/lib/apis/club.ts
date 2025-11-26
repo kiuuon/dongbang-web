@@ -496,3 +496,51 @@ export async function deleteInquiry(inquiryId: string) {
   if (error) throw error;
   return data;
 }
+
+export async function fetchLatestAnnouncement(clubId: string) {
+  const { data, error } = await supabase
+    .from('club_announcement')
+    .select('*')
+    .eq('club_id', clubId)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error) throw error;
+
+  return data ?? null;
+}
+
+export async function fetchAnnouncements(clubId: string, page: number) {
+  const PAGE_SIZE = 15;
+  const start = page * PAGE_SIZE;
+  const end = start + PAGE_SIZE - 1;
+
+  const { data, error } = await supabase
+    .from('club_announcement')
+    .select(
+      `
+      id,
+      title,
+      created_at,
+      author:User(name)
+    `,
+    )
+    .eq('club_id', clubId)
+    .order('created_at', { ascending: false })
+    .range(start, end);
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function writeAnnouncement(photos: string[], title: string, content: string, clubId: string) {
+  const { error } = await supabase.from('club_announcement').insert({
+    club_id: clubId,
+    title,
+    content,
+    photos,
+  });
+
+  if (error) throw error;
+}

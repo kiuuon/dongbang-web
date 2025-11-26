@@ -72,7 +72,7 @@ function ProfileVisibilityPage() {
   return (
     <div className="h-screen px-[20px] pt-[61px]">
       <Header>
-        <div className="flex items-center gap-[12px]">
+        <div className="flex items-center gap-[10px]">
           <BackButton />
           <div className="text-bold16">프로필 공개 범위 설정</div>
         </div>

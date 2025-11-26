@@ -91,7 +91,7 @@ function ClubHeader({
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-30 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between ${isHeaderBackgroundWhite ? 'bg-white' : 'bg-transparent'} px-[20px]`}
+      className={`header fixed left-0 right-0 top-0 z-30 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between ${isHeaderBackgroundWhite ? 'bg-white' : 'bg-transparent'} px-[20px]`}
     >
       <BackButton color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
       <div className="flex gap-[10px]">

@@ -27,7 +27,7 @@ function AccountSettingPage() {
     <div className="h-screen pt-[82px]">
       <div className="px-[20px]">
         <Header>
-          <div className="flex items-center gap-[12px]">
+          <div className="flex items-center gap-[10px]">
             <BackButton />
             <div className="text-bold16">계정 관리</div>
           </div>

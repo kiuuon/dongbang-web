@@ -20,6 +20,7 @@ const queryClient = new QueryClient();
 const REQUIRES_LOGIN_PATHS: (string | RegExp)[] = [
   /^\/club\/create(\/.*)?$/,
   /^\/club\/[^/]+\/edit/,
+  /^\/club\/[^/]+\/announcement/,
   /^\/club\/[^/]+\/members\/manage/,
   /^\/feed\/write\/[^/]+/,
   /^\/feed\/edit\/[^/]+/,

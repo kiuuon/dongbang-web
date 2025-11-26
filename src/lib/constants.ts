@@ -41,6 +41,8 @@ const ERROR_MESSAGE = {
     WRITE_INQUIRY_FAILED: '문의 작성에 실패했습니다. 다시 시도해주세요',
     DELETE_INQUIRY_FAILED: '문의 삭제에 실패했습니다. 다시 시도해주세요',
     FETCH_INQUIRY_FAILED: '문의를 불러오는 데 실패했습니다. 다시 시도해주세요',
+    FETCH_ANNOUNCEMENTS_FAILED: '공지를 불러오는 데 실패했습니다. 다시 시도해주세요',
+    WRITE_ANNOUNCEMENT_FAILED: '공지 작성에 실패했습니다. 다시 시도해주세요',
   },
   UNIVERSITY: {
     LIST_FETCH_FAILED: '대학 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
