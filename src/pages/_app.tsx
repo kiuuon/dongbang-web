@@ -12,6 +12,7 @@ import { supabase } from '@/lib/apis/supabaseClient';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import clubInfoStore from '@/stores/club-info-store';
+import clubPageStore from '@/stores/club-page-store';
 import Tab from '@/components/layout/tab';
 import LoginModal from '@/components/common/login-modal';
 
@@ -51,6 +52,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const setBio = clubInfoStore((state) => state.setBio);
   const setDescription = clubInfoStore((state) => state.setDescription);
   const setTags = clubInfoStore((state) => state.setTags);
+
+  const setClubPageTop = clubPageStore((state) => state.setClubPageTop);
 
   const tabPage = ['/feed/[clubType]', '/explore', '/club', '/interact', '/mypage'];
 
@@ -131,6 +134,8 @@ export default function App({ Component, pageProps }: AppProps) {
             setBio(bio);
             setDescription(description);
             setTags(tags);
+          } else if (action === 'set top in club page') {
+            setClubPageTop(+payload.top);
           }
         }
       } catch (error) {
@@ -151,7 +156,7 @@ export default function App({ Component, pageProps }: AppProps) {
         (document as any).removeEventListener('message', handler);
       }
     };
-  }, [setCampusClubType, setName, setCategory, setLocation, setBio, setDescription, setTags]);
+  }, [setCampusClubType, setName, setCategory, setLocation, setBio, setDescription, setTags, setClubPageTop]);
 
   useEffect(() => {
     (async () => {

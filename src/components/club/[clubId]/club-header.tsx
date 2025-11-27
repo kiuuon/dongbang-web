@@ -22,14 +22,37 @@ function ClubHeader({
   const router = useRouter();
   const { clubId } = router.query;
 
-  const [isHeaderBackgroundWhite, setIsHeaderBackgroundWhite] = useState(true);
+  const [isHeaderBackgroundWhite, setIsHeaderBackgroundWhite] = useState(false);
 
   const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+  const [isWebView, setIsWebView] = useState(true);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = document.scrollingElement?.scrollTop || 0;
-      setIsHeaderBackgroundWhite(scrollTop > 200);
+
+      if (scrollTop > 200) {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({ type: 'event', action: 'scroll event', payload: true }),
+          );
+        }
+        setIsHeaderBackgroundWhite(true);
+      } else {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({ type: 'event', action: 'scroll event', payload: false }),
+          );
+        }
+        setIsHeaderBackgroundWhite(false);
+      }
     };
 
     handleScroll();
@@ -88,6 +111,10 @@ function ClubHeader({
       toast.error('피드 링크 복사에 실패했습니다. 다시 시도해주세요.');
     }
   };
+
+  if (isWebView) {
+    return null;
+  }
 
   return (
     <header

@@ -14,16 +14,26 @@ function BoardSummary() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isHeaderOnTop, setIsHeaderOnTop] = useState(false);
 
+  const [isWebView, setIsWebView] = useState(true);
+
+  const clubPageTop = clubPageStore((state) => state.clubPageTop);
+
+  useEffect(() => {
+    if (!window.ReactNativeWebView) {
+      setIsWebView(false);
+    }
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
-      setIsHeaderOnTop(top <= 60);
+      setIsHeaderOnTop(top <= (isWebView ? clubPageTop + 60 : 60));
     };
 
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isWebView, clubPageTop]);
 
   const viewType = clubPageStore((state) => state.viewType[clubId] ?? 'grid');
   const selectedTab = clubPageStore((state) => state.selectedTab[clubId] ?? 'feed');
@@ -34,7 +44,7 @@ function BoardSummary() {
     <div>
       <div ref={sentinelRef} />
       <div
-        className={`${isHeaderOnTop && 'fixed left-[20px] right-[20px] top-[60px] z-50 m-auto w-[calc(100vw-40px)] max-w-[560px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+        className={`${isHeaderOnTop && `fixed left-[20px] right-[20px] ${isWebView ? `top-[${clubPageTop + 60}px]` : 'top-[60px]'} z-50 m-auto w-[calc(100vw-40px)] max-w-[560px]`} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
       >
         <div className="flex">
           <button

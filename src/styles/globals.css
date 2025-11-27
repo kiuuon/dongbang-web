@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.header {
-  padding-top: env(safe-area-inset-top);
-}
-
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE, Edge */
   scrollbar-width: none; /* Firefox */

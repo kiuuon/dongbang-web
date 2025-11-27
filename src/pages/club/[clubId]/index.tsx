@@ -160,7 +160,7 @@ function ClubPage() {
           <div className="h-[321px] w-full bg-secondary" />
         )}
 
-        <div className="to-transparent pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10" />
+        <div className="to-transparent pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/15" />
       </div>
 
       <div className="absolute top-[280px] flex w-full items-end justify-between pl-[32px] pr-[20px]">

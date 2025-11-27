@@ -24,6 +24,7 @@ export interface FeedType {
     user: {
       id: string;
       name: string;
+      nickname: string;
       avatar: string;
     };
   }[];
