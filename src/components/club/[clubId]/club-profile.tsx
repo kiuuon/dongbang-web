@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchClubInfo } from '@/lib/apis/club';
+import { fetchClubInfo } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import LocationMarkerIcon from '@/icons/location-marker-icon';

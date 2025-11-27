@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchMyClubs } from '@/lib/apis/club';
+import { fetchMyClubs } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';

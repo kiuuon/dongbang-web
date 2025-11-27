@@ -4,7 +4,7 @@ import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tansta
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchClubInquiries, writeInquiry } from '@/lib/apis/club';
+import { fetchClubInquiries, writeInquiry } from '@/lib/apis/club/inquiry';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';

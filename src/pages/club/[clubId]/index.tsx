@@ -4,7 +4,13 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { applyToClub, cancelApplication, checkIsClubMember, fetchClubMembers, fetchMyApply } from '@/lib/apis/club';
+import {
+  applyToClub,
+  cancelApplication,
+  checkIsClubMember,
+  fetchClubMembers,
+  fetchMyApply,
+} from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import useClubPageValidation from '@/hooks/useClubPageValidation';

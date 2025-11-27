@@ -1,8 +1,8 @@
 import { NewClubType } from '@/types/club-type';
 import { Filters } from '@/stores/filter-store';
-import { supabase } from './supabaseClient';
-import { fetchUserId } from './auth';
-import { shuffleArray } from '../utils';
+import { supabase } from '../supabaseClient';
+import { fetchUserId } from '../auth';
+import { shuffleArray } from '../../utils';
 
 export async function createClub(body: NewClubType) {
   const { error } = await supabase.rpc('create_club_with_recruitment_transaction', {
@@ -439,142 +439,6 @@ export async function expelMember(clubId: string, userId: string, expelReason: s
     p_club_id: clubId,
     p_user_id: userId,
     p_expel_reason: expelReason,
-  });
-
-  if (error) throw error;
-}
-
-export async function writeInquiry(clubId: string, content: string, isPrivate: boolean) {
-  const { error } = await supabase.from('club_inquiry').insert({
-    club_id: clubId,
-    content,
-    is_private: isPrivate,
-  });
-
-  if (error) {
-    throw error;
-  }
-}
-
-export async function fetchClubInquiries(
-  clubId: string,
-  onlyMine: boolean,
-  excludePrivate: boolean,
-  filter: string,
-  page: number,
-) {
-  const PAGE_SIZE = 20;
-
-  const { data, error } = await supabase.rpc('get_club_inquiries_offset', {
-    p_club_id: clubId,
-    p_only_mine: onlyMine,
-    p_exclude_private: excludePrivate,
-    p_filter: filter,
-    p_limit_count: PAGE_SIZE,
-    p_offset_count: page * PAGE_SIZE,
-  });
-
-  if (error) throw error;
-
-  return data ?? [];
-}
-
-export async function writeInquiryComment(inquiryId: string, content: string) {
-  const { error } = await supabase.from('club_inquiry_comment').insert({
-    inquiry_id: inquiryId,
-    content,
-  });
-
-  if (error) throw error;
-}
-
-export async function deleteInquiry(inquiryId: string) {
-  const { data, error } = await supabase.rpc('delete_club_inquiry', {
-    p_inquiry_id: inquiryId,
-  });
-
-  if (error) throw error;
-  return data;
-}
-
-export async function fetchLatestAnnouncement(clubId: string) {
-  const { data, error } = await supabase
-    .from('club_announcement')
-    .select('*')
-    .eq('club_id', clubId)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .limit(1);
-
-  if (error) throw error;
-
-  return data ?? null;
-}
-
-export async function fetchAnnouncement(announcementId: string, clubId: string) {
-  const { data, error } = await supabase
-    .from('club_announcement')
-    .select('*, author:User(id, name, nickname, avatar, role:Club_User(role))')
-    .eq('id', announcementId)
-    .eq('author.role.club_id', clubId)
-    .is('deleted_at', null)
-    .maybeSingle();
-
-  if (error) throw error;
-
-  return data ?? null;
-}
-
-export async function fetchAnnouncements(clubId: string, page: number) {
-  const PAGE_SIZE = 15;
-  const start = page * PAGE_SIZE;
-  const end = start + PAGE_SIZE - 1;
-
-  const { data, error } = await supabase
-    .from('club_announcement')
-    .select(
-      `
-      id,
-      title,
-      created_at,
-      author:User(name)
-    `,
-    )
-    .eq('club_id', clubId)
-    .is('deleted_at', null)
-    .order('created_at', { ascending: false })
-    .range(start, end);
-
-  if (error) throw error;
-
-  return data;
-}
-
-export async function writeAnnouncement(photos: string[], title: string, content: string, clubId: string) {
-  const { error } = await supabase.from('club_announcement').insert({
-    club_id: clubId,
-    title,
-    content,
-    photos,
-  });
-
-  if (error) throw error;
-}
-
-export async function editAnnouncement(announcementId: string, title: string, content: string, photos: string[]) {
-  const { error } = await supabase.rpc('update_announcement', {
-    p_announcement_id: announcementId,
-    p_title: title,
-    p_content: content,
-    p_photos: photos,
-  });
-
-  if (error) throw error;
-}
-
-export async function deleteAnnouncement(announcementId: string) {
-  const { error } = await supabase.rpc('delete_announcement', {
-    p_announcement_id: announcementId,
   });
 
   if (error) throw error;

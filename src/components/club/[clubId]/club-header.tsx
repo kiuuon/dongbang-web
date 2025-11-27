@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club';
+import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club/club';
 import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import MessageIcon from '@/icons/message-icon';

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
-import { fetchClubMembers } from '@/lib/apis/club';
+import { fetchClubMembers } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import UserAvatar from '@/components/common/user-avatar';

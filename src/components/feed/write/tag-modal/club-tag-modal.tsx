@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchClubs } from '@/lib/apis/club';
+import { fetchClubs } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';

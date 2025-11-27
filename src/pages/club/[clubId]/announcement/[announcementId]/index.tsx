@@ -4,7 +4,8 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { fetchUserId } from '@/lib/apis/auth';
-import { deleteAnnouncement, fetchMyRole } from '@/lib/apis/club';
+import { fetchMyRole } from '@/lib/apis/club/club';
+import { deleteAnnouncement } from '@/lib/apis/club/announcement';
 import { formatKoreanDate, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole, hasPermission } from '@/lib/club/service';

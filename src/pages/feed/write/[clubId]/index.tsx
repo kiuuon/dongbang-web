@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { upload } from '@/lib/apis/image';
 import { writeFeed } from '@/lib/apis/feed/feed';
-import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club';
+import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon from '@/icons/toggle-icon';

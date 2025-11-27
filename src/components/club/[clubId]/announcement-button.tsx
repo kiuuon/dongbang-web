@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchLatestAnnouncement } from '@/lib/apis/club';
+import { fetchLatestAnnouncement } from '@/lib/apis/club/announcement';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import SpeakerPhoneIcon from '@/icons/speaker-phone-icon';

@@ -9,7 +9,7 @@ import {
   fetchClubMember,
   fetchMyRole,
   transferPresident,
-} from '@/lib/apis/club';
+} from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubRole } from '@/lib/club/constants';

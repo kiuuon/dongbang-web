@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchClubsByUserId } from '@/lib/apis/club';
+import { fetchClubsByUserId } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole } from '@/lib/club/service';

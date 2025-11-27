@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { approveApplication, fetchApplicants, fetchMyRole, rejectApplication } from '@/lib/apis/club';
+import { approveApplication, fetchApplicants, fetchMyRole, rejectApplication } from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { hasPermission } from '@/lib/club/service';

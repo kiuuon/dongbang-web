@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchApplicants, fetchMyRole } from '@/lib/apis/club';
+import { fetchApplicants, fetchMyRole } from '@/lib/apis/club/club';
 import { fetchInviteCode, createInviteCode, deleteInviteCode } from '@/lib/apis/invite';
 import { generateBase62Code, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';

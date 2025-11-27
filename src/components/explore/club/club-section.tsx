@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchClubs, fetchClubsCount } from '@/lib/apis/club';
+import { fetchClubs, fetchClubsCount } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';

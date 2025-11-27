@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { fetchFeedsByClubType } from '@/lib/apis/feed/feed';
-import { fetchMyClubs } from '@/lib/apis/club';
+import { fetchMyClubs } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';

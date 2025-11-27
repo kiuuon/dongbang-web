@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchAnnouncements, fetchMyRole } from '@/lib/apis/club';
+import { fetchMyRole } from '@/lib/apis/club/club';
+import { fetchAnnouncements } from '@/lib/apis/club/announcement';
 import { formatKoreanDate, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { hasPermission } from '@/lib/club/service';

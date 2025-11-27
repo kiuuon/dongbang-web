@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchAnnouncement, fetchClubInfo } from '@/lib/apis/club';
+import { fetchClubInfo } from '@/lib/apis/club/club';
+import { fetchAnnouncement } from '@/lib/apis/club/announcement';
 import { isValidUUID, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import AccessDeniedPage from '@/components/common/access-denied-page';

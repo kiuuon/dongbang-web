@@ -4,7 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchUserId } from '@/lib/apis/auth';
 import { upload } from '@/lib/apis/image';
-import { editAnnouncement, fetchMyRole } from '@/lib/apis/club';
+import { fetchMyRole } from '@/lib/apis/club/club';
+import { editAnnouncement } from '@/lib/apis/club/announcement';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import Header from '@/components/layout/header';

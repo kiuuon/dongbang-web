@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { clubDetailSchema } from '@/lib/validationSchema';
 
 import { upload } from '@/lib/apis/image';
-import { editClubInfo, fetchClubInfo } from '@/lib/apis/club';
+import { editClubInfo, fetchClubInfo } from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import clubInfoStore from '@/stores/club-info-store';

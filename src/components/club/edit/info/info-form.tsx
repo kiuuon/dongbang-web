@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { campusClubInfoSchema } from '@/lib/validationSchema';
 
 import { fetchUser } from '@/lib/apis/user';
-import { fetchClubInfo } from '@/lib/apis/club';
+import { fetchClubInfo } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import clubInfoStore from '@/stores/club-info-store';

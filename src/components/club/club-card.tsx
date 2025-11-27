@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 
-import { fetchMyRole } from '@/lib/apis/club';
+import { fetchMyRole } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubType } from '@/types/club-type';

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession, loginAndRedirect } from '@/lib/apis/auth';
-import { checkIsClubMember, joinClub } from '@/lib/apis/club';
+import { checkIsClubMember, joinClub } from '@/lib/apis/club/club';
 import { fetchClubIdByCode } from '@/lib/apis/invite';
 import { fetchUser } from '@/lib/apis/user';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
