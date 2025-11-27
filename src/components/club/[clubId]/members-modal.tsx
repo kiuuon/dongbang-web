@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { fetchClubMembers } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import Image from 'next/image';
+import UserAvatar from '@/components/common/user-avatar';
 
 function MembersModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -57,33 +57,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       router.push(`/profile/${member.userId}`);
                     }}
                   >
-                    {member.avatar ? (
-                      <Image
-                        src={member.avatar}
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src="/images/none_avatar.png"
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    )}
+                    <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
                       <div className="text-bold14 h-[17px]">{member.name}</div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
@@ -107,33 +81,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       router.push(`/profile/${member.userId}`);
                     }}
                   >
-                    {member.avatar ? (
-                      <Image
-                        src={member.avatar}
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src="/images/none_avatar.png"
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    )}
+                    <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
                       <div className="text-bold14 h-[17px]">{member.name}</div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
@@ -157,33 +105,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       router.push(`/profile/${member.userId}`);
                     }}
                   >
-                    {member.avatar ? (
-                      <Image
-                        src={member.avatar}
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src="/images/none_avatar.png"
-                        alt="아바타"
-                        width={32}
-                        height={32}
-                        style={{
-                          objectFit: 'cover',
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                        }}
-                      />
-                    )}
+                    <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
                       <div className="text-bold14 h-[17px]">{member.name}</div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>

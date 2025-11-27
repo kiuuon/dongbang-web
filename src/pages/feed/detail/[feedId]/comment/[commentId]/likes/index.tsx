@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -9,6 +8,7 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import BackButton from '@/components/common/back-button';
 import Header from '@/components/layout/header';
 import AccessDeniedPage from '@/components/common/access-denied-page';
+import UserAvatar from '@/components/common/user-avatar';
 
 function CommentLikesPage() {
   const router = useRouter();
@@ -81,33 +81,7 @@ function CommentLikesPage() {
             router.push(`/profile/${user.id}`);
           }}
         >
-          {user.avatar ? (
-            <Image
-              src={user.avatar}
-              alt="아바타"
-              width={40}
-              height={40}
-              style={{
-                objectFit: 'cover',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-              }}
-            />
-          ) : (
-            <Image
-              src="/images/none_avatar.png"
-              alt="아바타"
-              width={40}
-              height={40}
-              style={{
-                objectFit: 'cover',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-              }}
-            />
-          )}
+          <UserAvatar avatar={user.avatar} size={40} />
           <div className="text-bold12">{user.name}</div>
         </button>
       ))}

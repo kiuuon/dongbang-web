@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -16,6 +15,7 @@ import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
 import TopArrowIcon from '@/icons/top-arrow-icon';
 import BottomArrowIcon4 from '@/icons/bottom-arrow-icon4';
+import UserAvatar from '@/components/common/user-avatar';
 import ReplyCard from './reply-card';
 import MentionRenderer from './mention-renderer';
 
@@ -206,37 +206,7 @@ export default function CommentCard({
             }}
             className="flex items-start"
           >
-            {comment.author.avatar ? (
-              <Image
-                src={comment.author.avatar}
-                alt="아바타"
-                width={32}
-                height={32}
-                style={{
-                  objectFit: 'cover',
-                  width: '32px',
-                  minWidth: '32px',
-                  height: '32px',
-                  minHeight: '32px',
-                  borderRadius: '50%',
-                }}
-              />
-            ) : (
-              <Image
-                src="/images/none_avatar.png"
-                alt="아바타"
-                width={32}
-                height={32}
-                style={{
-                  objectFit: 'cover',
-                  width: '32px',
-                  minWidth: '32px',
-                  height: '32px',
-                  minHeight: '32px',
-                  borderRadius: '50%',
-                }}
-              />
-            )}
+            <UserAvatar avatar={comment.author.avatar} size={32} />
           </button>
 
           <div className="flex flex-col gap-[4px]">

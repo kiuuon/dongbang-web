@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
@@ -13,6 +12,7 @@ import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import CheckIcon5 from '@/icons/check-icon5';
 import XIcon8 from '@/icons/x-icon8';
+import UserAvatar from '@/components/common/user-avatar';
 
 function MembersManageApplicationPage() {
   const router = useRouter();
@@ -118,33 +118,7 @@ function MembersManageApplicationPage() {
                   router.push(`/profile/${user.id}`);
                 }}
               >
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt="아바타"
-                    width={40}
-                    height={40}
-                    style={{
-                      objectFit: 'cover',
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                    }}
-                  />
-                ) : (
-                  <Image
-                    src="/images/none_avatar.png"
-                    alt="아바타"
-                    width={40}
-                    height={40}
-                    style={{
-                      objectFit: 'cover',
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                    }}
-                  />
-                )}
+                <UserAvatar avatar={user.avatar} size={40} />
                 <div className="flex flex-col text-start">
                   <div className="text-bold14 h-[17px]">{user.name}</div>
                   <div className="text-regular12 h-[14px] text-gray2">{user.nickname}</div>

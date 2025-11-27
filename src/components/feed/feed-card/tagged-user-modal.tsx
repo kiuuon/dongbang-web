@@ -1,5 +1,6 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
+
+import UserAvatar from '@/components/common/user-avatar';
 
 function TaggedUserModal({
   tagedUsers,
@@ -27,33 +28,7 @@ function TaggedUserModal({
               onClose();
             }}
           >
-            {user.avatar ? (
-              <Image
-                src={user.avatar}
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            ) : (
-              <Image
-                src="/images/none_avatar.png"
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            )}
+            <UserAvatar avatar={user.avatar} size={40} />
             <div className="text-bold12">{user.name}</div>
           </button>
         ))}

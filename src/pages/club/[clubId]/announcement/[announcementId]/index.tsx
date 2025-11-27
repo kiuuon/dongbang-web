@@ -14,6 +14,7 @@ import TrashIcon3 from '@/icons/trash-icon3';
 import EditIcon2 from '@/icons/edit-icon2';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import UserAvatar from '@/components/common/user-avatar';
 
 function AnnouncementDetailPage() {
   const router = useRouter();
@@ -105,33 +106,7 @@ function AnnouncementDetailPage() {
       )}
 
       <button type="button" className="flex justify-start gap-[12px] px-[24px]">
-        {announcement?.author.avatar ? (
-          <Image
-            src={announcement?.author.avatar}
-            alt="아바타"
-            width={32}
-            height={32}
-            style={{
-              objectFit: 'cover',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-            }}
-          />
-        ) : (
-          <Image
-            src="/images/none_avatar.png"
-            alt="아바타"
-            width={32}
-            height={32}
-            style={{
-              objectFit: 'cover',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-            }}
-          />
-        )}
+        <UserAvatar avatar={announcement?.author.avatar} size={32} />
         <div className="flex flex-col items-start">
           <div className="flex items-center gap-[2px]">
             <div className="text-bold14 h-[17px]">{announcement?.author.name}</div>

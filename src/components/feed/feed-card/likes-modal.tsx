@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchFeedLikedUsers } from '@/lib/apis/feed/like';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import UserAvatar from '@/components/common/user-avatar';
 
 function LikesModal({ feedId }: { feedId: string }) {
   const router = useRouter();
@@ -31,33 +31,7 @@ function LikesModal({ feedId }: { feedId: string }) {
               router.push(`/profile/${user.id}`);
             }}
           >
-            {user.avatar ? (
-              <Image
-                src={user.avatar}
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            ) : (
-              <Image
-                src="/images/none_avatar.png"
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            )}
+            <UserAvatar avatar={user.avatar} size={40} />
             <div className="text-bold12">{user.name}</div>
           </button>
         ))}

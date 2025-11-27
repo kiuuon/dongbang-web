@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -16,6 +15,7 @@ import ListIcon from '@/icons/list-icon';
 import FeedIcon2 from '@/icons/feed-icon2';
 import TaggedFeedIcon from '@/icons/tagged-feed-icon';
 import Header from '@/components/layout/header';
+import UserAvatar from '@/components/common/user-avatar';
 import AuthoredFeedSection from '@/components/profile/authored-feed-section';
 import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 
@@ -109,18 +109,7 @@ function MyPage() {
           <div className="flex justify-between">
             <div className="flex gap-[14px]">
               <div>
-                <Image
-                  src="/images/none_avatar.png"
-                  alt="아바타"
-                  width={64}
-                  height={64}
-                  style={{
-                    objectFit: 'cover',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                  }}
-                />
+                <UserAvatar avatar={null} size={64} />
               </div>
               <div className="flex h-full items-center">
                 <div className="text-bold16">로그인 해주세요</div>
@@ -170,33 +159,7 @@ function MyPage() {
         <div className="flex justify-between">
           <div className="flex gap-[14px]">
             <div>
-              {user?.avatar ? (
-                <Image
-                  src={user.avatar}
-                  alt="아바타"
-                  width={64}
-                  height={64}
-                  style={{
-                    objectFit: 'cover',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                  }}
-                />
-              ) : (
-                <Image
-                  src="/images/none_avatar.png"
-                  alt="아바타"
-                  width={64}
-                  height={64}
-                  style={{
-                    objectFit: 'cover',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                  }}
-                />
-              )}
+              <UserAvatar avatar={user?.avatar} size={64} />
             </div>
             <div className="pt-[12px]">
               <div className="text-bold16">{user?.name}</div>

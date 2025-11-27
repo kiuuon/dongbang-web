@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -18,6 +17,7 @@ import { getPermissionLabels, getRole } from '@/lib/club/service';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import AccessDeniedPage from '@/components/common/access-denied-page';
+import UserAvatar from '@/components/common/user-avatar';
 
 function MemberManagePage() {
   const router = useRouter();
@@ -182,33 +182,7 @@ function MemberManagePage() {
           router.push(`/profile/${member?.info.id}`);
         }}
       >
-        {member?.info.avatar ? (
-          <Image
-            src={member?.info.avatar}
-            alt="아바타"
-            width={40}
-            height={40}
-            style={{
-              objectFit: 'cover',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-            }}
-          />
-        ) : (
-          <Image
-            src="/images/none_avatar.png"
-            alt="아바타"
-            width={40}
-            height={40}
-            style={{
-              objectFit: 'cover',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-            }}
-          />
-        )}
+        <UserAvatar avatar={member?.info.avatar} size={40} />
         <div className="flex flex-col text-start">
           <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
             {member?.info.name}

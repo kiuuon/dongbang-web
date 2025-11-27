@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -7,6 +6,7 @@ import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubRole } from '@/lib/club/constants';
 import { getRole } from '@/lib/club/service';
+import UserAvatar from '@/components/common/user-avatar';
 
 function MemberList({
   members,
@@ -51,33 +51,7 @@ function MemberList({
               router.push(`/profile/${member.userId}`);
             }}
           >
-            {member.avatar ? (
-              <Image
-                src={member.avatar}
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            ) : (
-              <Image
-                src="/images/none_avatar.png"
-                alt="아바타"
-                width={40}
-                height={40}
-                style={{
-                  objectFit: 'cover',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                }}
-              />
-            )}
+            <UserAvatar avatar={member.avatar} size={40} />
             <div className="flex flex-col text-start">
               <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
                 {member.name}

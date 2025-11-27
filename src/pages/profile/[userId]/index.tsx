@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -20,6 +19,7 @@ import ReportIcon2 from '@/icons/report-icon2';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import AccessDeniedPage from '@/components/common/access-denied-page';
+import UserAvatar from '@/components/common/user-avatar';
 import AuthoredFeedSection from '@/components/profile/authored-feed-section';
 import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 import ClubsModal from '@/components/profile/clubs-modal';
@@ -170,33 +170,7 @@ function ProfilePage() {
         <div className="flex justify-between">
           <div className="flex gap-[14px]">
             <div>
-              {user?.avatar ? (
-                <Image
-                  src={user.avatar}
-                  alt="아바타"
-                  width={64}
-                  height={64}
-                  style={{
-                    objectFit: 'cover',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                  }}
-                />
-              ) : (
-                <Image
-                  src="/images/none_avatar.png"
-                  alt="아바타"
-                  width={64}
-                  height={64}
-                  style={{
-                    objectFit: 'cover',
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '50%',
-                  }}
-                />
-              )}
+              <UserAvatar avatar={user?.avatar} size={64} />
             </div>
             <div className="pt-[12px]">
               <div className="text-bold16">{user?.name}</div>

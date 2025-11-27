@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -14,6 +13,7 @@ import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
 import LikesIcon3 from '@/icons/likes-icon3';
 import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
+import UserAvatar from '@/components/common/user-avatar';
 import MentionRenderer from './mention-renderer';
 
 export default function ReplyCard({
@@ -174,33 +174,7 @@ export default function ReplyCard({
           }}
           className="flex items-start"
         >
-          {reply.author.avatar ? (
-            <Image
-              src={reply.author.avatar}
-              alt="아바타"
-              width={32}
-              height={32}
-              style={{
-                objectFit: 'cover',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-              }}
-            />
-          ) : (
-            <Image
-              src="/images/none_avatar.png"
-              alt="아바타"
-              width={32}
-              height={32}
-              style={{
-                objectFit: 'cover',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-              }}
-            />
-          )}
+          <UserAvatar avatar={reply.author.avatar} size={32} />
         </button>
 
         <div className="flex flex-col gap-[4px]">

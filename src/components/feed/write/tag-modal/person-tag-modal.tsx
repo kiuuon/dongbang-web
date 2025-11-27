@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Image from 'next/image';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchClubMembers } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import ToggleIcon2 from '@/icons/toggle-icon2';
+import UserAvatar from '@/components/common/user-avatar';
 
 function PersonTagModal({
   clubId,
@@ -61,33 +61,7 @@ function PersonTagModal({
             onClick={() => selectMember(member.userId)}
           >
             <div className="flex items-center gap-[29px]">
-              {member.avatar ? (
-                <Image
-                  src={member.avatar}
-                  alt="아바타"
-                  width={40}
-                  height={40}
-                  style={{
-                    objectFit: 'cover',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                  }}
-                />
-              ) : (
-                <Image
-                  src="/images/none_avatar.png"
-                  alt="아바타"
-                  width={40}
-                  height={40}
-                  style={{
-                    objectFit: 'cover',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                  }}
-                />
-              )}
+              <UserAvatar avatar={member.avatar} size={40} />
               <span className="text-bold12">{member.name}</span>
             </div>
             <div

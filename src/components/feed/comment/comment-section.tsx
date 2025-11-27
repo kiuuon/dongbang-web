@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ClipLoader } from 'react-spinners';
 
@@ -12,6 +11,7 @@ import useDebounce from '@/hooks/useDebounce';
 import loginModalStore from '@/stores/login-modal-store';
 import { FeedType } from '@/types/feed-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
+import UserAvatar from '@/components/common/user-avatar';
 import CommentCard from './comment-card';
 
 function CommentSection({ feed }: { feed: FeedType }) {
@@ -279,37 +279,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                   handleSelect(user);
                 }}
               >
-                {user.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt="아바타"
-                    width={32}
-                    height={32}
-                    style={{
-                      objectFit: 'cover',
-                      width: '32px',
-                      minWidth: '32px',
-                      height: '32px',
-                      minHeight: '32px',
-                      borderRadius: '50%',
-                    }}
-                  />
-                ) : (
-                  <Image
-                    src="/images/none_avatar.png"
-                    alt="아바타"
-                    width={32}
-                    height={32}
-                    style={{
-                      objectFit: 'cover',
-                      width: '32px',
-                      minWidth: '32px',
-                      height: '32px',
-                      minHeight: '32px',
-                      borderRadius: '50%',
-                    }}
-                  />
-                )}
+                <UserAvatar avatar={user.avatar} size={32} />
                 <div className="flex flex-col items-start">
                   <div className="text-bold14 h-[17px]">{user.name}</div>
                   <div className="text-regular12 h-[14px] text-gray2">{user.nickname}</div>
