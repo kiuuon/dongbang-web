@@ -239,7 +239,7 @@ function ProfilePage() {
         <div>
           <div ref={sentinelRef} className={`${isFeedHeaderOnTop && 'h-[47px]'} w-full`} />
           <div
-            className={`${isFeedHeaderOnTop && 'fixed left-[20px] right-[20px] top-[60px] z-50 m-auto w-[calc(100vw-40px)] max-w-[560px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+            className={`${isFeedHeaderOnTop && 'fixed left-0 right-0 top-[60px] z-50 m-auto max-w-[600px] px-[20px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
           >
             <div className="flex">
               <button

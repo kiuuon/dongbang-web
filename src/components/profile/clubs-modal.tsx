@@ -3,18 +3,18 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchClubsByUserId } from '@/lib/apis/club/club';
+import { fetchClubsByUserNickname } from '@/lib/apis/club/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole } from '@/lib/club/service';
 
 function ClubsModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
-  const { userId } = router.query;
+  const { nickname } = router.query;
 
   const { data: clubs } = useQuery({
-    queryKey: ['clubs', userId],
-    queryFn: () => fetchClubsByUserId(userId as string),
+    queryKey: ['clubs', nickname],
+    queryFn: () => fetchClubsByUserNickname(nickname as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.LIST_FETCH_FAILED),
   });
 
@@ -47,7 +47,7 @@ function ClubsModal({ onClose }: { onClose: () => void }) {
       <div className="scrollbar-hide flex h-[420px] w-full flex-col gap-[32px] overflow-y-auto rounded-[20px] bg-white p-[32px]">
         <div className="text-bold14 w-full text-center">소속 동아리</div>
         <div className="flex flex-col gap-[30px]">
-          {clubs?.map((club) => (
+          {clubs?.map(({ club, role }: any) => (
             <button
               type="button"
               className="flex items-center gap-[20px]"
@@ -70,9 +70,9 @@ function ClubsModal({ onClose }: { onClose: () => void }) {
               />
               <div className="flex flex-col items-start gap-[5px]">
                 <div className="text-bold16 h-[19px]">{club.name}</div>
-                <div className="text-bold12 h-[14px] text-gray2">{getRole(club.role[0].role)}</div>
+                <div className="text-bold12 h-[14px] text-gray2">{getRole(role)}</div>
                 <div className="flex gap-[4px]">
-                  {club.tags.map(
+                  {club.tags?.map(
                     (tag: string, index: number) =>
                       index < 3 && (
                         <div key={tag} className="text-bold10 rounded-[8px] bg-gray0 px-[5px] py-[2px] text-gray2">

@@ -27,7 +27,12 @@ function BoardSummary() {
   useEffect(() => {
     const handleScroll = () => {
       const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
-      setIsHeaderOnTop(top <= (isWebView ? clubPageTop + 60 : 60));
+      const headerTop = isWebView ? clubPageTop + 60 : 60;
+      if (top <= headerTop) {
+        setIsHeaderOnTop(true);
+      } else {
+        setIsHeaderOnTop(false);
+      }
     };
 
     handleScroll();
@@ -44,7 +49,8 @@ function BoardSummary() {
     <div>
       <div ref={sentinelRef} />
       <div
-        className={`${isHeaderOnTop && `fixed left-[20px] right-[20px] ${isWebView ? `top-[${clubPageTop + 60}px]` : 'top-[60px]'} z-50 m-auto w-[calc(100vw-40px)] max-w-[560px]`} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+        className={`${isHeaderOnTop && `fixed left-0 right-0 z-50 m-auto w-[calc(100vw-40px)] max-w-[600px] px-[20px]`} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+        style={{ top: isWebView ? clubPageTop + 60 : 60 }}
       >
         <div className="flex">
           <button
