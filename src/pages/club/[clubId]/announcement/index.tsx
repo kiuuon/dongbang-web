@@ -7,6 +7,7 @@ import { fetchAnnouncements, fetchMyRole } from '@/lib/apis/club';
 import { formatKoreanDate, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { hasPermission } from '@/lib/club/service';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import PlusIcon2 from '@/icons/plus-icon2';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
@@ -17,9 +18,12 @@ function AnnouncementPage() {
 
   const observerElement = useRef(null);
 
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
   const { data: myRole } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
@@ -27,6 +31,7 @@ function AnnouncementPage() {
     initialPageParam: 0,
     queryKey: ['announcements', clubId],
     queryFn: ({ pageParam }) => fetchAnnouncements(clubId, pageParam),
+    enabled: isValid,
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 15 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.FETCH_ANNOUNCEMENTS_FAILED),
   });
@@ -50,6 +55,10 @@ function AnnouncementPage() {
 
     return () => observerInstance.unobserve(target);
   }, [fetchNextPage, hasNextPage]);
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   return (
     <div className="flex h-screen flex-col pt-[60px]">

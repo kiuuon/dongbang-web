@@ -7,6 +7,8 @@ import { ClipLoader } from 'react-spinners';
 import { approveApplication, fetchApplicants, fetchMyRole, rejectApplication } from '@/lib/apis/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import CheckIcon5 from '@/icons/check-icon5';
@@ -20,9 +22,12 @@ function MembersManageApplicationPage() {
   const [approvedIds, setApprovedIds] = useState<string[]>([]);
   const [rejectedIds, setRejectedIds] = useState<string[]>([]);
 
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
   const { data: applications } = useQuery({
     queryKey: ['applications', clubId],
     queryFn: () => fetchApplicants(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
   });
 
@@ -44,17 +49,26 @@ function MembersManageApplicationPage() {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.REJECTED_FAILED),
   });
 
-  const { data: myRole, isPending } = useQuery({
+  const {
+    data: myRole,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (myRole === 'member') {
+    if (isSuccess && (!myRole || !hasPermission(myRole, 'manage_membership'))) {
       router.replace(`/club/${clubId}`);
     }
-  }, [myRole, router, clubId]);
+  }, [myRole, router, clubId, isSuccess]);
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   if (isPending) {
     return (

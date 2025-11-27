@@ -15,7 +15,7 @@ import CampusClubTypeInput from './campus-club-type-input';
 import CategoryInput from './category-input';
 import LocationInput from './location-input';
 
-function InfoForm() {
+function InfoForm({ isClubIdValid }: { isClubIdValid: boolean }) {
   const router = useRouter();
   const { clubId } = router.query;
   const setClubCampusType = clubInfoStore((state) => state.setCampusClubType);
@@ -37,6 +37,7 @@ function InfoForm() {
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
+    enabled: isClubIdValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 

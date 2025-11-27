@@ -4,22 +4,15 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 import { fetchSession } from '@/lib/apis/auth';
-import {
-  applyToClub,
-  cancelApplication,
-  checkIsClubMember,
-  fetchClubInfo,
-  fetchClubMembers,
-  fetchMyApply,
-} from '@/lib/apis/club';
-import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
+import { applyToClub, cancelApplication, checkIsClubMember, fetchClubMembers, fetchMyApply } from '@/lib/apis/club';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import loginModalStore from '@/stores/login-modal-store';
 import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
 import MembersIcon from '@/icons/members-icon';
 import ReportIcon2 from '@/icons/report-icon2';
-import AccessDeniedPage from '@/components/common/access-denied-page';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import ClubHeader from '@/components/club/[clubId]/club-header';
@@ -36,10 +29,10 @@ function ClubPage() {
 
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
-  const isValid = isValidUUID(clubId as string);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+
+  const { isValid, clubInfo, ErrorComponent } = useClubPageValidation();
 
   useEffect(() => {
     const key = `scroll:${router.asPath}`;
@@ -55,17 +48,6 @@ function ClubPage() {
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
-  });
-
-  const {
-    data: clubInfo,
-    isPending: isClubInfoPending,
-    isSuccess,
-  } = useQuery({
-    queryKey: ['club', clubId],
-    queryFn: () => fetchClubInfo(clubId as string),
-    enabled: isValid,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 
   const { data: isClubMember, isPending: isPendingToCheckingClubMember } = useQuery({
@@ -104,8 +86,8 @@ function ClubPage() {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CANCEL_APPLICATION_FAILED),
   });
 
-  if ((clubId && !isValid) || (isSuccess && !clubInfo && !isClubInfoPending)) {
-    return <AccessDeniedPage title="동아리를 찾을 수 없어요." content="존재하지 않는 동아리입니다." />;
+  if (!isValid) {
+    return ErrorComponent;
   }
 
   const handleApplicationButton = () => {

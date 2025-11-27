@@ -18,7 +18,7 @@ import BackgroundInput from './background-input';
 import LogoInput from './logo-input';
 import TagInput from '../info/tag-input';
 
-function DetailForm() {
+function DetailForm({ isClubIdValid }: { isClubIdValid: boolean }) {
   const router = useRouter();
   const { clubId } = router.query;
   const uuid = crypto.randomUUID();
@@ -38,6 +38,7 @@ function DetailForm() {
   const { data: clubInfo } = useQuery({
     queryKey: ['club', clubId],
     queryFn: () => fetchClubInfo(clubId as string),
+    enabled: isClubIdValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 

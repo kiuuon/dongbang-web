@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import ProgressBar from '@/components/club/edit/progress-bar';
@@ -14,17 +16,24 @@ function Detail() {
   const router = useRouter();
   const { clubId } = router.query;
 
-  const { data: role, isPending } = useQuery({
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
+  const {
+    data: role,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (!role || (role !== 'officer' && role !== 'president')) {
+    if (isSuccess && (!role || !hasPermission(role, 'edit_club_page'))) {
       router.replace('/');
     }
-  }, [role, router]);
+  }, [role, router, isSuccess]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -38,6 +47,10 @@ function Detail() {
     };
   }, []);
 
+  if (!isValid) {
+    return ErrorComponent;
+  }
+
   if (isPending) {
     return null;
   }
@@ -48,7 +61,7 @@ function Detail() {
         <BackButton />
       </Header>
       <ProgressBar />
-      <DetailForm />
+      <DetailForm isClubIdValid={isValid} />
     </div>
   );
 }

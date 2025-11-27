@@ -6,6 +6,7 @@ import { upload } from '@/lib/apis/image';
 import { fetchMyRole, writeAnnouncement } from '@/lib/apis/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
@@ -26,17 +27,19 @@ function AnnouncementWritePage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const { data: myRole } = useQuery({
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
+  const { data: myRole, isSuccess } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (!hasPermission(myRole, 'manage_announcement')) {
+    if (isSuccess && (!myRole || !hasPermission(myRole, 'manage_announcement'))) {
       router.replace(`/club`);
     }
-  }, [myRole, router, clubId]);
+  }, [myRole, router, clubId, isSuccess]);
 
   const { mutateAsync: uploadPhoto } = useMutation({
     mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'announcement-image'),
@@ -55,6 +58,10 @@ function AnnouncementWritePage() {
     onError: (error) =>
       handleMutationError(error, ERROR_MESSAGE.CLUB.WRITE_ANNOUNCEMENT_FAILED, () => setIsLoading(false)),
   });
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   const handleWriteButton = async () => {
     try {

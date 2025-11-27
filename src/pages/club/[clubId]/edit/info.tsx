@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchMyRole } from '@/lib/apis/club';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import clubInfoStore from '@/stores/club-info-store';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
@@ -15,6 +17,8 @@ function Info() {
   const router = useRouter();
   const { clubId } = router.query;
 
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
   const {
     data: role,
     isPending,
@@ -22,11 +26,12 @@ function Info() {
   } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (isSuccess && (!role || (role !== 'officer' && role !== 'president'))) {
+    if (isSuccess && (!role || !hasPermission(role, 'edit_club_page'))) {
       router.replace('/');
     }
   }, [role, router, isSuccess]);
@@ -57,6 +62,10 @@ function Info() {
     };
   }, []);
 
+  if (!isValid) {
+    return ErrorComponent;
+  }
+
   if (isPending) {
     return null;
   }
@@ -67,7 +76,7 @@ function Info() {
         <BackButton />
       </Header>
       <ProgressBar />
-      <InfoForm />
+      <InfoForm isClubIdValid={isValid} />
     </div>
   );
 }

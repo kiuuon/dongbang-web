@@ -8,6 +8,8 @@ import { fetchApplicants, fetchMyRole } from '@/lib/apis/club';
 import { fetchInviteCode, createInviteCode, deleteInviteCode } from '@/lib/apis/invite';
 import { generateBase62Code, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
+import useClubPageValidation from '@/hooks/useClubPageValidation';
 import DuplicateIcon from '@/icons/duplicate-icon';
 import TrashIcon from '@/icons/trash-icon';
 import ShareIcon from '@/icons/share-icon';
@@ -15,28 +17,36 @@ import UserGroupIcon from '@/icons/user-group-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import MemberBoard from '@/components/club/[clubId]/members/manage/member-board';
-import { hasPermission } from '@/lib/club/service';
 
 function MembersManagePage() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
   const queryClient = useQueryClient();
 
+  const { isValid, ErrorComponent } = useClubPageValidation();
+
   const { data: code } = useQuery({
     queryKey: ['inviteCode', clubId],
     queryFn: () => fetchInviteCode(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INVITE_CODE_FETCH_FAILED),
   });
 
-  const { data: myRole, isPending } = useQuery({
+  const {
+    data: myRole,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
   const { data: applications } = useQuery({
     queryKey: ['applications', clubId],
     queryFn: () => fetchApplicants(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.APPLY_FETCH_FAILED),
   });
 
@@ -57,10 +67,14 @@ function MembersManagePage() {
   });
 
   useEffect(() => {
-    if (!hasPermission(myRole, 'manage_membership')) {
+    if (isSuccess && (!myRole || !hasPermission(myRole, 'manage_membership'))) {
       router.replace(`/club/${clubId}`);
     }
-  }, [myRole, router, clubId]);
+  }, [myRole, router, clubId, isSuccess]);
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   if (isPending) {
     return (

@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchUserId } from '@/lib/apis/auth';
 import { upload } from '@/lib/apis/image';
-import { editAnnouncement, fetchAnnouncement, fetchMyRole } from '@/lib/apis/club';
+import { editAnnouncement, fetchMyRole } from '@/lib/apis/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import Header from '@/components/layout/header';
@@ -12,12 +12,15 @@ import BackButton from '@/components/common/back-button';
 import Loading from '@/components/common/loading';
 import PhotoInput from '@/components/club/[clubId]/announcement/photo-input';
 import { hasPermission } from '@/lib/club/service';
+import useClubAnnouncementPageValidation from '@/hooks/useClubAnnouncementPageValidation';
 
 function AnnouncementEditPage() {
   const uuid = crypto.randomUUID();
   const queryClient = useQueryClient();
   const router = useRouter();
   const { clubId, announcementId } = router.query as { clubId: string; announcementId: string };
+
+  const { isValid, ErrorComponent, announcement } = useClubAnnouncementPageValidation();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -31,6 +34,7 @@ function AnnouncementEditPage() {
   const { data: myRole } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
@@ -38,12 +42,6 @@ function AnnouncementEditPage() {
     queryKey: ['userId'],
     queryFn: fetchUserId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
-  });
-
-  const { data: announcement } = useQuery({
-    queryKey: ['announcement', announcementId],
-    queryFn: () => fetchAnnouncement(announcementId, clubId),
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.FETCH_ANNOUNCEMENT_FAILED),
   });
 
   useEffect(() => {
@@ -81,6 +79,10 @@ function AnnouncementEditPage() {
     onError: (error) =>
       handleMutationError(error, ERROR_MESSAGE.CLUB.EDIT_ANNOUNCEMENT_FAILED, () => setIsLoading(false)),
   });
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   const handleWriteButton = async () => {
     try {

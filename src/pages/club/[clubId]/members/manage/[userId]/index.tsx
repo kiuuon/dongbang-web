@@ -3,13 +3,21 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { changeMemberRole, expelMember, fetchClubMember, fetchMyRole, transferPresident } from '@/lib/apis/club';
-import { handleMutationError, handleQueryError } from '@/lib/utils';
+import {
+  changeMemberRole,
+  expelMember,
+  fetchClubInfo,
+  fetchClubMember,
+  fetchMyRole,
+  transferPresident,
+} from '@/lib/apis/club';
+import { handleMutationError, handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { ClubRole } from '@/lib/club/constants';
 import { getPermissionLabels, getRole } from '@/lib/club/service';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import AccessDeniedPage from '@/components/common/access-denied-page';
 
 function MemberManagePage() {
   const router = useRouter();
@@ -20,14 +28,29 @@ function MemberManagePage() {
   const [transferInputValue, setTransferInputValue] = useState('');
   const [expelInputValue, setExpelInputValue] = useState('');
 
+  const isClubIdValid = isValidUUID(clubId);
+  const isMemberIdValid = isValidUUID(userId);
+
   const {
     data: member,
-    isPending,
+    isPending: isMemberFetchPending,
     isSuccess: isMemberFetchSuccess,
   } = useQuery({
     queryKey: ['member', clubId, userId],
     queryFn: () => fetchClubMember(clubId, userId),
+    enabled: isClubIdValid && isMemberIdValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.MEMBER_FETCH_FAILED),
+  });
+
+  const {
+    data: clubInfo,
+    isPending: isClubInfoPending,
+    isSuccess: isClubInfoSuccess,
+  } = useQuery({
+    queryKey: ['club', clubId],
+    queryFn: () => fetchClubInfo(clubId as string),
+    enabled: isClubIdValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.INFO_FETCH_FAILED),
   });
 
   useEffect(() => {
@@ -39,6 +62,7 @@ function MemberManagePage() {
   const { data: myRole, isSuccess: isMyRoleFetchSuccess } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId),
+    enabled: isClubIdValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
@@ -92,7 +116,16 @@ function MemberManagePage() {
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.EXPEL_MEMBER_FAILED),
   });
 
-  if (isPending) {
+  if (
+    (clubId && !isClubIdValid) ||
+    (isClubInfoSuccess && !clubInfo && !isClubInfoPending) ||
+    (userId && !isMemberIdValid) ||
+    (isMemberFetchSuccess && !member && !isMemberFetchPending)
+  ) {
+    return <AccessDeniedPage title="멤버를 찾을 수 없어요." content="존재하지 않는 동아리 또는 멤버입니다." />;
+  }
+
+  if (isClubInfoPending || isMemberFetchPending) {
     return null;
   }
 

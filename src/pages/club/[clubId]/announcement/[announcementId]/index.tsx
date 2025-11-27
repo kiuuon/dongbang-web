@@ -4,10 +4,11 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { fetchUserId } from '@/lib/apis/auth';
-import { deleteAnnouncement, fetchAnnouncement, fetchMyRole } from '@/lib/apis/club';
+import { deleteAnnouncement, fetchMyRole } from '@/lib/apis/club';
 import { formatKoreanDate, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole, hasPermission } from '@/lib/club/service';
+import useClubAnnouncementPageValidation from '@/hooks/useClubAnnouncementPageValidation';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import TrashIcon3 from '@/icons/trash-icon3';
 import EditIcon2 from '@/icons/edit-icon2';
@@ -21,6 +22,8 @@ function AnnouncementDetailPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+
+  const { isValid, ErrorComponent, announcement } = useClubAnnouncementPageValidation();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -52,12 +55,6 @@ function AnnouncementDetailPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
-  const { data: announcement } = useQuery({
-    queryKey: ['announcement', announcementId],
-    queryFn: () => fetchAnnouncement(announcementId, clubId),
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.FETCH_ANNOUNCEMENT_FAILED),
-  });
-
   const { mutate: handleDeleteAnnouncement } = useMutation({
     mutationFn: () => deleteAnnouncement(announcementId),
     onSuccess: () => {
@@ -65,6 +62,10 @@ function AnnouncementDetailPage() {
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.DELETE_ANNOUNCEMENT_FAILED),
   });
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   return (
     <div className="flex h-screen flex-col pt-[60px]">
