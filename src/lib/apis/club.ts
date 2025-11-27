@@ -561,6 +561,17 @@ export async function writeAnnouncement(photos: string[], title: string, content
   if (error) throw error;
 }
 
+export async function editAnnouncement(announcementId: string, title: string, content: string, photos: string[]) {
+  const { error } = await supabase.rpc('update_announcement', {
+    p_announcement_id: announcementId,
+    p_title: title,
+    p_content: content,
+    p_photos: photos,
+  });
+
+  if (error) throw error;
+}
+
 export async function deleteAnnouncement(announcementId: string) {
   const { error } = await supabase.rpc('delete_announcement', {
     p_announcement_id: announcementId,

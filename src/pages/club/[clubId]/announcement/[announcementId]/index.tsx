@@ -91,7 +91,11 @@ function AnnouncementDetailPage() {
             <span className="text-regular16 whitespace-nowrap text-gray3">삭제</span>
           </button>
           {userId === announcement?.author.id && (
-            <button type="button" className="flex w-full items-center gap-[9px]">
+            <button
+              type="button"
+              className="flex w-full items-center gap-[9px]"
+              onClick={() => router.push(`/club/${clubId}/announcement/${announcementId}/edit`)}
+            >
               <EditIcon2 />
               <span className="text-regular16 whitespace-nowrap text-gray3">수정</span>
             </button>
