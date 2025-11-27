@@ -78,7 +78,7 @@ function CommentLikesPage() {
               );
               return;
             }
-            router.push(`/profile/${user.id}`);
+            router.push(`/profile/${user.nickname}`);
           }}
         >
           <UserAvatar avatar={user.avatar} size={40} />

@@ -28,7 +28,7 @@ function LikesModal({ feedId }: { feedId: string }) {
             onClick={() => {
               sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
-              router.push(`/profile/${user.id}`);
+              router.push(`/profile/${user.nickname}`);
             }}
           >
             <UserAvatar avatar={user.avatar} size={40} />

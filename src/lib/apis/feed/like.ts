@@ -43,6 +43,7 @@ type LikedUser = {
   id: string;
   name: string;
   avatar: string | null;
+  nickname: string;
 };
 
 export async function fetchFeedLikedUsers(feedId: string): Promise<LikedUser[] | null> {
@@ -53,6 +54,7 @@ export async function fetchFeedLikedUsers(feedId: string): Promise<LikedUser[] |
       User!inner (
         id,
         name,
+        nickname,
         avatar
       )
     `,
@@ -69,6 +71,7 @@ export async function fetchFeedLikedUsers(feedId: string): Promise<LikedUser[] |
       id: user.id,
       name: user.name,
       avatar: user.avatar,
+      nickname: user.nickname,
     })),
   );
 }

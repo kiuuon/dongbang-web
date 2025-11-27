@@ -48,7 +48,7 @@ function MemberList({
                 );
                 return;
               }
-              router.push(`/profile/${member.userId}`);
+              router.push(`/profile/${member.nickname}`);
             }}
           >
             <UserAvatar avatar={member.avatar} size={40} />

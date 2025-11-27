@@ -6,7 +6,7 @@ function TaggedUserModal({
   tagedUsers,
   onClose,
 }: {
-  tagedUsers: { user: { id: string; name: string; avatar: string } }[];
+  tagedUsers: { user: { id: string; name: string; avatar: string; nickname: string } }[];
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -24,7 +24,7 @@ function TaggedUserModal({
             onClick={() => {
               sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
-              router.push(`/profile/${user.id}`);
+              router.push(`/profile/${user.nickname}`);
               onClose();
             }}
           >

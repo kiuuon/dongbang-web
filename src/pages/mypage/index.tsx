@@ -78,7 +78,7 @@ function MyPage() {
 
   const copyProfileLinkToClipboard = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/profile/${userId}`;
+      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/profile/${user?.nickname}`;
       await navigator.clipboard.writeText(url);
       toast.success('프로필 링크가 클립보드에 복사되었습니다!');
     } catch (error) {

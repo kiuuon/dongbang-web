@@ -18,9 +18,9 @@ export async function fetchUser() {
   return data[0];
 }
 
-export async function fetchUserById(userId: string, showUniversity: boolean) {
+export async function fetchUserByNickname(nickname: string, showUniversity: boolean) {
   if (!showUniversity) {
-    const { data } = await supabase.from('User').select('id, name, nickname, avatar').eq('id', userId);
+    const { data } = await supabase.from('User').select('id, name, nickname, avatar').eq('nickname', nickname);
 
     if (!data) {
       return null;
@@ -33,7 +33,7 @@ export async function fetchUserById(userId: string, showUniversity: boolean) {
     return data[0];
   }
 
-  const { data } = await supabase.from('User').select('*, University(name)').eq('id', userId);
+  const { data } = await supabase.from('User').select('*, University(name)').eq('nickname', nickname);
 
   if (!data) {
     return null;
@@ -75,6 +75,17 @@ export async function fetchUserProfileVisibility(userId: string) {
   if (error) throw error;
 
   return data;
+}
+
+export async function fetchUserProfileVisibilityByNickname(nickname: string) {
+  const { data, error } = await supabase.rpc('get_user_profile_visibility_by_nickname', {
+    p_nickname: nickname,
+  });
+
+  if (error) throw error;
+
+  // RPC가 배열을 반환하므로 첫 번째 요소 반환 (없으면 null)
+  return data?.[0] ?? null;
 }
 
 export async function updateUserProfileVisibility(body: {

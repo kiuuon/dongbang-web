@@ -54,7 +54,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
-                      router.push(`/profile/${member.userId}`);
+                      router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
@@ -78,7 +78,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
-                      router.push(`/profile/${member.userId}`);
+                      router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
@@ -102,7 +102,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
-                      router.push(`/profile/${member.userId}`);
+                      router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />

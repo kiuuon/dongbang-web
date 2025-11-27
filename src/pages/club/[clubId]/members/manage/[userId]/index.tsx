@@ -179,7 +179,7 @@ function MemberManagePage() {
             );
             return;
           }
-          router.push(`/profile/${member?.info.id}`);
+          router.push(`/profile/${member?.info.nickname}`);
         }}
       >
         <UserAvatar avatar={member?.info.avatar} size={40} />

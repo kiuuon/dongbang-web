@@ -170,7 +170,7 @@ export default function ReplyCard({
               return;
             }
 
-            router.push(`/profile/${reply.author_id}`);
+            router.push(`/profile/${reply.author.nickname}`);
           }}
           className="flex items-start"
         >
@@ -192,7 +192,7 @@ export default function ReplyCard({
                   );
                   return;
                 }
-                router.push(`/profile/${reply.author_id}`);
+                router.push(`/profile/${reply.author.nickname}`);
               }}
               className="text-bold14"
             >

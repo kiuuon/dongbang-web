@@ -41,7 +41,7 @@ function MentionRenderer({ text }: { text: string }) {
               key={index}
               role="button"
               tabIndex={0}
-              className="text-regular16 bg-tag cursor-pointer text-tertiary"
+              className="text-regular16 cursor-pointer bg-tag text-tertiary"
               onClick={(event) => {
                 event.stopPropagation();
                 if (window.ReactNativeWebView) {
@@ -57,7 +57,7 @@ function MentionRenderer({ text }: { text: string }) {
 
                 sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
-                router.push(`/profile/${user.id}`);
+                router.push(`/profile/${user.nickname}`);
               }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -75,7 +75,7 @@ function MentionRenderer({ text }: { text: string }) {
 
                   sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
-                  router.push(`/profile/${user.id}`);
+                  router.push(`/profile/${user.nickname}`);
                 }
               }}
             >

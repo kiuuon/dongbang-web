@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { fetchUserById, fetchUserProfileVisibility } from '@/lib/apis/user';
-import { handleQueryError, isValidUUID } from '@/lib/utils';
+import { fetchUserByNickname, fetchUserProfileVisibilityByNickname } from '@/lib/apis/user';
+import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import profilePageStore from '@/stores/profile-page-store';
 import loginModalStore from '@/stores/login-modal-store';
@@ -26,10 +26,10 @@ import ClubsModal from '@/components/profile/clubs-modal';
 
 function ProfilePage() {
   const router = useRouter();
-  const { userId } = router.query as { userId: string };
+  const { nickname } = router.query as { nickname: string };
 
-  const viewType = profilePageStore((state) => state.viewType[userId] ?? 'grid');
-  const selectedFeedType = profilePageStore((state) => state.selectedFeedType[userId] ?? 'authored');
+  const viewType = profilePageStore((state) => state.viewType[nickname] ?? 'grid');
+  const selectedFeedType = profilePageStore((state) => state.selectedFeedType[nickname] ?? 'authored');
   const setViewType = profilePageStore((state) => state.setViewType);
   const setSelectedFeedType = profilePageStore((state) => state.setSelectedFeedType);
 
@@ -41,8 +41,6 @@ function ProfilePage() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
-
-  const isValid = isValidUUID(userId);
 
   const [isFeedHeaderOnTop, setIsFeedHeaderOnTop] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -99,9 +97,9 @@ function ProfilePage() {
   });
 
   const { data: profileVisibility, isPending: isProfileVisibilityPending } = useQuery({
-    queryKey: ['userProfileVisibility', userId],
-    queryFn: () => fetchUserProfileVisibility(userId as string),
-    enabled: !!userId,
+    queryKey: ['userProfileVisibility', nickname],
+    queryFn: () => fetchUserProfileVisibilityByNickname(nickname as string),
+    enabled: !!nickname,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.PROFILE_VISIBILITY_FETCH_FAILED),
   });
 
@@ -110,13 +108,13 @@ function ProfilePage() {
     isPending,
     isSuccess,
   } = useQuery({
-    queryKey: ['user', userId],
-    queryFn: () => fetchUserById(userId as string, profileVisibility?.show_university),
-    enabled: isValid && !!profileVisibility,
+    queryKey: ['user', nickname],
+    queryFn: () => fetchUserByNickname(nickname as string, profileVisibility?.show_university),
+    enabled: !!profileVisibility,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
 
-  if ((userId && !isValid) || (isSuccess && !user && !isPending)) {
+  if (isSuccess && !user && !isPending) {
     return <AccessDeniedPage title="사용자를 찾을 수 없어요." content="존재하지 않는 사용자입니다." />;
   }
 
@@ -140,7 +138,7 @@ function ProfilePage() {
 
   const copyProfileLinkToClipboard = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/profile/${userId}`;
+      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/profile/${nickname}`;
       await navigator.clipboard.writeText(url);
       toast.success('프로필 링크가 클립보드에 복사되었습니다!');
     } catch (error) {
@@ -247,30 +245,30 @@ function ProfilePage() {
               <button
                 type="button"
                 className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
-                onClick={() => setSelectedFeedType(userId, 'authored')}
+                onClick={() => setSelectedFeedType(nickname, 'authored')}
               >
                 <FeedIcon2 isActive={selectedFeedType === 'authored'} />
               </button>
               <button
                 type="button"
                 className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
-                onClick={() => setSelectedFeedType(userId, 'tagged')}
+                onClick={() => setSelectedFeedType(nickname, 'tagged')}
               >
                 <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
               </button>
             </div>
             <div className="flex gap-[27px] pb-[5px]">
-              <button type="button" onClick={() => setViewType(userId, 'grid')}>
+              <button type="button" onClick={() => setViewType(nickname, 'grid')}>
                 <GridIcon isActive={viewType === 'grid'} />
               </button>
-              <button type="button" onClick={() => setViewType(userId, 'list')}>
+              <button type="button" onClick={() => setViewType(nickname, 'list')}>
                 <ListIcon isActive={viewType === 'list'} />
               </button>
             </div>
           </div>
 
-          {selectedFeedType === 'authored' && <AuthoredFeedSection userId={userId} viewType={viewType} />}
-          {selectedFeedType === 'tagged' && <TaggedFeedSection userId={userId} viewType={viewType} />}
+          {selectedFeedType === 'authored' && <AuthoredFeedSection userId={user.id} viewType={viewType} />}
+          {selectedFeedType === 'tagged' && <TaggedFeedSection userId={user.id} viewType={viewType} />}
         </div>
       ) : (
         <div className="text-bold24 mt-[164px] text-center">비공개</div>

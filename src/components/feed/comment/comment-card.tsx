@@ -202,7 +202,7 @@ export default function CommentCard({
 
               sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
-              router.push(`/profile/${comment.author_id}`);
+              router.push(`/profile/${comment.author.nickname}`);
             }}
             className="flex items-start"
           >
@@ -225,7 +225,7 @@ export default function CommentCard({
                     return;
                   }
 
-                  router.push(`/profile/${comment.author_id}`);
+                  router.push(`/profile/${comment.author.nickname}`);
                 }}
                 className="text-bold14"
               >
