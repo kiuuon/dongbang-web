@@ -84,18 +84,6 @@ function EditFeedPage() {
 
       queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
 
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'authoredFeedList',
-      });
-
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'taggedFeedList',
-      });
-
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'clubFeedList',
-      });
-
       router.back();
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEED.EDIT_FAILED, () => setIsLoading(false)),

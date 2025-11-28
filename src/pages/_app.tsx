@@ -97,33 +97,9 @@ export default function App({ Component, pageProps }: AppProps) {
             });
 
             queryClient.invalidateQueries({ queryKey: ['feedDetail', payload] });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'authoredFeedList',
-            });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'taggedFeedList',
-            });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'clubFeedList',
-            });
           } else if (action === 'delete feed') {
             queryClient.invalidateQueries({
               predicate: (query) => query.queryKey[0] === 'feeds',
-            });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'authoredFeedList',
-            });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'taggedFeedList',
-            });
-
-            queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'clubFeedList',
             });
           } else if (action === 'set club detail in create/edit club page') {
             const { clubCampusType, name, category, location, bio, description, tags } = payload;
@@ -136,13 +112,18 @@ export default function App({ Component, pageProps }: AppProps) {
             setTags(tags);
           } else if (action === 'set top in club page') {
             setClubPageTop(+payload.top);
-          } else if (action === 'block user in Feed') {
-            queryClient.invalidateQueries({ queryKey: ['feedDetail', payload] });
+          } else if (action === 'block user') {
+            if (payload.nickname) {
+              queryClient.invalidateQueries({ queryKey: ['blockStatus', payload.nickname] });
+            }
+
+            if (payload.feedId) {
+              queryClient.invalidateQueries({ queryKey: ['feedDetail', payload.feedId] });
+            }
+
             queryClient.invalidateQueries({
               predicate: (q) => q.queryKey[0] === 'feeds',
             });
-          } else if (action === 'block user in Profile') {
-            queryClient.invalidateQueries({ queryKey: ['blockStatus', payload] });
           }
         }
       } catch (error) {

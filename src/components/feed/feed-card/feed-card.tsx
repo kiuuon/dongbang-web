@@ -17,6 +17,7 @@ import LikesIcon from '@/icons/likes-icon';
 import CommentsIcon from '@/icons/comments-icon';
 import ProfileIcon2 from '@/icons/profile-icon2';
 import BottomSheet from '@/components/common/bottom-sheet';
+import FeedReportBottomSheet from '@/components/report/feed-report-bottomsheet';
 import FeedContent from './feed-content';
 import TaggedClubModal from './tagged-club-modal';
 import TaggedUserModal from './tagged-user-modal';
@@ -33,6 +34,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+  const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const { data: session } = useQuery({
@@ -330,6 +332,17 @@ function FeedCard({ feed }: { feed: FeedType }) {
       {feed.content && <FeedContent content={feed.content} />}
 
       {/* 바텀 시트 */}
+      {isReportBottomSheetOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>
+          <FeedReportBottomSheet
+            feedId={feed.id}
+            usreId={feed.author_id}
+            username={feed.author.name}
+            nickname={feed.author.nickname}
+            onClose={() => setIsReportBottomSheetOpen(false)}
+          />
+        </BottomSheet>
+      )}
       {isLikesModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsLikesModalOpen}>
           <LikesModal feedId={feed.id} />
@@ -352,7 +365,12 @@ function FeedCard({ feed }: { feed: FeedType }) {
       )}
       {isSettingModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsSettingModalOpen}>
-          <SettingModal authorId={feed.author_id} feedId={feed.id} onClose={() => setIsSettingModalOpen(false)} />
+          <SettingModal
+            authorId={feed.author_id}
+            feedId={feed.id}
+            onClose={() => setIsSettingModalOpen(false)}
+            setIsReportBottomSheetOpen={setIsReportBottomSheetOpen}
+          />
         </BottomSheet>
       )}
     </div>

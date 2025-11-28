@@ -28,6 +28,7 @@ import TaggedUserModal from '@/components/feed/feed-card/tagged-user-modal';
 import InteractModal from '@/components/feed/feed-card/interact-modal';
 import SettingModal from '@/components/feed/feed-card/setting-modal';
 import LikesModal from '@/components/feed/feed-card/likes-modal';
+import FeedReportBottomSheet from '@/components/report/feed-report-bottomsheet';
 
 function FeedDetailPage() {
   const router = useRouter();
@@ -39,6 +40,7 @@ function FeedDetailPage() {
   const [isInteractModalOpen, setIsInteractModalOpen] = useState(false);
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+  const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
 
   const setSearchTarget = exploreStore((state) => state.setSearchTarget);
   const setKeyword = exploreStore((state) => state.setKeyword);
@@ -408,6 +410,18 @@ function FeedDetailPage() {
       <CommentSection feed={feed} />
 
       {/* 바텀 시트 */}
+      {isReportBottomSheetOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>
+          <FeedReportBottomSheet
+            feedId={feed.id}
+            usreId={feed.author_id}
+            username={feed.author.name}
+            nickname={feed.author.nickname}
+            onClose={() => setIsReportBottomSheetOpen(false)}
+          />
+        </BottomSheet>
+      )}
+
       {isLikesModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsLikesModalOpen}>
           <LikesModal feedId={feed.id} />
@@ -430,7 +444,12 @@ function FeedDetailPage() {
       )}
       {isSettingModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsSettingModalOpen}>
-          <SettingModal authorId={feed.author_id} feedId={feed.id} onClose={() => setIsSettingModalOpen(false)} />
+          <SettingModal
+            authorId={feed.author_id}
+            feedId={feed.id}
+            onClose={() => setIsSettingModalOpen(false)}
+            setIsReportBottomSheetOpen={setIsReportBottomSheetOpen}
+          />
         </BottomSheet>
       )}
     </div>

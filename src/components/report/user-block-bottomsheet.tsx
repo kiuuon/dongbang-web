@@ -7,11 +7,13 @@ function UserBlockBottomSheet({
   userId,
   username,
   nickname,
+  feedId,
   onClose,
 }: {
   userId: string;
   username: string;
   nickname: string;
+  feedId?: string;
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
@@ -20,8 +22,17 @@ function UserBlockBottomSheet({
     mutationFn: () => blockUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['blockStatus', nickname] });
+
+      if (feedId) {
+        queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
+      }
+
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'feeds',
+      });
       onClose();
     },
+
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.BLOCK_FAILED),
   });
 

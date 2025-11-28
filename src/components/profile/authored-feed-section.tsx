@@ -16,7 +16,7 @@ function AuthoredFeedSection({ userId, viewType }: { userId: string; viewType: s
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     initialPageParam: 0,
-    queryKey: ['authoredFeedList', userId],
+    queryKey: ['feeds', userId],
     queryFn: ({ pageParam }) => fetchFeedsByAuthor(userId as string, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 15 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),

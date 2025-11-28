@@ -20,7 +20,7 @@ function FeedSection() {
 
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     initialPageParam: 0,
-    queryKey: ['clubFeedList', clubId],
+    queryKey: ['feeds', clubId],
     queryFn: ({ pageParam }) => fetchFeedsByClub(clubId as string, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 15 ? allPages.length : undefined),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.FEED.LIST_FETCH_FAILED),

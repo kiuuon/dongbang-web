@@ -15,7 +15,17 @@ import ExternalLinkIcon from '@/icons/external-link-icon';
 import ReportIcon from '@/icons/report-icon';
 import BanIcon from '@/icons/ban-icon';
 
-function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId: string; onClose: () => void }) {
+function SettingModal({
+  authorId,
+  feedId,
+  onClose,
+  setIsReportBottomSheetOpen,
+}: {
+  authorId: string;
+  feedId: string;
+  onClose: () => void;
+  setIsReportBottomSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { feedId: isFeedDetail } = router.query;
@@ -56,18 +66,6 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     onSuccess: () => {
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'feeds',
-      });
-
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'authoredFeedList',
-      });
-
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'taggedFeedList',
-      });
-
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === 'clubFeedList',
       });
 
       onClose();
@@ -153,7 +151,14 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
             차단
           </button>
           <div className="h-[1px] w-full bg-gray0" />
-          <button type="button" className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
+          <button
+            type="button"
+            className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
+            onClick={() => {
+              setIsReportBottomSheetOpen(true);
+              onClose();
+            }}
+          >
             <ReportIcon />
             신고
           </button>
