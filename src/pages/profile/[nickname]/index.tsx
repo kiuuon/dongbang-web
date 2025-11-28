@@ -27,6 +27,8 @@ import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import AccessDeniedPage from '@/components/common/access-denied-page';
 import UserAvatar from '@/components/common/user-avatar';
+import BottomSheet from '@/components/common/bottom-sheet';
+import UserReportBottomSheet from '@/components/report/user-report-bottomsheet';
 import AuthoredFeedSection from '@/components/profile/authored-feed-section';
 import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 import ClubsModal from '@/components/profile/clubs-modal';
@@ -46,6 +48,7 @@ function ProfilePage() {
   const [isWebView, setIsWebView] = useState(true);
   const [isClubsModalOpen, setIsClubsModalOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
@@ -172,7 +175,19 @@ function ProfilePage() {
       setIsLoginModalOpen(true);
     }
 
-    // TODO: 신고하기
+    setIsDropDownOpen(false);
+
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: 'event',
+          action: 'open report bottom sheet',
+          payload: { userId: user?.id, username: user?.name, nickname: user?.nickname },
+        }),
+      );
+    } else {
+      setIsReportBottomSheetOpen(true);
+    }
   };
 
   const copyProfileLinkToClipboard = async () => {
@@ -347,6 +362,17 @@ function ProfilePage() {
           </div>
         );
       })()}
+
+      {isReportBottomSheetOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>
+          <UserReportBottomSheet
+            usreId={user?.id}
+            username={user?.name}
+            nickname={user?.nickname}
+            onClose={() => setIsReportBottomSheetOpen(false)}
+          />
+        </BottomSheet>
+      )}
     </div>
   );
 }

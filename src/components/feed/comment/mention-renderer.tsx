@@ -49,7 +49,7 @@ function MentionRenderer({ text }: { text: string }) {
                     JSON.stringify({
                       type: 'event',
                       action: 'go to profile page',
-                      payload: user.id,
+                      payload: user.nickname,
                     }),
                   );
                   return;

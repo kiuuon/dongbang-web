@@ -141,6 +141,8 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (q) => q.queryKey[0] === 'feeds',
             });
+          } else if (action === 'block user in Profile') {
+            queryClient.invalidateQueries({ queryKey: ['blockStatus', payload] });
           }
         }
       } catch (error) {
