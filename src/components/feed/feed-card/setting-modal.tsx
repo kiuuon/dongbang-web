@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { fetchUserId } from '@/lib/apis/auth';
+import { blockUser } from '@/lib/apis/user';
 import { deleteFeed, fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { fetchMyRole } from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
@@ -12,6 +13,7 @@ import EditIcon from '@/icons/edit-icon';
 import DeleteIcon from '@/icons/delete-icon';
 import ExternalLinkIcon from '@/icons/external-link-icon';
 import ReportIcon from '@/icons/report-icon';
+import BanIcon from '@/icons/ban-icon';
 
 function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId: string; onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -35,6 +37,18 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
     queryFn: () => fetchMyRole(feed?.club_id),
     enabled: !!feed?.club_id,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
+  });
+
+  const { mutate: handleBlockUser } = useMutation({
+    mutationFn: () => blockUser(authorId),
+    onSuccess: () => {
+      onClose();
+      queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'feeds',
+      });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.BLOCK_FAILED),
   });
 
   const { mutate: handleDeleteFeed } = useMutation({
@@ -120,12 +134,6 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
         </div>
       ) : (
         <div className="mb-[30px] w-full rounded-[8px] bg-background">
-          <button type="button" className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
-            <ReportIcon />
-            신고
-          </button>
-          <div className="h-[1px] w-full bg-gray0" />
-          <div className="h-[1px] w-full bg-gray0" />
           <button
             type="button"
             className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
@@ -133,6 +141,21 @@ function SettingModal({ authorId, feedId, onClose }: { authorId: string; feedId:
           >
             <ExternalLinkIcon />
             공유
+          </button>
+
+          <div className="h-[1px] w-full bg-gray0" />
+          <button
+            type="button"
+            className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]"
+            onClick={() => handleBlockUser()}
+          >
+            <BanIcon />
+            차단
+          </button>
+          <div className="h-[1px] w-full bg-gray0" />
+          <button type="button" className="text-bold16 flex h-[66px] min-h-[66px] items-center gap-[30px] px-[48px]">
+            <ReportIcon />
+            신고
           </button>
         </div>
       )}

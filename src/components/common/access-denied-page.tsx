@@ -13,7 +13,11 @@ function AccessDeniedPage({ title, content }: { title: string; content: string }
         type="button"
         className="text-bold16 flex h-[43px] w-[292px] items-center justify-center rounded-[12px] bg-primary text-white"
         onClick={() => {
-          router.push('/');
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to home' }));
+          } else {
+            router.push('/');
+          }
         }}
       >
         홈으로 가기

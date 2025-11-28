@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
+import { blockUser } from '@/lib/apis/user';
 import { deleteComment, fetchMyCommentLike, fetchReplyComment, toggleCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
@@ -13,6 +14,7 @@ import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
 import LikesIcon3 from '@/icons/likes-icon3';
 import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
+import Ban2Icon from '@/icons/ban2-icon';
 import TopArrowIcon from '@/icons/top-arrow-icon';
 import BottomArrowIcon4 from '@/icons/bottom-arrow-icon4';
 import UserAvatar from '@/components/common/user-avatar';
@@ -21,14 +23,14 @@ import MentionRenderer from './mention-renderer';
 
 export default function CommentCard({
   comment,
-  reply,
-  setReply,
+  replyTargetId,
+  setReplyTargetId,
   setInputValue,
   textareaRef,
 }: {
   comment: CommentType;
-  reply: string;
-  setReply: any;
+  replyTargetId: string;
+  setReplyTargetId: React.Dispatch<React.SetStateAction<string>>;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
@@ -123,6 +125,22 @@ export default function CommentCard({
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.DELETE_FAILED),
   });
 
+  const { mutate: handleBlockUser } = useMutation({
+    mutationFn: () => blockUser(comment.author_id),
+    onSuccess: () => {
+      setIsDropDownOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['blockStatus', comment.author.nickname] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'rootCommentList',
+      });
+
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'replyCommentList',
+      });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.BLOCK_FAILED),
+  });
+
   const toggleLike = () => {
     if (!session?.user) {
       if (window.ReactNativeWebView) {
@@ -183,7 +201,7 @@ export default function CommentCard({
   return (
     <div className="flex flex-col">
       <div
-        className={`relative mb-[16px] flex flex-row justify-between ${reply === comment.id ? 'before:absolute before:-bottom-[8px] before:-top-[8px] before:left-1/2 before:-z-10 before:w-screen before:-translate-x-1/2 before:bg-background before:content-[""]' : ''} `}
+        className={`relative mb-[16px] flex flex-row justify-between ${replyTargetId === comment.id ? 'before:absolute before:-bottom-[8px] before:-top-[8px] before:left-1/2 before:-z-10 before:w-screen before:-translate-x-1/2 before:bg-background before:content-[""]' : ''} `}
       >
         <div className="flex flex-row gap-[12px]">
           <button
@@ -240,10 +258,10 @@ export default function CommentCard({
               type="button"
               className="text-regular12 text-start text-gray3"
               onClick={() => {
-                if (reply === '') {
-                  setReply(comment.id);
+                if (replyTargetId === '') {
+                  setReplyTargetId(comment.id);
                 } else {
-                  setReply('');
+                  setReplyTargetId('');
                 }
                 textareaRef.current?.focus();
               }}
@@ -282,7 +300,7 @@ export default function CommentCard({
           {isDropDownOpen && (
             <div
               ref={dropdownRef}
-              className="absolute right-0 top-[24px] z-10 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
+              className="absolute right-0 top-[24px] z-50 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
             >
               {(feed?.author_id === userId || comment.author_id === userId) && (
                 <button
@@ -300,6 +318,12 @@ export default function CommentCard({
                 <button type="button" className="flex w-full items-center gap-[9px]" onClick={report}>
                   <ReportIcon2 />
                   <span className="text-regular16 whitespace-nowrap text-error">신고</span>
+                </button>
+              )}
+              {(!session?.user || comment.author_id !== userId) && (
+                <button type="button" className="flex w-full items-center gap-[9px]" onClick={() => handleBlockUser()}>
+                  <Ban2Icon />
+                  <span className="text-regular16 whitespace-nowrap text-error">차단</span>
                 </button>
               )}
             </div>
@@ -323,6 +347,7 @@ export default function CommentCard({
                     key={rp.id}
                     reply={rp}
                     parentId={comment.id}
+                    setReplyTargetId={setReplyTargetId}
                     setInputValue={setInputValue}
                     textareaRef={textareaRef}
                   />

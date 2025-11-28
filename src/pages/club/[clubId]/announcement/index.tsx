@@ -105,6 +105,17 @@ function AnnouncementPage() {
                     key={announcement.id}
                     className="flex w-full flex-col items-start gap-[5px] border-b border-gray0 px-[24px] py-[8px]"
                     onClick={() => {
+                      if (window.ReactNativeWebView) {
+                        window.ReactNativeWebView.postMessage(
+                          JSON.stringify({
+                            type: 'event',
+                            action: 'go to announcement detail page',
+                            payload: announcement.id,
+                          }),
+                        );
+                        return;
+                      }
+
                       router.push(`/club/${clubId}/announcement/${announcement.id}`);
                     }}
                   >

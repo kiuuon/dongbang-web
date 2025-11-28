@@ -16,6 +16,10 @@ const ERROR_MESSAGE = {
     LIST_FETCH_FAILED: '유저 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     PROFILE_VISIBILITY_FETCH_FAILED: '프로필 공개 범위 설정을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     PROFILE_VISIBILITY_UPDATE_FAILED: '프로필 공개 범위 설정을 업데이트하는 데 실패했습니다. 다시 시도해주세요.',
+    BLOCK_FAILED: '차단에 실패했습니다. 다시 시도해주세요.',
+    UNBLOCK_FAILED: '차단 해제에 실패했습니다. 다시 시도해주세요.',
+    BLOCKED_USER_LIST_FETCH_FAILED: '차단 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    BLOCK_STATUS_FETCH_FAILED: '차단 상태를 불러오는 데 실패했습니다. 다시 시도해주세요.',
   },
   CLUB: {
     INFO_FETCH_FAILED: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',

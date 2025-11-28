@@ -21,7 +21,7 @@ function AnnouncementEditPage() {
   const router = useRouter();
   const { clubId, announcementId } = router.query as { clubId: string; announcementId: string };
 
-  const { isValid, ErrorComponent, announcement } = useClubAnnouncementPageValidation();
+  const { isValid, ErrorComponent, announcement, isSuccess } = useClubAnnouncementPageValidation();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -32,24 +32,28 @@ function AnnouncementEditPage() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const { data: myRole } = useQuery({
+  const { data: myRole, isSuccess: isMyRoleFetchSuccess } = useQuery({
     queryKey: ['myRole', clubId],
     queryFn: () => fetchMyRole(clubId as string),
     enabled: isValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
-  const { data: userId } = useQuery({
+  const { data: userId, isSuccess: isUserIdFetchSuccess } = useQuery({
     queryKey: ['userId'],
     queryFn: fetchUserId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
   useEffect(() => {
-    if (!hasPermission(myRole, 'manage_announcement') || userId !== announcement?.author.id) {
+    if (
+      (isMyRoleFetchSuccess && !hasPermission(myRole, 'manage_announcement')) ||
+      (isUserIdFetchSuccess && isSuccess && userId !== announcement?.author.id)
+    ) {
+      alert(`${userId} ${announcement?.author.id}`);
       router.replace(`/club`);
     }
-  }, [myRole, userId, announcement, router, clubId]);
+  }, [myRole, userId, announcement, router, clubId, isMyRoleFetchSuccess, isUserIdFetchSuccess, isValid, isSuccess]);
 
   useEffect(() => {
     if (announcement) {

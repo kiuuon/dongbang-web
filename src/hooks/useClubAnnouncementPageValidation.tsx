@@ -48,6 +48,7 @@ function useClubAnnouncementPageValidation() {
       clubInfo: null,
       announcement: null,
       isPending: isClubInfoPending || isAnnouncementPending,
+      isSuccess: isClubInfoSuccess && isAnnouncementSuccess,
       ErrorComponent: (
         <AccessDeniedPage title="공지를 찾을 수 없어요." content="존재하지 않는 동아리 또는 공지입니다." />
       ),
@@ -61,6 +62,7 @@ function useClubAnnouncementPageValidation() {
     clubInfo,
     announcement,
     isPending: isClubInfoPending || isAnnouncementPending,
+    isSuccess: isClubInfoSuccess && isAnnouncementSuccess,
     ErrorComponent: null,
   };
 }

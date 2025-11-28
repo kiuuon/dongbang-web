@@ -50,6 +50,7 @@ function AccountSettingPage() {
           프로필 편집
           <RightArrowIcon2 />
         </button>
+
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[13px] pl-[24px] pr-[20px]"
@@ -69,6 +70,7 @@ function AccountSettingPage() {
           </div>
           <RightArrowIcon2 />
         </button>
+
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[13px] pl-[24px] pr-[20px]"
@@ -87,15 +89,15 @@ function AccountSettingPage() {
           </div>
           <RightArrowIcon2 />
         </button>
+
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
           onClick={() => {
-            // TODO: 차단 목록
             if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: '' }));
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to block list page' }));
             } else {
-              // router.push('/profile/edit');
+              router.push('/mypage/setting/block-list');
             }
           }}
         >

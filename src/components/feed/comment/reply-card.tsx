@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchSession, fetchUserId } from '@/lib/apis/auth';
+import { blockUser } from '@/lib/apis/user';
 import { deleteComment, fetchMyCommentLike, toggleCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
@@ -13,17 +14,20 @@ import MoreHorizontalIcon from '@/icons/more-horizontal-icon';
 import LikesIcon3 from '@/icons/likes-icon3';
 import TrashIcon2 from '@/icons/trash-icon2';
 import ReportIcon2 from '@/icons/report-icon2';
+import Ban2Icon from '@/icons/ban2-icon';
 import UserAvatar from '@/components/common/user-avatar';
 import MentionRenderer from './mention-renderer';
 
 export default function ReplyCard({
   reply,
   parentId,
+  setReplyTargetId,
   setInputValue,
   textareaRef,
 }: {
   reply: CommentType;
   parentId: string;
+  setReplyTargetId: React.Dispatch<React.SetStateAction<string>>;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 }) {
@@ -94,6 +98,22 @@ export default function ReplyCard({
       queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.DELETE_FAILED),
+  });
+
+  const { mutate: handleBlockUser } = useMutation({
+    mutationFn: () => blockUser(reply.author_id),
+    onSuccess: () => {
+      setIsDropDownOpen(false);
+
+      queryClient.invalidateQueries({ queryKey: ['blockStatus', reply.author.nickname] });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'rootCommentList',
+      });
+      queryClient.invalidateQueries({
+        predicate: (q) => q.queryKey[0] === 'replyCommentList',
+      });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.BLOCK_FAILED),
   });
 
   const toggleLike = () => {
@@ -207,6 +227,7 @@ export default function ReplyCard({
             type="button"
             className="text-regular12 text-start text-gray3"
             onClick={() => {
+              setReplyTargetId(parentId);
               setInputValue(`@${reply.author.nickname} `);
               textareaRef.current?.focus();
             }}
@@ -243,7 +264,7 @@ export default function ReplyCard({
         {isDropDownOpen && (
           <div
             ref={dropdownRef}
-            className="absolute right-0 top-[24px] z-10 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
+            className="absolute right-0 top-[24px] z-50 flex flex-col gap-[11px] rounded-[4px] bg-white p-[10px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.25)]"
           >
             {(feed?.author_id === userId || reply.author_id === userId) && (
               <button
@@ -261,6 +282,12 @@ export default function ReplyCard({
               <button type="button" className="flex w-full items-center gap-[9px]" onClick={report}>
                 <ReportIcon2 />
                 <span className="text-regular16 whitespace-nowrap text-error">신고</span>
+              </button>
+            )}
+            {(!session?.user || reply.author_id !== userId) && (
+              <button type="button" className="flex w-full items-center gap-[9px]" onClick={() => handleBlockUser()}>
+                <Ban2Icon />
+                <span className="text-regular16 whitespace-nowrap text-error">차단</span>
               </button>
             )}
           </div>

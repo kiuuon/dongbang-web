@@ -97,7 +97,22 @@ function AnnouncementDetailPage() {
             <button
               type="button"
               className="flex w-full items-center gap-[9px]"
-              onClick={() => router.push(`/club/${clubId}/announcement/${announcementId}/edit`)}
+              onClick={() => {
+                setIsDropDownOpen(false);
+
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: 'event',
+                      action: 'go to announcement edit page',
+                      payload: announcementId,
+                    }),
+                  );
+                  return;
+                }
+
+                router.push(`/club/${clubId}/announcement/${announcementId}/edit`);
+              }}
             >
               <EditIcon2 />
               <span className="text-regular16 whitespace-nowrap text-gray3">수정</span>

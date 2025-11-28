@@ -136,6 +136,11 @@ export default function App({ Component, pageProps }: AppProps) {
             setTags(tags);
           } else if (action === 'set top in club page') {
             setClubPageTop(+payload.top);
+          } else if (action === 'block user in Feed') {
+            queryClient.invalidateQueries({ queryKey: ['feedDetail', payload] });
+            queryClient.invalidateQueries({
+              predicate: (q) => q.queryKey[0] === 'feeds',
+            });
           }
         }
       } catch (error) {

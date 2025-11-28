@@ -47,10 +47,11 @@ export async function fetchUserByNickname(nickname: string, showUniversity: bool
 }
 
 export async function fetchUserListByMention(keyword: string) {
-  const { data, error } = await supabase
-    .from('User')
-    .select('avatar, nickname, name')
-    .or(`nickname.ilike.%${keyword}%,name.ilike.%${keyword}%`);
+  if (!keyword.trim()) return [];
+
+  const { data, error } = await supabase.rpc('search_mention_users', {
+    p_keyword: keyword,
+  });
 
   if (error) throw error;
 
@@ -98,4 +99,43 @@ export async function updateUserProfileVisibility(body: {
   const { error } = await supabase.from('user_profile_visibility').update(body).eq('user_id', userId);
 
   if (error) throw error;
+}
+
+export async function fetchBlockedUserList() {
+  const userId = await fetchUserId();
+
+  const { data, error } = await supabase
+    .from('user_block')
+    .select('*, blockedUser:User!User_Block_blocked_id_fkey(id, name, nickname, avatar)')
+    .eq('blocker_id', userId);
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function blockUser(userId: string) {
+  const { error } = await supabase.rpc('block_user', {
+    p_blocked_id: userId,
+  });
+
+  if (error) throw error;
+}
+
+export async function unblockUser(userId: string) {
+  const { error } = await supabase.rpc('unblock_user', {
+    p_blocked_id: userId,
+  });
+
+  if (error) throw error;
+}
+
+export async function fetchBlockStatus(targetNickname: string) {
+  const { data, error } = await supabase.rpc('check_block_status', {
+    p_nickname: targetNickname,
+  });
+
+  if (error) throw error;
+
+  return data;
 }

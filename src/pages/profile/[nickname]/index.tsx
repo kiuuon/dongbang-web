@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
-import { fetchSession } from '@/lib/apis/auth';
-import { fetchUserByNickname, fetchUserProfileVisibilityByNickname } from '@/lib/apis/user';
-import { handleQueryError } from '@/lib/utils';
+import { fetchSession, fetchUserId } from '@/lib/apis/auth';
+import {
+  blockUser,
+  fetchBlockStatus,
+  fetchUserByNickname,
+  fetchUserProfileVisibilityByNickname,
+  unblockUser,
+} from '@/lib/apis/user';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import profilePageStore from '@/stores/profile-page-store';
 import loginModalStore from '@/stores/login-modal-store';
@@ -16,6 +22,7 @@ import ListIcon from '@/icons/list-icon';
 import FeedIcon2 from '@/icons/feed-icon2';
 import TaggedFeedIcon from '@/icons/tagged-feed-icon';
 import ReportIcon2 from '@/icons/report-icon2';
+import Ban2Icon from '@/icons/ban2-icon';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import AccessDeniedPage from '@/components/common/access-denied-page';
@@ -25,6 +32,7 @@ import TaggedFeedSection from '@/components/profile/tagged-feed-section';
 import ClubsModal from '@/components/profile/clubs-modal';
 
 function ProfilePage() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { nickname } = router.query as { nickname: string };
 
@@ -96,25 +104,56 @@ function ProfilePage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
-  const { data: profileVisibility, isPending: isProfileVisibilityPending } = useQuery({
+  const { data: userId } = useQuery({
+    queryKey: ['userId'],
+    queryFn: fetchUserId,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
+  });
+
+  const { data: blockStatus } = useQuery({
+    queryKey: ['blockStatus', nickname],
+    queryFn: () => fetchBlockStatus(nickname as string),
+    enabled: !!nickname,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.BLOCK_STATUS_FETCH_FAILED),
+  });
+
+  const {
+    data: profileVisibility,
+    isPending: isProfileVisibilityPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['userProfileVisibility', nickname],
     queryFn: () => fetchUserProfileVisibilityByNickname(nickname as string),
     enabled: !!nickname,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.PROFILE_VISIBILITY_FETCH_FAILED),
   });
 
-  const {
-    data: user,
-    isPending,
-    isSuccess,
-  } = useQuery({
+  const { data: user, isPending } = useQuery({
     queryKey: ['user', nickname],
-    queryFn: () => fetchUserByNickname(nickname as string, profileVisibility?.show_university),
+    queryFn: () =>
+      fetchUserByNickname(nickname as string, blockStatus.blockedMe ? false : profileVisibility?.show_university),
     enabled: !!profileVisibility,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.INFO_FETCH_FAILED),
   });
 
-  if (isSuccess && !user && !isPending) {
+  const { mutate: handleBlockUser } = useMutation({
+    mutationFn: () => blockUser(user?.id),
+    onSuccess: () => {
+      setIsDropDownOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['blockStatus', nickname] });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.BLOCK_FAILED),
+  });
+
+  const { mutate: handleUnblockUser } = useMutation({
+    mutationFn: (targetUserId: string) => unblockUser(targetUserId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blockStatus', nickname] });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.USER.UNBLOCK_FAILED),
+  });
+
+  if (isSuccess && !profileVisibility && !isProfileVisibilityPending) {
     return <AccessDeniedPage title="사용자를 찾을 수 없어요." content="존재하지 않는 사용자입니다." />;
   }
 
@@ -158,9 +197,11 @@ function ProfilePage() {
     <div className={`min-h-screen p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}>
       <Header>
         <BackButton />
-        <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
-          <MoreVertIcon />
-        </button>
+        {userId !== user?.id && !blockStatus.iBlocked && (
+          <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
+            <MoreVertIcon />
+          </button>
+        )}
       </Header>
 
       {/* 학생증 */}
@@ -183,42 +224,58 @@ function ProfilePage() {
         <div className="text-regular14 flex flex-col gap-[4px] text-gray2">
           <div className="flex justify-between">
             <span>학교</span>
-            {profileVisibility?.show_university && <span>{user?.University.name}</span>}
+            {profileVisibility?.show_university && !blockStatus.blockedMe && <span>{user?.University.name}</span>}
           </div>
           <div className="flex justify-between">
             <span>학과</span>
-            {profileVisibility?.show_university && <span>{user?.major}</span>}
+            {profileVisibility?.show_university && !blockStatus.blockedMe && <span>{user?.major}</span>}
           </div>
         </div>
       </div>
 
       {/* 버튼 */}
-      <div className="mb-[24px] mt-[16px] flex w-full gap-[14px]">
+      {blockStatus.iBlocked && (
         <button
           type="button"
-          className={`text-regular14 h-[32px] w-full rounded-[8px] bg-gray0 ${!profileVisibility?.show_clubs ? 'text-gray1' : 'text-black'}`}
-          onClick={() => {
-            if (!profileVisibility?.show_clubs) {
-              return;
-            }
+          className="text-bold14 mt-[16px] w-full rounded-[8px] bg-primary py-[8px] text-center text-white"
+          onClick={() => handleUnblockUser(user?.id)}
+        >
+          차단 해제
+        </button>
+      )}
+      {blockStatus.blockedMe && !blockStatus.iBlocked && (
+        <div className="text-bold14 mt-[16px] w-full rounded-[8px] bg-gray0 py-[8px] text-center">
+          접근 할 수 없는 사용자
+        </div>
+      )}
+      {!blockStatus.blockedMe && !blockStatus.iBlocked && (
+        <div className="mb-[24px] mt-[16px] flex w-full gap-[14px]">
+          <button
+            type="button"
+            className={`text-regular14 h-[32px] w-full rounded-[8px] bg-gray0 ${!profileVisibility?.show_clubs ? 'text-gray1' : 'text-black'}`}
+            onClick={() => {
+              if (!profileVisibility?.show_clubs) {
+                return;
+              }
 
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open clubs modal' }));
-            } else {
-              setIsClubsModalOpen(true);
-            }
-          }}
-        >
-          소속 동아리
-        </button>
-        <button
-          type="button"
-          className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0"
-          onClick={copyProfileLinkToClipboard}
-        >
-          프로필 공유
-        </button>
-      </div>
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open clubs modal' }));
+              } else {
+                setIsClubsModalOpen(true);
+              }
+            }}
+          >
+            소속 동아리
+          </button>
+          <button
+            type="button"
+            className="text-regular14 h-[32px] w-full rounded-[8px] bg-gray0"
+            onClick={copyProfileLinkToClipboard}
+          >
+            프로필 공유
+          </button>
+        </div>
+      )}
 
       {isClubsModalOpen && <ClubsModal onClose={() => setIsClubsModalOpen(false)} />}
 
@@ -231,48 +288,65 @@ function ProfilePage() {
             <ReportIcon2 />
             <span className="text-regular16 whitespace-nowrap text-error">신고</span>
           </button>
+          <button type="button" className="flex w-full items-center gap-[9px]" onClick={() => handleBlockUser()}>
+            <Ban2Icon />
+            <span className="text-regular16 whitespace-nowrap text-error">차단</span>
+          </button>
         </div>
       )}
 
       {/* 피드 */}
-      {profileVisibility?.show_feed ? (
-        <div>
-          <div ref={sentinelRef} className={`${isFeedHeaderOnTop && 'h-[47px]'} w-full`} />
-          <div
-            className={`${isFeedHeaderOnTop && 'fixed left-0 right-0 top-[60px] z-50 m-auto max-w-[600px] px-[20px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
-          >
-            <div className="flex">
-              <button
-                type="button"
-                className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'authored' && 'border-b border-b-primary'} pb-[5px]`}
-                onClick={() => setSelectedFeedType(nickname, 'authored')}
-              >
-                <FeedIcon2 isActive={selectedFeedType === 'authored'} />
-              </button>
-              <button
-                type="button"
-                className={`flex w-[75px] items-center justify-center ${selectedFeedType === 'tagged' && 'border-b border-b-primary'} pb-[5px]`}
-                onClick={() => setSelectedFeedType(nickname, 'tagged')}
-              >
-                <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
-              </button>
-            </div>
-            <div className="flex gap-[27px] pb-[5px]">
-              <button type="button" onClick={() => setViewType(nickname, 'grid')}>
-                <GridIcon isActive={viewType === 'grid'} />
-              </button>
-              <button type="button" onClick={() => setViewType(nickname, 'list')}>
-                <ListIcon isActive={viewType === 'list'} />
-              </button>
-            </div>
-          </div>
+      {(() => {
+        // 1. 차단 상태면 아무 UI도 표시 안함
+        if (blockStatus.blockedMe || blockStatus.iBlocked) return null;
 
-          {selectedFeedType === 'authored' && <AuthoredFeedSection userId={user.id} viewType={viewType} />}
-          {selectedFeedType === 'tagged' && <TaggedFeedSection userId={user.id} viewType={viewType} />}
-        </div>
-      ) : (
-        <div className="text-bold24 mt-[164px] text-center">비공개</div>
-      )}
+        // 2. 피드가 비공개면 "비공개" 표시
+        if (!profileVisibility?.show_feed) {
+          return <div className="text-bold24 mt-[164px] text-center">비공개</div>;
+        }
+
+        // 3. 공개 + 차단 아님 → 피드 렌더링
+        return (
+          <div>
+            <div ref={sentinelRef} className={`${isFeedHeaderOnTop && 'h-[47px]'} w-full`} />
+            <div
+              className={`${isFeedHeaderOnTop && 'fixed left-0 right-0 top-[60px] z-50 m-auto max-w-[600px] px-[20px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+            >
+              <div className="flex">
+                <button
+                  type="button"
+                  className={`flex w-[75px] items-center justify-center ${
+                    selectedFeedType === 'authored' && 'border-b border-b-primary'
+                  } pb-[5px]`}
+                  onClick={() => setSelectedFeedType(nickname, 'authored')}
+                >
+                  <FeedIcon2 isActive={selectedFeedType === 'authored'} />
+                </button>
+                <button
+                  type="button"
+                  className={`flex w-[75px] items-center justify-center ${
+                    selectedFeedType === 'tagged' && 'border-b border-b-primary'
+                  } pb-[5px]`}
+                  onClick={() => setSelectedFeedType(nickname, 'tagged')}
+                >
+                  <TaggedFeedIcon isActive={selectedFeedType === 'tagged'} />
+                </button>
+              </div>
+              <div className="flex gap-[27px] pb-[5px]">
+                <button type="button" onClick={() => setViewType(nickname, 'grid')}>
+                  <GridIcon isActive={viewType === 'grid'} />
+                </button>
+                <button type="button" onClick={() => setViewType(nickname, 'list')}>
+                  <ListIcon isActive={viewType === 'list'} />
+                </button>
+              </div>
+            </div>
+
+            {selectedFeedType === 'authored' && <AuthoredFeedSection userId={user.id} viewType={viewType} />}
+            {selectedFeedType === 'tagged' && <TaggedFeedSection userId={user.id} viewType={viewType} />}
+          </div>
+        );
+      })()}
     </div>
   );
 }

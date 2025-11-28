@@ -17,7 +17,7 @@ import CommentCard from './comment-card';
 function CommentSection({ feed }: { feed: FeedType }) {
   const queryClient = useQueryClient();
   const [inputValue, setInputValue] = useState('');
-  const [reply, setReply] = useState('');
+  const [replyTargetId, setReplyTargetId] = useState('');
   const setIsLoginModalOpen = loginModalStore((state) => state.setIsOpen);
 
   const [keyword, setKeyword] = useState('');
@@ -107,12 +107,12 @@ function CommentSection({ feed }: { feed: FeedType }) {
   });
 
   const { mutate: hanldeAddReplyComment } = useMutation({
-    mutationFn: () => addReplyComment(feed.id, reply, inputValue),
+    mutationFn: () => addReplyComment(feed.id, replyTargetId, inputValue),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feed.id] });
-      queryClient.invalidateQueries({ queryKey: ['replyCommentList', reply] });
+      queryClient.invalidateQueries({ queryKey: ['replyCommentList', replyTargetId] });
 
-      const ref = bottomReplyRefs.current[reply];
+      const ref = bottomReplyRefs.current[replyTargetId];
       if (ref) {
         setTimeout(() => {
           ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -120,7 +120,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
       }
 
       setInputValue('');
-      setReply('');
+      setReplyTargetId('');
 
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
@@ -215,7 +215,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                   setIsLoginModalOpen(true);
                   return;
                 }
-                if (reply === '') {
+                if (replyTargetId === '') {
                   hanldeAddRootComment();
                 } else {
                   hanldeAddReplyComment();
@@ -242,8 +242,8 @@ function CommentSection({ feed }: { feed: FeedType }) {
                   <CommentCard
                     key={comment.id}
                     comment={comment}
-                    reply={reply}
-                    setReply={setReply}
+                    replyTargetId={replyTargetId}
+                    setReplyTargetId={setReplyTargetId}
                     setInputValue={setInputValue}
                     textareaRef={textareaRef}
                   />
@@ -321,7 +321,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
                   setIsLoginModalOpen(true);
                   return;
                 }
-                if (reply === '') {
+                if (replyTargetId === '') {
                   hanldeAddRootComment();
                 } else {
                   hanldeAddReplyComment();
