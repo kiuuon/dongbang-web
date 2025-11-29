@@ -19,6 +19,8 @@ import PencilIcon from '@/icons/pencil-icon';
 import XIcon3 from '@/icons/x-icon3';
 import MembersIcon from '@/icons/members-icon';
 import ReportIcon2 from '@/icons/report-icon2';
+import BottomSheet from '@/components/common/bottom-sheet';
+import ClubReportBottomSheet from '@/components/report/club-report-bottomsheet';
 import WriteModal from '@/components/club/[clubId]/write-modal';
 import ClubProfile from '@/components/club/[clubId]/club-profile';
 import ClubHeader from '@/components/club/[clubId]/club-header';
@@ -37,6 +39,7 @@ function ClubPage() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
 
   const { isValid, clubInfo, ErrorComponent } = useClubPageValidation();
 
@@ -136,7 +139,11 @@ function ClubPage() {
       setIsLoginModalOpen(true);
     }
 
-    // TODO: 신고하기
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open club report bottom sheet' }));
+    } else {
+      setIsReportBottomSheetOpen(true);
+    }
   };
 
   return (
@@ -261,6 +268,12 @@ function ClubPage() {
             <span className="text-regular16 whitespace-nowrap text-error">신고</span>
           </button>
         </div>
+      )}
+
+      {isReportBottomSheetOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>
+          <ClubReportBottomSheet clubId={clubId as string} onClose={() => setIsReportBottomSheetOpen(false)} />
+        </BottomSheet>
       )}
     </div>
   );
