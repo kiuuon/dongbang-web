@@ -121,6 +121,16 @@ export default function App({ Component, pageProps }: AppProps) {
               queryClient.invalidateQueries({ queryKey: ['feedDetail', payload.feedId] });
             }
 
+            if (payload.commentId) {
+              queryClient.invalidateQueries({
+                predicate: (q) => q.queryKey[0] === 'rootCommentList',
+              });
+
+              queryClient.invalidateQueries({
+                predicate: (q) => q.queryKey[0] === 'replyCommentList',
+              });
+            }
+
             queryClient.invalidateQueries({
               predicate: (q) => q.queryKey[0] === 'feeds',
             });

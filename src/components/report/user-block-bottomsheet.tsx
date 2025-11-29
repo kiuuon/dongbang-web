@@ -8,12 +8,14 @@ function UserBlockBottomSheet({
   username,
   nickname,
   feedId,
+  commentId,
   onClose,
 }: {
   userId: string;
   username: string;
   nickname: string;
   feedId?: string;
+  commentId?: string;
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
@@ -25,6 +27,16 @@ function UserBlockBottomSheet({
 
       if (feedId) {
         queryClient.invalidateQueries({ queryKey: ['feedDetail', feedId] });
+      }
+
+      if (commentId) {
+        queryClient.invalidateQueries({
+          predicate: (q) => q.queryKey[0] === 'rootCommentList',
+        });
+
+        queryClient.invalidateQueries({
+          predicate: (q) => q.queryKey[0] === 'replyCommentList',
+        });
       }
 
       queryClient.invalidateQueries({

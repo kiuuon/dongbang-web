@@ -18,6 +18,8 @@ import Ban2Icon from '@/icons/ban2-icon';
 import TopArrowIcon from '@/icons/top-arrow-icon';
 import BottomArrowIcon4 from '@/icons/bottom-arrow-icon4';
 import UserAvatar from '@/components/common/user-avatar';
+import BottomSheet from '@/components/common/bottom-sheet';
+import CommentReportBottomSheet from '@/components/report/comment-report-bottomsheet';
 import ReplyCard from './reply-card';
 import MentionRenderer from './mention-renderer';
 
@@ -41,6 +43,7 @@ export default function CommentCard({
 
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReplyOpen, setIsReplyOpen] = useState(false);
+  const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -175,7 +178,18 @@ export default function CommentCard({
       setIsLoginModalOpen(true);
     }
 
-    // TODO: 신고하기
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: 'event',
+          action: 'open comment report bottom sheet',
+          payload: comment.id,
+        }),
+      );
+    } else {
+      setIsReportBottomSheetOpen(true);
+    }
+    setIsDropDownOpen(false);
   };
 
   function getTimeAgo(dateString: string) {
@@ -369,6 +383,18 @@ export default function CommentCard({
             </button>
           )}
         </div>
+      )}
+
+      {isReportBottomSheetOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>
+          <CommentReportBottomSheet
+            commentId={comment.id}
+            usreId={comment.author_id}
+            username={comment.author.name}
+            nickname={comment.author.nickname}
+            onClose={() => setIsReportBottomSheetOpen(false)}
+          />
+        </BottomSheet>
       )}
     </div>
   );
