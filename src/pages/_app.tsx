@@ -134,6 +134,9 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({
               predicate: (q) => q.queryKey[0] === 'feeds',
             });
+          } else if (action === 'leave club') {
+            queryClient.invalidateQueries({ queryKey: ['isClubMember', payload] });
+            queryClient.invalidateQueries({ queryKey: ['myApply', payload] });
           }
         }
       } catch (error) {

@@ -391,6 +391,34 @@ export async function fetchClubMember(clubId: string, userId: string) {
   return data[0];
 }
 
+export async function fetchClubNickname(clubId: string) {
+  const userId = await fetchUserId();
+
+  if (!userId) return null;
+
+  const { data, error } = await supabase
+    .from('Club_User')
+    .select('club_nickname')
+    .eq('club_id', clubId)
+    .eq('user_id', userId)
+    .is('deleted_at', null)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data?.club_nickname;
+}
+
+export async function updateClubNickname(clubId: string, clubNickname: string) {
+  const { error } = await supabase.rpc('update_club_nickname', {
+    p_club_id: clubId,
+    p_club_nickname: clubNickname,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
 export async function changeMemberRole(
   clubId: string,
   userId: string,

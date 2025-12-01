@@ -9,6 +9,7 @@ import { hasPermission } from '@/lib/club/service';
 import FeedIcon from '@/icons/feed-icon';
 import PersonIcon2 from '@/icons/person-icon2';
 import EditIcon from '@/icons/edit-icon';
+import TagIcon from '@/icons/tag-icon';
 
 function WriteModal({ onClose }: { onClose: () => void }) {
   const router = useRouter();
@@ -75,13 +76,30 @@ function WriteModal({ onClose }: { onClose: () => void }) {
       }}
     >
       <div className="absolute bottom-[110px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+        <button
+          type="button"
+          className="text-regular16 flex items-center gap-[8px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              onClose();
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to club profile page' }),
+              );
+              return;
+            }
+            router.push(`/club/${clubId}/profile`);
+          }}
+        >
+          <TagIcon />
+          활동명 변경
+        </button>
         <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={writeFeed}>
           <FeedIcon />
           피드 작성
         </button>
       </div>
       {hasPermission(role, 'manage_membership') && (
-        <div className="absolute bottom-[179px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
+        <div className="absolute bottom-[220px] right-[20px] flex w-[181px] flex-col gap-[18px] rounded-[8px] bg-white px-[14px] py-[16px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.1)]">
           <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={goToMembersManagePage}>
             <PersonIcon2 />
             부원 관리
