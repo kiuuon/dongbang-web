@@ -25,6 +25,7 @@ const ERROR_MESSAGE = {
     BLOCK_STATUS_FETCH_FAILED: '차단 상태를 불러오는 데 실패했습니다. 다시 시도해주세요.',
   },
   CLUB: {
+    LEAVE_CLUB_FAILED: '동아리 탈퇴에 실패했습니다. 다시 시도해주세요.',
     INFO_FETCH_FAILED: '동아리 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
     MEMBERS_FETCH_FAILED: '동아리 멤버 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     MEMBER_FETCH_FAILED: '동아리 멤버를 불러오는 데 실패했습니다. 다시 시도해주세요.',

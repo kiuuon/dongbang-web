@@ -10,6 +10,8 @@ import {
   checkIsClubMember,
   fetchClubMembers,
   fetchMyApply,
+  fetchMyRole,
+  leaveClub,
 } from '@/lib/apis/club/club';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
@@ -59,6 +61,12 @@ function ClubPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
   });
 
+  const { data: myRole } = useQuery({
+    queryKey: ['myRole', clubId],
+    queryFn: () => fetchMyRole(clubId as string),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
+  });
+
   const { data: isClubMember, isPending: isPendingToCheckingClubMember } = useQuery({
     queryKey: ['isClubMember', clubId],
     queryFn: () => checkIsClubMember(clubId as string),
@@ -93,6 +101,15 @@ function ClubPage() {
       queryClient.invalidateQueries({ queryKey: ['myApply', clubId] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CANCEL_APPLICATION_FAILED),
+  });
+
+  const { mutate: handleLeaveClub } = useMutation({
+    mutationFn: async () => leaveClub(clubId as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['isClubMember', clubId] });
+      setIsDropDownOpen(false);
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.LEAVE_CLUB_FAILED),
   });
 
   if (!isValid) {
@@ -267,6 +284,12 @@ function ClubPage() {
             <ReportIcon2 />
             <span className="text-regular16 whitespace-nowrap text-error">신고</span>
           </button>
+          {isClubMember && myRole !== 'president' && (
+            <button type="button" className="flex w-full items-center gap-[9px]" onClick={() => handleLeaveClub()}>
+              <ReportIcon2 />
+              <span className="text-regular16 whitespace-nowrap text-error">탈퇴</span>
+            </button>
+          )}
         </div>
       )}
 

@@ -209,6 +209,16 @@ export async function joinClub(clubId: string, code: string) {
   if (error) throw error;
 }
 
+export async function leaveClub(clubId: string) {
+  const { error } = await supabase.rpc('leave_club', {
+    p_club_id: clubId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function checkIsClubMember(clubId: string) {
   const userId = await fetchUserId();
 
@@ -386,11 +396,11 @@ export async function changeMemberRole(
   userId: string,
   newRole: 'president' | 'officer' | 'member' | 'on_leave' | 'graduate',
 ) {
-  const { error } = await supabase
-    .from('Club_User')
-    .update({ role: newRole })
-    .eq('club_id', clubId)
-    .eq('user_id', userId);
+  const { error } = await supabase.rpc('change_member_role', {
+    p_club_id: clubId,
+    p_user_id: userId,
+    p_new_role: newRole,
+  });
 
   if (error) {
     throw error;
@@ -398,24 +408,14 @@ export async function changeMemberRole(
 }
 
 export async function transferPresident(clubId: string, targetUserId: string) {
-  const userId = await fetchUserId();
+  const { error } = await supabase.rpc('transfer_president', {
+    p_club_id: clubId,
+    p_target_user_id: targetUserId,
+  });
 
-  const { error: promoteError } = await supabase
-    .from('Club_User')
-    .update({ role: 'president' })
-    .eq('club_id', clubId)
-    .eq('user_id', targetUserId);
-
-  if (promoteError) throw promoteError;
-
-  // B. 현재 회장을 officer 로 변경
-  const { error: demoteError } = await supabase
-    .from('Club_User')
-    .update({ role: 'officer' })
-    .eq('club_id', clubId)
-    .eq('user_id', userId);
-
-  if (demoteError) throw demoteError;
+  if (error) {
+    throw error;
+  }
 }
 
 export async function expelMember(clubId: string, userId: string, expelReason: string | null) {
