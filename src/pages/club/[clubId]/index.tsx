@@ -29,6 +29,7 @@ import ClubHeader from '@/components/club/[clubId]/club-header';
 import AnnouncementButton from '@/components/club/[clubId]/announcement-button';
 import Board from '@/components/club/[clubId]/board/board';
 import MembersModal from '@/components/club/[clubId]/members-modal';
+import LogoutIcon from '@/icons/logout-icon';
 
 function ClubPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ function ClubPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [isReportBottomSheetOpen, setIsReportBottomSheetOpen] = useState(false);
+  const [isLeaveClubModalOpen, setIsLeaveClubModalOpen] = useState(false);
 
   const { isValid, clubInfo, ErrorComponent } = useClubPageValidation();
 
@@ -107,7 +109,8 @@ function ClubPage() {
     mutationFn: async () => leaveClub(clubId as string),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isClubMember', clubId] });
-      setIsDropDownOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['myApply', clubId] });
+      setIsLeaveClubModalOpen(false);
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.LEAVE_CLUB_FAILED),
   });
@@ -285,11 +288,55 @@ function ClubPage() {
             <span className="text-regular16 whitespace-nowrap text-error">신고</span>
           </button>
           {isClubMember && myRole !== 'president' && (
-            <button type="button" className="flex w-full items-center gap-[9px]" onClick={() => handleLeaveClub()}>
-              <ReportIcon2 />
+            <button
+              type="button"
+              className="flex w-full items-center gap-[9px]"
+              onClick={() => {
+                setIsLeaveClubModalOpen(true);
+                setIsDropDownOpen(false);
+              }}
+            >
+              <LogoutIcon color="#F40707" />
               <span className="text-regular16 whitespace-nowrap text-error">탈퇴</span>
             </button>
           )}
+        </div>
+      )}
+
+      {isLeaveClubModalOpen && (
+        <div
+          tabIndex={0}
+          role="button"
+          className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-center bg-black bg-opacity-60 px-[60px]"
+          onClick={() => {
+            setIsLeaveClubModalOpen(false);
+          }}
+          onKeyDown={() => {
+            setIsLeaveClubModalOpen(false);
+          }}
+        >
+          <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white px-[27px] py-[24px]">
+            <div className="text-bold14 mb-[24px]">소속된 동아리에서 탈퇴하시겠습니까?</div>
+
+            <button
+              type="button"
+              className="text-bold14 mb-[16px] text-error"
+              onClick={() => {
+                handleLeaveClub();
+              }}
+            >
+              탈퇴 하기
+            </button>
+            <button
+              type="button"
+              className="text-regular14"
+              onClick={() => {
+                setIsLeaveClubModalOpen(false);
+              }}
+            >
+              취소
+            </button>
+          </div>
         </div>
       )}
 
