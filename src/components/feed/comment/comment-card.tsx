@@ -85,12 +85,14 @@ export default function CommentCard({
 
   const { data: isLike } = useQuery({
     queryKey: ['isCommentLike', comment.id],
-    queryFn: () => fetchMyCommentLike(comment.id),
+    queryFn: () => fetchMyCommentLike(comment.id, userId as string),
+    enabled: !!userId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     initialPageParam: 0,
+    enabled: isReplyOpen && comment.reply_count > 0,
     queryKey: ['replyCommentList', comment.id],
     queryFn: ({ pageParam }) => fetchReplyComment(feed.id, comment.id, pageParam),
     getNextPageParam: (lastPage, allPages) => (lastPage?.length === 5 ? allPages.length : undefined),

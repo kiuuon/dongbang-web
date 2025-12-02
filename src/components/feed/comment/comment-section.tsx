@@ -27,7 +27,6 @@ function CommentSection({ feed }: { feed: FeedType }) {
 
   const observerElement = useRef(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const bottomCommentRef = useRef<HTMLDivElement>(null);
   const bottomReplyRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const { data: session } = useQuery({
@@ -99,9 +98,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
         textareaRef.current.style.height = 'auto';
       }
 
-      setTimeout(() => {
-        bottomCommentRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.COMMENT.WRITE_FAILED),
   });
@@ -235,27 +232,25 @@ function CommentSection({ feed }: { feed: FeedType }) {
       <div className="text-regular12">댓글 {(commentCount as number) > 0 && commentCount}</div>
       {(commentCount as number) > 0 ? (
         <div>
-          {
-            data?.pages.map((page) =>
-              page.map((comment) => (
-                <div>
-                  <CommentCard
-                    key={comment.id}
-                    comment={comment}
-                    replyTargetId={replyTargetId}
-                    setReplyTargetId={setReplyTargetId}
-                    setInputValue={setInputValue}
-                    textareaRef={textareaRef}
-                  />
-                  <div
-                    ref={(el) => {
-                      bottomReplyRefs.current[comment.id] = el;
-                    }}
-                  />
-                </div>
-              )),
-            )[0]
-          }
+          {data?.pages.map((page) =>
+            page.map((comment) => (
+              <div>
+                <CommentCard
+                  key={comment.id}
+                  comment={comment}
+                  replyTargetId={replyTargetId}
+                  setReplyTargetId={setReplyTargetId}
+                  setInputValue={setInputValue}
+                  textareaRef={textareaRef}
+                />
+                <div
+                  ref={(el) => {
+                    bottomReplyRefs.current[comment.id] = el;
+                  }}
+                />
+              </div>
+            )),
+          )}
         </div>
       ) : (
         <div className="mt-[28px] flex w-full flex-col items-center justify-center gap-[16px]">
@@ -263,7 +258,7 @@ function CommentSection({ feed }: { feed: FeedType }) {
           <div className="text-regular20 text-gray3">첫 댓글을 남겨보세요</div>
         </div>
       )}
-      <div ref={bottomCommentRef} />
+
       <div className="fixed bottom-0 left-1/2 z-10 flex w-screen max-w-[600px] -translate-x-1/2 flex-col">
         {isActive && mentionUsers.length > 0 && (
           <div className="flex w-full flex-col gap-[4px] border-t border-t-gray0 bg-white p-[8px]">

@@ -18,7 +18,9 @@ function MentionRenderer({ text }: { text: string }) {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.LIST_FETCH_FAILED),
   });
 
-  const userMap = Object.fromEntries(mentionedUsers?.map((u: any) => [u.nickname, u]) || []);
+  const userMap = Object.fromEntries(
+    mentionedUsers?.map((u: { id: string; nickname: string; name: string }) => [u.nickname, u]) || [],
+  );
 
   const parts = text.split(/(@[\w가-힣]+)|(\n)/g).filter(Boolean);
 

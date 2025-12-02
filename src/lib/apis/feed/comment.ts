@@ -1,4 +1,3 @@
-import { fetchUserId } from '../auth';
 import { supabase } from '../supabaseClient';
 
 export async function fetchFeedCommentCount(feedId: string) {
@@ -42,7 +41,7 @@ export async function fetchRootComment(feedId: string, page: number) {
     .eq('feed_id', feedId)
     .is('parent_id', null)
     .is('deleted_at', null)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
     .range(start, end);
 
   if (error) throw error;
@@ -118,11 +117,7 @@ export async function fetchCommentLikeCount(commentId: string) {
   return data.like_count as number;
 }
 
-export async function fetchMyCommentLike(commentId: string) {
-  const userId = await fetchUserId();
-
-  if (!userId) return false;
-
+export async function fetchMyCommentLike(commentId: string, userId: string) {
   const { data, error } = await supabase
     .from('Comment_Like')
     .select('*')

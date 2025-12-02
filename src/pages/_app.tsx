@@ -137,6 +137,8 @@ export default function App({ Component, pageProps }: AppProps) {
           } else if (action === 'leave club') {
             queryClient.invalidateQueries({ queryKey: ['isClubMember', payload] });
             queryClient.invalidateQueries({ queryKey: ['myApply', payload] });
+          } else if (action === 'write comment') {
+            queryClient.invalidateQueries({ queryKey: ['commentCount', payload] });
           }
         }
       } catch (error) {

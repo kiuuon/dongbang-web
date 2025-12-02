@@ -81,7 +81,8 @@ export default function ReplyCard({
 
   const { data: isLike } = useQuery({
     queryKey: ['isCommentLike', reply.id],
-    queryFn: () => fetchMyCommentLike(reply.id),
+    queryFn: () => fetchMyCommentLike(reply.id, userId as string),
+    enabled: !!userId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
