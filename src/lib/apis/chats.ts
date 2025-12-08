@@ -91,3 +91,12 @@ export async function activateChatRoom(chatRoomId: string) {
 
   if (error) throw error;
 }
+
+export async function sendTextMessage(chatRoomId: string, content: string) {
+  const { error } = await supabase.rpc('send_text_message', {
+    p_chat_room_id: chatRoomId,
+    p_content: content,
+  });
+
+  if (error) throw error;
+}

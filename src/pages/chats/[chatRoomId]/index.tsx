@@ -1,13 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import useChatMessages from '@/hooks/useChatMessages';
 import useChatPageValidation from '@/hooks/useChatPageValidation';
 import { MessageType } from '@/types/message-type';
+import RightArrowIcon6 from '@/icons/right-arrow-icon6';
 import ChatRoomHeader from '@/components/chats/chat-room-header';
 import SystemMessage from '@/components/chats/system-message';
 import TextMessage from '@/components/chats/text-message';
+import { sendTextMessage } from '@/lib/apis/chats';
+import { handleMutationError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 
 function ChatRoomPage() {
   const queryClient = useQueryClient();
@@ -23,7 +27,50 @@ function ChatRoomPage() {
   const previousScrollHeightRef = useRef<number | null>(null);
   const isInitialLoadRef = useRef(true);
 
-  const { isValid, ErrorComponent } = useChatPageValidation();
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const previousInputHeightRef = useRef<number>(124);
+  const [inputContainerHeight, setInputContainerHeight] = useState(124);
+  const [inputValue, setInputValue] = useState('');
+
+  const { chatRoomInfo, isValid, ErrorComponent } = useChatPageValidation();
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, []);
+
+  const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(event.target.value);
+    if (!textareaRef.current || !scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const previousHeight = previousInputHeightRef.current;
+
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+
+    const newInputHeight = textareaRef.current.scrollHeight + 82;
+    const heightDiff = newInputHeight - previousHeight;
+
+    // 맨 아래에 있는지 확인 (약간의 여유를 둠, 5px)
+    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 5;
+
+    setInputContainerHeight(newInputHeight);
+    previousInputHeightRef.current = newInputHeight;
+
+    requestAnimationFrame(() => {
+      if (!scrollContainerRef.current) return;
+
+      if (isAtBottom) {
+        // 맨 아래일 때는 맨 아래로 유지
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      } else if (heightDiff !== 0) {
+        // 중간일 때는 높이 차이만큼만 스크롤 조정
+        scrollContainerRef.current.scrollTop += heightDiff;
+      }
+    });
+  };
 
   const {
     firstPageUnreadCount,
@@ -37,8 +84,29 @@ function ChatRoomPage() {
     chatMessages,
   } = useChatMessages(chatRoomId);
 
+  const { mutate: handleSendTextMessage } = useMutation({
+    mutationFn: (content: string) => sendTextMessage(chatRoomId, content),
+    onSuccess: () => {
+      setInputValue('');
+
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+
+      setInputContainerHeight(124);
+
+      requestAnimationFrame(() => {
+        if (!scrollContainerRef.current) return;
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+      });
+    },
+    onError: (error) => {
+      handleMutationError(error, ERROR_MESSAGE.CHATS.SEND_FAILED);
+    },
+  });
+
   useEffect(
-    () => () => queryClient.removeQueries({ queryKey: ['chatMessages', chatRoomId, 'centered'] }),
+    () => () => queryClient.removeQueries({ queryKey: ['chatMessages', chatRoomId] }),
     [chatRoomId, queryClient],
   );
 
@@ -137,7 +205,14 @@ function ChatRoomPage() {
   return (
     <div className="flex h-screen flex-col">
       <ChatRoomHeader />
-      <div ref={scrollContainerRef} className="flex min-h-screen flex-col overflow-y-auto bg-tag px-[20px]">
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-col overflow-y-auto overscroll-none bg-tag px-[20px]"
+        style={{
+          height: `calc(100vh - ${inputContainerHeight}px)`,
+          minHeight: `calc(100vh - ${inputContainerHeight}px)`,
+        }}
+      >
         {hasPreviousPage && <div ref={topObserverElement} />}
         {messages.map((message: MessageType, idx: number) => (
           <div key={message.id}>
@@ -169,6 +244,31 @@ function ChatRoomPage() {
         ))}
 
         {hasNextPage && <div ref={bottomObserverElement} />}
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white px-[20px] pb-[66px] pt-[10px]">
+        <textarea
+          ref={textareaRef}
+          rows={1}
+          value={inputValue}
+          placeholder={chatRoomInfo?.is_active ? '입력' : '채팅방이 비활성화되었습니다.'}
+          className="text-regular16 box-border w-full resize-none overflow-hidden rounded-[8px] bg-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
+          onChange={handleInput}
+          disabled={!chatRoomInfo?.is_active}
+        />
+        {inputValue.trim() !== '' && (
+          <button
+            type="button"
+            className="absolute bottom-[81px] right-[26px]"
+            onClick={() => {
+              if (!inputValue.trim()) return;
+
+              handleSendTextMessage(inputValue);
+            }}
+          >
+            <RightArrowIcon6 />
+          </button>
+        )}
       </div>
     </div>
   );

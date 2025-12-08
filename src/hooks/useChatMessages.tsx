@@ -15,7 +15,7 @@ function useChatMessages(chatRoomId: string) {
     fetchPreviousPage,
     hasPreviousPage,
   } = useInfiniteQuery({
-    queryKey: ['chatMessages', chatRoomId, 'centered'],
+    queryKey: ['chatMessages', chatRoomId],
     queryFn: async ({ pageParam }) =>
       fetchChatMessages(chatRoomId, pageParam as { cursor: string | null; direction: 'initial' | 'past' | 'future' }),
     initialPageParam: { cursor: null, direction: 'initial' },
@@ -35,6 +35,7 @@ function useChatMessages(chatRoomId: string) {
       return { cursor: newestMsg.created_at, direction: 'future' };
     },
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
+    refetchOnWindowFocus: false,
   });
 
   const firstPageUnreadCount = useMemo(

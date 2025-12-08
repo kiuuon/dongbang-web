@@ -34,7 +34,7 @@ function SystemMessage({
   return (
     <div
       ref={index === boundaryIndex ? boundaryMessageRef : null}
-      className="text-regular14 mx-auto mb-[8px] w-fit max-w-full rounded-[16px] bg-gray3 px-[12px] py-[6px] text-white opacity-60"
+      className="text-regular14 mx-auto mb-[16px] mt-[8px] w-fit max-w-full rounded-[16px] bg-gray3 px-[12px] py-[6px] text-white opacity-60"
     >
       {content}
     </div>

@@ -33,7 +33,13 @@ function ChatsPage() {
           key={chatRoom.chat_room_id}
           className="flex items-center gap-[16px] rounded-[12px] py-[16px] pl-[20px] pr-[13px] shadow-[0_1px_24px_0_rgba(0,0,0,0.08)]"
           onClick={() => {
-            router.push(`/chats/${chatRoom.chat_room_id}`);
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to chat room page', payload: chatRoom.chat_room_id }),
+              );
+            } else {
+              router.push(`/chats/${chatRoom.chat_room_id}`);
+            }
           }}
         >
           <Image

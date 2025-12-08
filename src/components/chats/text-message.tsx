@@ -24,7 +24,9 @@ function TextMessage({
           className="relative mb-[8px] mt-[8px] flex items-end justify-end gap-[4px]"
         >
           <div className="text-regular10">{formatToTime(message.created_at)}</div>
-          <div className="text-regular14 break-all rounded-[12px] bg-primary p-[12px]">{message.content}</div>
+          <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
+            {message.content}
+          </div>
 
           <div className="absolute right-[-8px] top-[3px]">
             <TextMessageTail isMine={message.isMine} />
@@ -39,7 +41,9 @@ function TextMessage({
         className="mb-[8px] flex items-end justify-end gap-[4px]"
       >
         <div className="text-regular10">{formatToTime(message.created_at)}</div>
-        <div className="text-regular14 break-all rounded-[12px] bg-primary p-[12px]">{message.content}</div>
+        <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
+          {message.content}
+        </div>
       </div>
     );
   }
@@ -54,7 +58,9 @@ function TextMessage({
             ref={index === boundaryIndex ? boundaryMessageRef : null}
             className="relative mb-[8px] flex items-end gap-[4px]"
           >
-            <div className="text-regular14 break-all rounded-[12px] bg-white p-[12px]">{message.content}</div>
+            <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
+              {message.content}
+            </div>
             <div className="text-regular10">{formatToTime(message.created_at)}</div>
             <div className="absolute left-[-8px] top-[3px]">
               <TextMessageTail isMine={message.isMine} />
@@ -70,7 +76,9 @@ function TextMessage({
       ref={index === boundaryIndex ? boundaryMessageRef : null}
       className="mb-[8px] ml-[40px] flex items-end gap-[4px]"
     >
-      <div className="text-regular14 break-all rounded-[12px] bg-white p-[12px]">{message.content}</div>
+      <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
+        {message.content}
+      </div>
       <div className="text-regular10">{formatToTime(message.created_at)}</div>
     </div>
   );

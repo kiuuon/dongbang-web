@@ -82,6 +82,10 @@ function IquirySection() {
       queryClient.invalidateQueries({ queryKey: ['inquiryList', clubId, onlyMine, excludePrivate, filter] });
       setInquiryValue('');
       setIsPrivate(false);
+
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.WRITE_INQUIRY_FAILED),
   });

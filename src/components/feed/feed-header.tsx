@@ -84,7 +84,16 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
           <button type="button">
             <BellIcon />
           </button>
-          <button type="button" onClick={() => router.push('/chats')}>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to chats page' }));
+              } else {
+                router.push('/chats');
+              }
+            }}
+          >
             <MessageIcon />
           </button>
         </div>

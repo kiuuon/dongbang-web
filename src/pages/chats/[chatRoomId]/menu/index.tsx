@@ -94,6 +94,15 @@ function ChatRoomMenu() {
         <div className="text-bold16">채팅방 멤버</div>
         <div className="flex flex-col gap-[16px] rounded-[8px] bg-white px-[27px] py-[16px] shadow-[0px_1px_24px_0px_rgba(0,0,0,0.08)]">
           {chatRoomInfo?.members
+            .sort(
+              (
+                a: { role: 'president' | 'officer' | 'member' | 'on_leave' | 'graduate' },
+                b: { role: 'president' | 'officer' | 'member' | 'on_leave' | 'graduate' },
+              ) => {
+                const roleOrder = { president: 1, officer: 2, member: 3, on_leave: 4, graduate: 5 };
+                return (roleOrder[a.role] || 99) - (roleOrder[b.role] || 99);
+              },
+            )
             .slice(0, expanded ? chatRoomInfo?.members.length : 5)
             .map(
               (member: {
@@ -111,7 +120,7 @@ function ChatRoomMenu() {
                   onClick={() => {
                     if (window.ReactNativeWebView) {
                       window.ReactNativeWebView.postMessage(
-                        JSON.stringify({ type: 'event', action: 'go to profile page', payload: member.id }),
+                        JSON.stringify({ type: 'event', action: 'go to profile page', payload: member.nickname }),
                       );
                       return;
                     }
@@ -147,7 +156,7 @@ function ChatRoomMenu() {
               }
             }}
           >
-            <ToggleIcon2 active={isChatRoomActive} />
+            <ToggleIcon2 active={!isChatRoomActive} />
           </button>
         </div>
       )}
