@@ -47,7 +47,17 @@ function ChatRoomHeader() {
         <button type="button">
           <SearchIcon2 />
         </button>
-        <button type="button">
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to chat room menu' }));
+              return;
+            }
+
+            router.push(`/chats/${chatRoomId}/menu`);
+          }}
+        >
           <MenuIcon />
         </button>
       </div>

@@ -96,6 +96,8 @@ const ERROR_MESSAGE = {
   CHATS: {
     FETCH_FAILED: '채팅방 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     FETCH_ROOM_INFO_FAILED: '채팅방 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    DEACTIVATE_ROOM_FAILED: '채팅방 비활성화에 실패했습니다. 다시 시도해주세요.',
+    ACTIVATE_ROOM_FAILED: '채팅방 활성화에 실패했습니다. 다시 시도해주세요.',
   },
 };
 

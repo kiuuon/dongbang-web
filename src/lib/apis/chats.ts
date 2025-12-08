@@ -75,3 +75,19 @@ export async function fetchChatMessages(
 
   return [];
 }
+
+export async function deactivateChatRoom(chatRoomId: string) {
+  const { error } = await supabase.rpc('deactivate_chat_room', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+}
+
+export async function activateChatRoom(chatRoomId: string) {
+  const { error } = await supabase.rpc('activate_chat_room', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+}

@@ -7,7 +7,7 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import { groupSystemMessages } from '@/lib/chats/service';
 import { MessageType } from '@/types/message-type';
 
-export function useChatMessages(chatRoomId: string) {
+function useChatMessages(chatRoomId: string) {
   const {
     data: chatMessages,
     fetchNextPage,
@@ -70,3 +70,5 @@ export function useChatMessages(chatRoomId: string) {
     chatMessages,
   };
 }
+
+export default useChatMessages;

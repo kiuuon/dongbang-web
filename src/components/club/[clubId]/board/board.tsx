@@ -30,7 +30,7 @@ function BoardSummary() {
   return (
     <div>
       <div
-        className="sticky left-0 right-0 top-[59px] z-50 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]"
+        className="sticky left-0 right-0 top-[59px] z-30 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]"
         style={{ top: isWebView ? clubPageTop + 60 : 60 }}
       >
         <div className="flex">

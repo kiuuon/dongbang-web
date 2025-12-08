@@ -9,6 +9,8 @@ export const CLUB_PERMISSIONS = {
   DELETE_CLUB_FEED: 'delete_club_feed',
   ANSWER_INQUIRY: 'answer_inquiry',
   MANAGE_ANNOUNCEMENT: 'manage_announcement',
+  JOIN_CHAT_ROOM: 'join_chat_room',
+  MANAGE_CHAT_ROOM: 'manage_chat_room',
 } as const;
 
 export type ClubRole = 'president' | 'officer' | 'member' | 'on_leave' | 'graduate';
@@ -25,6 +27,8 @@ export const PERMISSION_LABELS: Record<ClubPermission, string> = {
   delete_club_feed: '동아리 피드 삭제',
   answer_inquiry: '문의 답변',
   manage_announcement: '공지 관리',
+  join_chat_room: '채팅방 참여',
+  manage_chat_room: '채팅방 관리',
 };
 
 export const CLUB_ROLE_PERMISSIONS: Record<ClubRole, ClubPermission[]> = {
@@ -40,8 +44,15 @@ export const CLUB_ROLE_PERMISSIONS: Record<ClubRole, ClubPermission[]> = {
     CLUB_PERMISSIONS.EDIT_CLUB_PAGE,
     CLUB_PERMISSIONS.DELETE_CLUB_FEED,
     CLUB_PERMISSIONS.ANSWER_INQUIRY,
+    CLUB_PERMISSIONS.JOIN_CHAT_ROOM,
+    CLUB_PERMISSIONS.MANAGE_CHAT_ROOM,
   ],
-  member: [CLUB_PERMISSIONS.VIEW_ANNOUNCEMENT, CLUB_PERMISSIONS.WRITE_FEED, CLUB_PERMISSIONS.VIEW_PRIVATE_FEED],
+  member: [
+    CLUB_PERMISSIONS.VIEW_ANNOUNCEMENT,
+    CLUB_PERMISSIONS.WRITE_FEED,
+    CLUB_PERMISSIONS.VIEW_PRIVATE_FEED,
+    CLUB_PERMISSIONS.JOIN_CHAT_ROOM,
+  ],
   on_leave: [CLUB_PERMISSIONS.VIEW_ANNOUNCEMENT, CLUB_PERMISSIONS.VIEW_PRIVATE_FEED],
   graduate: [CLUB_PERMISSIONS.VIEW_ANNOUNCEMENT, CLUB_PERMISSIONS.VIEW_PRIVATE_FEED],
 } as const;

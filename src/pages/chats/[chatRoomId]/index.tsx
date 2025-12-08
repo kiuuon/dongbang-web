@@ -2,7 +2,8 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useChatMessages } from '@/hooks/useChatMessages';
+import useChatMessages from '@/hooks/useChatMessages';
+import useChatPageValidation from '@/hooks/useChatPageValidation';
 import { MessageType } from '@/types/message-type';
 import ChatRoomHeader from '@/components/chats/chat-room-header';
 import SystemMessage from '@/components/chats/system-message';
@@ -21,6 +22,8 @@ function ChatRoomPage() {
 
   const previousScrollHeightRef = useRef<number | null>(null);
   const isInitialLoadRef = useRef(true);
+
+  const { isValid, ErrorComponent } = useChatPageValidation();
 
   const {
     firstPageUnreadCount,
@@ -126,6 +129,10 @@ function ChatRoomPage() {
       }
     });
   }, [chatMessages, messages, boundaryIndex, firstPageUnreadCount]);
+
+  if (!isValid) {
+    return ErrorComponent;
+  }
 
   return (
     <div className="flex h-screen flex-col">
