@@ -84,7 +84,7 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
           <button type="button">
             <BellIcon />
           </button>
-          <button type="button">
+          <button type="button" onClick={() => router.push('/chats')}>
             <MessageIcon />
           </button>
         </div>

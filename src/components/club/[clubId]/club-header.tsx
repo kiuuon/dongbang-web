@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club/club';
+import { getChatRoomIdByClubId } from '@/lib/apis/chats';
 import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import MessageIcon from '@/icons/message-icon';
@@ -102,6 +103,13 @@ function ClubHeader({
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
   });
 
+  const { data: chatRoomId } = useQuery({
+    queryKey: ['chatRoomId', clubId],
+    queryFn: () => getChatRoomIdByClubId(clubId as string),
+    enabled: !!isClubMember,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
+  });
+
   const clickShareButton = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SITE_URL}/club/${clubId}`;
@@ -123,7 +131,7 @@ function ClubHeader({
       <BackButton color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
       <div className="flex gap-[10px]">
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
-          <button type="button">
+          <button type="button" onClick={() => router.push(`/chats/${chatRoomId}`)}>
             <MessageIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
           </button>
         )}
