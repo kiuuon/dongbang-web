@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -28,19 +28,6 @@ function MyPage() {
   const setSelectedFeedType = myPageStore((state) => state.setSelectedFeedType);
 
   const [isWebView, setIsWebView] = useState(true);
-  const [isFeedHeaderOnTop, setIsFeedHeaderOnTop] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
-      setIsFeedHeaderOnTop(top <= 60);
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (!window.ReactNativeWebView) {
@@ -211,10 +198,7 @@ function MyPage() {
 
       {/* 피드 */}
       <div>
-        <div ref={sentinelRef} className={`${isFeedHeaderOnTop && 'h-[47px]'} w-full`} />
-        <div
-          className={`${isFeedHeaderOnTop && 'fixed left-0 right-0 top-[60px] z-50 m-auto max-w-[600px] px-[20px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
-        >
+        <div className="sticky left-0 right-0 top-[59px] z-50 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]">
           <div className="flex">
             <button
               type="button"

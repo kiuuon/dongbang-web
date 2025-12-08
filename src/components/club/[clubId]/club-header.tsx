@@ -107,7 +107,7 @@ function ClubHeader({
     queryKey: ['chatRoomId', clubId],
     queryFn: () => getChatRoomIdByClubId(clubId as string),
     enabled: !!isClubMember,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_ROOM_INFO_FAILED),
   });
 
   const clickShareButton = async () => {

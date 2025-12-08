@@ -8,6 +8,16 @@ export async function fetchMyChatRooms() {
   return data;
 }
 
+export async function fetchChatRoomInfo(chatRoomId: string) {
+  const { data, error } = await supabase.rpc('get_chat_room_info', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+
+  return data;
+}
+
 export async function getChatRoomIdByClubId(clubId: string) {
   const { data, error } = await supabase.rpc('get_chat_room_id_by_club_id', {
     p_club_id: clubId,

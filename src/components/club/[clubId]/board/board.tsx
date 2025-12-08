@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import clubPageStore from '@/stores/club-page-store';
@@ -11,8 +11,6 @@ import IquirySection from './inquiry-section';
 function BoardSummary() {
   const router = useRouter();
   const { clubId } = router.query as { clubId: string };
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const [isHeaderOnTop, setIsHeaderOnTop] = useState(false);
 
   const [isWebView, setIsWebView] = useState(true);
 
@@ -24,22 +22,6 @@ function BoardSummary() {
     }
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
-      const headerTop = isWebView ? clubPageTop + 60 : 60;
-      if (top <= headerTop) {
-        setIsHeaderOnTop(true);
-      } else {
-        setIsHeaderOnTop(false);
-      }
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isWebView, clubPageTop]);
-
   const viewType = clubPageStore((state) => state.viewType[clubId] ?? 'grid');
   const selectedTab = clubPageStore((state) => state.selectedTab[clubId] ?? 'feed');
   const setViewType = clubPageStore((state) => state.setViewType);
@@ -47,9 +29,8 @@ function BoardSummary() {
 
   return (
     <div>
-      <div ref={sentinelRef} />
       <div
-        className={`${isHeaderOnTop && `fixed left-0 right-0 z-50 m-auto w-[calc(100vw-40px)] max-w-[600px] px-[20px]`} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
+        className="sticky left-0 right-0 top-[59px] z-50 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]"
         style={{ top: isWebView ? clubPageTop + 60 : 60 }}
       >
         <div className="flex">
@@ -88,11 +69,9 @@ function BoardSummary() {
         )}
       </div>
 
-      <div className={`${isHeaderOnTop && 'mt-[65px]'}`}>
-        {selectedTab === 'feed' && <FeedSection />}
-        {selectedTab === 'interact' && <InteractSection />}
-        {selectedTab === 'inquiry' && <IquirySection />}
-      </div>
+      {selectedTab === 'feed' && <FeedSection />}
+      {selectedTab === 'interact' && <InteractSection />}
+      {selectedTab === 'inquiry' && <IquirySection />}
     </div>
   );
 }

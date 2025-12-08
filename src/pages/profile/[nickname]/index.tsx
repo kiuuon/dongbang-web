@@ -53,20 +53,6 @@ function ProfilePage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
-  const [isFeedHeaderOnTop, setIsFeedHeaderOnTop] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const top = sentinelRef.current?.getBoundingClientRect().top ?? Infinity;
-      setIsFeedHeaderOnTop(top <= 60);
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -323,10 +309,7 @@ function ProfilePage() {
         // 3. 공개 + 차단 아님 → 피드 렌더링
         return (
           <div>
-            <div ref={sentinelRef} className={`${isFeedHeaderOnTop && 'h-[47px]'} w-full`} />
-            <div
-              className={`${isFeedHeaderOnTop && 'fixed left-0 right-0 top-[60px] z-50 m-auto max-w-[600px] px-[20px]'} mb-[15px] flex w-full justify-between border-b border-b-gray0 bg-white`}
-            >
+            <div className="sticky left-0 right-0 top-[59px] z-50 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]">
               <div className="flex">
                 <button
                   type="button"
