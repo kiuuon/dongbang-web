@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router';
+
 import { formatToTime } from '@/lib/utils';
 import { MessageType } from '@/types/message-type';
 import TextMessageTail from './text-message-tail';
@@ -16,6 +18,8 @@ function TextMessage({
   boundaryIndex: number;
   boundaryMessageRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const router = useRouter();
+
   if (message.isMine) {
     if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
       return (
@@ -61,7 +65,20 @@ function TextMessage({
   if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
     return (
       <div className="mt-[8px] flex items-start gap-[8px]">
-        <UserAvatar avatar={message.sender?.avatar} size={32} />
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to profile page', payload: message.sender?.nickname }),
+              );
+            } else {
+              router.push(`/profile/${message.sender?.nickname}`);
+            }
+          }}
+        >
+          <UserAvatar avatar={message.sender?.avatar} size={32} />
+        </button>
         <div>
           <div className="text-bold14 mb-[4px]">{message.sender?.club_nickname}</div>
           <div
