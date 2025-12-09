@@ -25,6 +25,7 @@ function ChatRoomPage() {
   const bottomObserverElement = useRef(null);
 
   const previousScrollHeightRef = useRef<number | null>(null);
+  const previousMessageCountRef = useRef<number>(0);
   const isInitialLoadRef = useRef(true);
   const isBottomScrollRef = useRef(false);
 
@@ -190,15 +191,16 @@ function ChatRoomPage() {
         // 처음 로드 이후 새 페이지 로드 시 스크롤 위치 조정 (위로 스크롤 할 때)
         if (!isInitialLoadRef.current && previousScrollHeightRef.current) {
           const heightDiff = container.scrollHeight - previousScrollHeightRef.current;
-          if (heightDiff > 300) {
+          if (heightDiff > 500 || heightDiff === 0) {
             // 위로 스크롤할 때: 새 메시지가 위에 추가되므로 높이 차이만큼 스크롤 위치 조정
             container.scrollTop += heightDiff;
-          } else {
+          } else if (previousMessageCountRef.current < messages.length && previousMessageCountRef.current !== 0) {
             container.scrollTo({
               top: container.scrollHeight,
               behavior: 'smooth',
             });
           }
+          previousMessageCountRef.current = messages.length;
           previousScrollHeightRef.current = container.scrollHeight;
 
           return;
@@ -213,6 +215,8 @@ function ChatRoomPage() {
           top: container.scrollHeight,
           behavior: 'smooth',
         });
+
+        previousMessageCountRef.current = messages.length;
       }
     });
   }, [chatMessages, messages, boundaryIndex, firstPageUnreadCount]);

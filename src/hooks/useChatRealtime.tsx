@@ -2,7 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/apis/supabaseClient';
+
 import { fetchMyChatRooms, updateLastReadAt } from '@/lib/apis/chats';
+import { handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import { MessageType } from '@/types/message-type';
 
 export function useChatRealtime(
@@ -18,6 +21,7 @@ export function useChatRealtime(
   const { data: chatRooms } = useQuery({
     queryKey: ['chatRooms'],
     queryFn: fetchMyChatRooms,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
   });
 
   useEffect(() => {

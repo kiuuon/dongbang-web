@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { clubDetailSchema } from '@/lib/validationSchema';
@@ -19,6 +19,7 @@ import LogoInput from './logo-input';
 import TagInput from '../info/tag-input';
 
 function DetailForm() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { clubType } = router.query;
   const uuid = crypto.randomUUID();
@@ -73,6 +74,7 @@ function DetailForm() {
         tags: [],
       });
       router.push('/club');
+      queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.CREATE_FAILED, () => setIsLoading(false)),
   });

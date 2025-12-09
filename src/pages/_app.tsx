@@ -43,7 +43,7 @@ function ChatRealtimeSubscriber() {
 
   useChatRealtime((message) => {
     // 알림 표시
-    if (!message.notification_enabled || !message.is_unread) {
+    if (!message.notification_enabled || !message.is_unread || message.message_type === 'system') {
       return;
     }
 

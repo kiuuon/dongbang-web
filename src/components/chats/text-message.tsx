@@ -24,7 +24,9 @@ function TextMessage({
           className="relative mb-[8px] mt-[8px] flex items-end justify-end gap-[4px]"
         >
           <div className="flex flex-col items-end">
-            <div className="text-bold10 text-primary">{message.unread_count}</div>
+            {message.unread_count && message.unread_count > 0 ? (
+              <div className="text-bold10 text-primary">{message.unread_count}</div>
+            ) : null}
             <div className="text-regular10">{formatToTime(message.created_at)}</div>
           </div>
           <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
@@ -44,7 +46,9 @@ function TextMessage({
         className="mb-[8px] flex items-end justify-end gap-[4px]"
       >
         <div className="flex flex-col items-end">
-          <div className="text-bold10 text-primary">{message.unread_count}</div>
+          {message.unread_count && message.unread_count > 0 ? (
+            <div className="text-bold10 text-primary">{message.unread_count}</div>
+          ) : null}
           <div className="text-regular10">{formatToTime(message.created_at)}</div>
         </div>
         <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
@@ -68,7 +72,9 @@ function TextMessage({
               {message.content}
             </div>
             <div className="flex flex-col items-start">
-              <div className="text-bold10 text-primary">{message.unread_count}</div>
+              {message.unread_count && message.unread_count > 0 ? (
+                <div className="text-bold10 text-primary">{message.unread_count}</div>
+              ) : null}
               <div className="text-regular10">{formatToTime(message.created_at)}</div>
             </div>
             <div className="absolute left-[-8px] top-[3px]">
@@ -89,7 +95,9 @@ function TextMessage({
         {message.content}
       </div>
       <div className="flex flex-col items-start">
-        <div className="text-bold10 text-primary">{message.unread_count}</div>
+        {message.unread_count && message.unread_count > 0 ? (
+          <div className="text-bold10 text-primary">{message.unread_count}</div>
+        ) : null}
         <div className="text-regular10">{formatToTime(message.created_at)}</div>
       </div>
     </div>
