@@ -143,6 +143,47 @@ export function useChatRealtime(
             }
           },
         )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'chat_message',
+            filter: `chat_room_id=eq.${chatRoomId}`,
+          },
+          async (payload) => {
+            const updatedMessage = payload.new as any;
+            const oldMessage = payload.old as any;
+
+            // unread_count가 업데이트된 경우
+            if (updatedMessage.unread_count !== oldMessage.unread_count) {
+              // 현재 채팅방이면 React Query 캐시에서 해당 메시지의 unread_count 업데이트
+              if (currentChatRoomId === chatRoomId) {
+                queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
+                  if (!oldData) return oldData;
+
+                  // 모든 페이지에서 해당 메시지의 unread_count 업데이트
+                  const updatedPages = oldData.pages.map((page: any[]) =>
+                    page.map((msg: any) => {
+                      if (msg.id === updatedMessage.id) {
+                        return {
+                          ...msg,
+                          unread_count: updatedMessage.unread_count,
+                        };
+                      }
+                      return msg;
+                    }),
+                  );
+
+                  return {
+                    ...oldData,
+                    pages: updatedPages,
+                  };
+                });
+              }
+            }
+          },
+        )
         .subscribe();
 
       channelsRef.current.set(chatRoomId, channel);

@@ -1,4 +1,5 @@
 export interface MessageType {
+  unread_count?: number;
   id: string;
   chat_room_id: string;
   sender_id?: string;

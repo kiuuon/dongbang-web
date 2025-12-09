@@ -23,7 +23,10 @@ function TextMessage({
           ref={index === boundaryIndex ? boundaryMessageRef : null}
           className="relative mb-[8px] mt-[8px] flex items-end justify-end gap-[4px]"
         >
-          <div className="text-regular10">{formatToTime(message.created_at)}</div>
+          <div className="flex flex-col items-end">
+            <div className="text-bold10 text-primary">{message.unread_count}</div>
+            <div className="text-regular10">{formatToTime(message.created_at)}</div>
+          </div>
           <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
             {message.content}
           </div>
@@ -40,7 +43,10 @@ function TextMessage({
         ref={index === boundaryIndex ? boundaryMessageRef : null}
         className="mb-[8px] flex items-end justify-end gap-[4px]"
       >
-        <div className="text-regular10">{formatToTime(message.created_at)}</div>
+        <div className="flex flex-col items-end">
+          <div className="text-bold10 text-primary">{message.unread_count}</div>
+          <div className="text-regular10">{formatToTime(message.created_at)}</div>
+        </div>
         <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
           {message.content}
         </div>
@@ -61,7 +67,10 @@ function TextMessage({
             <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
               {message.content}
             </div>
-            <div className="text-regular10">{formatToTime(message.created_at)}</div>
+            <div className="flex flex-col items-start">
+              <div className="text-bold10 text-primary">{message.unread_count}</div>
+              <div className="text-regular10">{formatToTime(message.created_at)}</div>
+            </div>
             <div className="absolute left-[-8px] top-[3px]">
               <TextMessageTail isMine={message.isMine} />
             </div>
@@ -79,7 +88,10 @@ function TextMessage({
       <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
         {message.content}
       </div>
-      <div className="text-regular10">{formatToTime(message.created_at)}</div>
+      <div className="flex flex-col items-start">
+        <div className="text-bold10 text-primary">{message.unread_count}</div>
+        <div className="text-regular10">{formatToTime(message.created_at)}</div>
+      </div>
     </div>
   );
 }
