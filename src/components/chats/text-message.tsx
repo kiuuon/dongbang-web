@@ -17,7 +17,7 @@ function TextMessage({
   boundaryMessageRef: React.RefObject<HTMLDivElement | null>;
 }) {
   if (message.isMine) {
-    if (index === messages.length - 1 || messages[index + 1].sender?.id !== message.sender?.id) {
+    if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
       return (
         <div
           ref={index === boundaryIndex ? boundaryMessageRef : null}
@@ -48,7 +48,7 @@ function TextMessage({
     );
   }
 
-  if (index === messages.length - 1 || messages[index + 1].sender?.id !== message.sender?.id) {
+  if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
     return (
       <div className="mt-[8px] flex items-start gap-[8px]">
         <UserAvatar avatar={message.sender?.avatar} size={32} />

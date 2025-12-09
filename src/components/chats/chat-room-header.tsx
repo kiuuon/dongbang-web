@@ -24,20 +24,22 @@ function ChatRoomHeader() {
     <header className="fixed left-0 right-0 top-0 z-30 m-auto flex h-[60px] w-full max-w-[600px] items-center justify-between bg-tag px-[20px]">
       <BackButton />
       <div className="flex items-center gap-[7px]">
-        <Image
-          src={chatRoomInfo?.club?.logo}
-          alt="club logo"
-          width={40}
-          height={40}
-          style={{
-            objectFit: 'cover',
-            borderRadius: '16px',
-            width: '40px',
-            height: '40px',
-            minWidth: '40px',
-            minHeight: '40px',
-          }}
-        />
+        {chatRoomInfo?.club?.logo && (
+          <Image
+            src={chatRoomInfo?.club?.logo}
+            alt="club logo"
+            width={40}
+            height={40}
+            style={{
+              objectFit: 'cover',
+              borderRadius: '16px',
+              width: '40px',
+              height: '40px',
+              minWidth: '40px',
+              minHeight: '40px',
+            }}
+          />
+        )}
         <div>
           <div className="text-bold14">{chatRoomInfo?.club?.name}</div>
           <div className="text-regular12 text-gray1">{chatRoomInfo?.members.length}명</div>

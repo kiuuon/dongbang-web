@@ -26,10 +26,11 @@ function ChatRoomPage() {
 
   const previousScrollHeightRef = useRef<number | null>(null);
   const isInitialLoadRef = useRef(true);
+  const isBottomScrollRef = useRef(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const previousInputHeightRef = useRef<number>(124);
-  const [inputContainerHeight, setInputContainerHeight] = useState(124);
+  const previousInputHeightRef = useRef<number>(91);
+  const [inputContainerHeight, setInputContainerHeight] = useState(91);
   const [inputValue, setInputValue] = useState('');
 
   const { chatRoomInfo, isValid, ErrorComponent } = useChatPageValidation();
@@ -50,7 +51,7 @@ function ChatRoomPage() {
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
 
-    const newInputHeight = textareaRef.current.scrollHeight + 82;
+    const newInputHeight = textareaRef.current.scrollHeight + 49;
     const heightDiff = newInputHeight - previousHeight;
 
     // 맨 아래에 있는지 확인 (약간의 여유를 둠, 5px)
@@ -93,7 +94,7 @@ function ChatRoomPage() {
         textareaRef.current.style.height = 'auto';
       }
 
-      setInputContainerHeight(124);
+      setInputContainerHeight(91);
 
       requestAnimationFrame(() => {
         if (!scrollContainerRef.current) return;
@@ -145,6 +146,7 @@ function ChatRoomPage() {
           if (entry.isIntersecting && hasNextPage) {
             // 아래로 스크롤할 때는 previousScrollHeightRef를 null로 설정하여 스크롤 위치 조정 방지
             previousScrollHeightRef.current = null;
+            isBottomScrollRef.current = true;
             fetchNextPage();
           }
         });
@@ -188,12 +190,29 @@ function ChatRoomPage() {
         // 처음 로드 이후 새 페이지 로드 시 스크롤 위치 조정 (위로 스크롤 할 때)
         if (!isInitialLoadRef.current && previousScrollHeightRef.current) {
           const heightDiff = container.scrollHeight - previousScrollHeightRef.current;
-          if (heightDiff > 0) {
+          if (heightDiff > 300) {
             // 위로 스크롤할 때: 새 메시지가 위에 추가되므로 높이 차이만큼 스크롤 위치 조정
             container.scrollTop += heightDiff;
+          } else {
+            container.scrollTo({
+              top: container.scrollHeight,
+              behavior: 'smooth',
+            });
           }
           previousScrollHeightRef.current = container.scrollHeight;
+
+          return;
         }
+
+        if (isBottomScrollRef.current) {
+          isBottomScrollRef.current = false;
+          return;
+        }
+
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth',
+        });
       }
     });
   }, [chatMessages, messages, boundaryIndex, firstPageUnreadCount]);
@@ -246,7 +265,7 @@ function ChatRoomPage() {
         {hasNextPage && <div ref={bottomObserverElement} />}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white px-[20px] pb-[66px] pt-[10px]">
+      <div className="fixed bottom-0 left-0 right-0 z-40 mx-auto max-w-[600px] bg-white px-[20px] pb-[33px] pt-[10px]">
         <textarea
           ref={textareaRef}
           rows={1}
@@ -255,15 +274,24 @@ function ChatRoomPage() {
           className="text-regular16 box-border w-full resize-none overflow-hidden rounded-[8px] bg-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
           onChange={handleInput}
           disabled={!chatRoomInfo?.is_active}
+          // 1. 자동완성 끄기
+          autoComplete="off"
+          // 2. 자동교정 끄기
+          autoCorrect="off"
+          // 3. 첫글자 대문자 끄기 (선택사항)
+          autoCapitalize="off"
+          // 4. 맞춤법 검사 끄기
+          spellCheck="false"
         />
         {inputValue.trim() !== '' && (
           <button
             type="button"
-            className="absolute bottom-[81px] right-[26px]"
+            className="absolute bottom-[48px] right-[26px]"
             onClick={() => {
               if (!inputValue.trim()) return;
 
               handleSendTextMessage(inputValue);
+              textareaRef.current?.focus();
             }}
           >
             <RightArrowIcon6 />

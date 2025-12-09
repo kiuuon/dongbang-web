@@ -41,7 +41,7 @@ function DetailForm() {
     defaultValues: {
       tags,
     },
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: yupResolver(clubDetailSchema),
   });
 

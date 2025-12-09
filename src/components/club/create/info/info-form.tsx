@@ -48,7 +48,7 @@ function InfoForm() {
       bio: clubInfoStore.getState().bio ?? '',
       description: clubInfoStore.getState().description ?? '',
     },
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: yupResolver(campusClubInfoSchema),
   });
 
@@ -176,7 +176,7 @@ function InfoForm() {
               className="text-regular14 flex h-[48px] w-full resize-none rounded-[8px] border border-gray0 py-[12px] pl-[16px] leading-normal outline-none placeholder:text-gray1"
             />
           </div>
-          {errors.description && <p className="text-regular10 mt-[8px] text-error">{errors.description.message}</p>}
+          {errors.bio && <p className="text-regular10 mt-[8px] text-error">{errors.bio.message}</p>}
         </div>
 
         <div className="flex flex-col">

@@ -10,11 +10,13 @@ import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { supabase } from '@/lib/apis/supabaseClient';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { useChatRealtime } from '@/hooks/useChatRealtime';
 import loginModalStore from '@/stores/login-modal-store';
 import clubInfoStore from '@/stores/club-info-store';
 import clubPageStore from '@/stores/club-page-store';
 import Tab from '@/components/layout/tab';
 import LoginModal from '@/components/common/login-modal';
+import ChatToast from '@/components/common/chat-toast';
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,45 @@ const REQUIRES_LOGIN_PATHS: (string | RegExp)[] = [
 function requiresLoginPath(pathname: string) {
   return REQUIRES_LOGIN_PATHS.some((pattern) =>
     typeof pattern === 'string' ? pathname === pattern : pattern.test(pathname),
+  );
+}
+
+function ChatRealtimeSubscriber() {
+  const [toast, setToast] = useState({ show: false, chatRoomId: '', chatRoomName: '', clubLogo: '', message: '' });
+
+  useChatRealtime((message) => {
+    // 알림 표시
+    if (!message.notification_enabled || !message.is_unread) {
+      return;
+    }
+
+    if (window.ReactNativeWebView) {
+      return;
+    }
+
+    setToast({ show: false, chatRoomId: '', chatRoomName: '', clubLogo: '', message: '' });
+
+    setTimeout(() => {
+      setToast({
+        show: true,
+        chatRoomId: message.chat_room_id,
+        chatRoomName: message.chat_room_name,
+        clubLogo: message.club_logo,
+        message: message.content as string,
+      });
+    }, 100);
+  });
+
+  return (
+    <ChatToast
+      isVisible={toast.show}
+      chatRoomId={toast.chatRoomId}
+      chatRoomName={toast.chatRoomName}
+      clubLogo={toast.clubLogo}
+      message={toast.message}
+      duration={3000} // 3초 뒤 자동 닫힘
+      onClose={() => setToast({ ...toast, show: false })}
+    />
   );
 }
 
@@ -205,6 +246,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ChatRealtimeSubscriber />
       <div className="scrollbar-hide m-auto max-w-[600px] shadow-lg">
         <Head>
           <title>동방</title>

@@ -106,7 +106,7 @@ function ClubHeader({
   const { data: chatRoomId } = useQuery({
     queryKey: ['chatRoomId', clubId],
     queryFn: () => getChatRoomIdByClubId(clubId as string),
-    enabled: !!isClubMember,
+    enabled: !!isClubMember && !!clubId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_ROOM_INFO_FAILED),
   });
 
