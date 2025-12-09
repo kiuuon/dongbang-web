@@ -99,6 +99,8 @@ const ERROR_MESSAGE = {
     DEACTIVATE_ROOM_FAILED: '채팅방 비활성화에 실패했습니다. 다시 시도해주세요.',
     ACTIVATE_ROOM_FAILED: '채팅방 활성화에 실패했습니다. 다시 시도해주세요.',
     SEND_FAILED: '메시지 전송에 실패했습니다. 다시 시도해주세요.',
+    NOTIFICATION_ENABLED_FETCH_FAILED: '채팅방 알림 여부 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    TOGGLE_NOTIFICATION_ENABLED_FAILED: '채팅방 알림 설정 변경에 실패했습니다. 다시 시도해주세요.',
   },
 };
 

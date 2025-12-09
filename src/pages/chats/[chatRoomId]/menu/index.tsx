@@ -4,12 +4,18 @@ import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { fetchMyRole } from '@/lib/apis/club/club';
-import { activateChatRoom, deactivateChatRoom } from '@/lib/apis/chats';
+import {
+  activateChatRoom,
+  deactivateChatRoom,
+  fetchNotificationEnabled,
+  toggleNotificationEnabled,
+} from '@/lib/apis/chats';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole, hasPermission } from '@/lib/club/service';
 import useChatPageValidation from '@/hooks/useChatPageValidation';
 import ToggleIcon2 from '@/icons/toggle-icon2';
+import BellIcon2 from '@/icons/bell-icon2';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
 import UserAvatar from '@/components/common/user-avatar';
@@ -31,6 +37,13 @@ function ChatRoomMenu() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
   });
 
+  const { data: notificationEnabled } = useQuery({
+    queryKey: ['notificationEnabled', chatRoomId],
+    queryFn: () => fetchNotificationEnabled(chatRoomId),
+    enabled: !!chatRoomId,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.NOTIFICATION_ENABLED_FETCH_FAILED),
+  });
+
   const { mutate: handleDeactivateChatRoom } = useMutation({
     mutationFn: () => deactivateChatRoom(chatRoomId),
     onSuccess: () => {
@@ -47,6 +60,14 @@ function ChatRoomMenu() {
     onError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.ACTIVATE_ROOM_FAILED),
   });
 
+  const { mutate: handleToggleNotificationEnabled } = useMutation({
+    mutationFn: () => toggleNotificationEnabled(chatRoomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notificationEnabled', chatRoomId] });
+    },
+    onError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.TOGGLE_NOTIFICATION_ENABLED_FAILED),
+  });
+
   useEffect(() => {
     setIsChatRoomActive(chatRoomInfo?.is_active);
   }, [chatRoomInfo]);
@@ -59,6 +80,9 @@ function ChatRoomMenu() {
     <div className="min-h-screen px-[20px] pb-[47px] pt-[83px]">
       <Header>
         <BackButton />
+        <button type="button" onClick={() => handleToggleNotificationEnabled()}>
+          <BellIcon2 isActive={notificationEnabled} />
+        </button>
       </Header>
       <button
         type="button"

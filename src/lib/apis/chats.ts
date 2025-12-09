@@ -110,3 +110,23 @@ export async function updateLastReadAt(chatRoomId: string) {
 
   if (error) throw error;
 }
+
+export async function fetchNotificationEnabled(chatRoomId: string) {
+  const { data, error } = await supabase.rpc('get_notification_enabled', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function toggleNotificationEnabled(chatRoomId: string): Promise<boolean> {
+  const { data, error } = await supabase.rpc('toggle_notification_enabled', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+
+  return data;
+}
