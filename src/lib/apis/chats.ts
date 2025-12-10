@@ -32,11 +32,11 @@ export async function getChatRoomIdByClubId(clubId: string) {
 
 export async function fetchChatMessages(
   chatRoomId: string,
-  pageParam: { cursor: string | null; direction: 'initial' | 'past' | 'future' },
+  pageParam: { cursor: string | null; cursorId: string | null; direction: 'initial' | 'past' | 'future' },
 ) {
   const PAGE_SIZE_TOTAL = 20;
 
-  const { cursor, direction } = pageParam;
+  const { cursor, cursorId, direction } = pageParam;
 
   // 초기 로드 (Last Read Message 기준 Centering)
   if (direction === 'initial') {
@@ -55,6 +55,7 @@ export async function fetchChatMessages(
       p_chat_room_id: chatRoomId,
       p_limit: PAGE_SIZE_TOTAL,
       p_cursor: cursor, // 가장 오래된 메시지의 created_at
+      p_cursor_id: cursorId,
       p_direction: 'past',
     });
     if (error) throw error;
@@ -68,6 +69,7 @@ export async function fetchChatMessages(
       p_chat_room_id: chatRoomId,
       p_limit: PAGE_SIZE_TOTAL,
       p_cursor: cursor, // 가장 최신 메시지의 created_at
+      p_cursor_id: cursorId,
       p_direction: 'future',
     });
     if (error) throw error;

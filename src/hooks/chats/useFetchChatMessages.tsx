@@ -17,23 +17,22 @@ function useFetchChatMessages(chatRoomId: string) {
   } = useInfiniteQuery({
     queryKey: ['chatMessages', chatRoomId],
     queryFn: async ({ pageParam }) =>
-      fetchChatMessages(chatRoomId, pageParam as { cursor: string | null; direction: 'initial' | 'past' | 'future' }),
-    initialPageParam: { cursor: null, direction: 'initial' },
+      fetchChatMessages(
+        chatRoomId,
+        pageParam as { cursor: string | null; cursorId: string | null; direction: 'initial' | 'past' | 'future' },
+      ),
+    initialPageParam: { cursor: null, cursorId: null, direction: 'initial' },
     // 위로 스크롤 (과거 메시지 로드) -> PREVIOUS Page
     getPreviousPageParam: (firstPage) => {
       if (!firstPage || firstPage.length === 0) return undefined;
       const oldestMsg = firstPage[0];
-      return { cursor: oldestMsg.created_at, direction: 'past' };
+      return { cursor: oldestMsg.created_at, cursorId: oldestMsg.id, direction: 'past' };
     },
     // 아래로 스크롤 (최신 메시지 로드) -> NEXT Page
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length === 0) return undefined;
       const newestMsg = lastPage[lastPage.length - 1];
-      return { cursor: newestMsg.created_at, direction: 'future' };
-    },
-    select: (data) => {
-      const pages = (data.pages ?? []).filter((p) => Array.isArray(p) && p.length > 0);
-      return { ...data, pages };
+      return { cursor: newestMsg.created_at, cursorId: newestMsg.id, direction: 'future' };
     },
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
     refetchOnWindowFocus: false,
