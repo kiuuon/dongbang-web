@@ -10,7 +10,7 @@ import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { supabase } from '@/lib/apis/supabaseClient';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import { useChatRealtime } from '@/hooks/useChatRealtime';
+import { useChatRealtime } from '@/hooks/chats/useChatRealtime';
 import loginModalStore from '@/stores/login-modal-store';
 import clubInfoStore from '@/stores/club-info-store';
 import clubPageStore from '@/stores/club-page-store';

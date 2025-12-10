@@ -132,3 +132,25 @@ export async function toggleNotificationEnabled(chatRoomId: string): Promise<boo
 
   return data;
 }
+
+export async function searchChatMessages(chatRoomId: string, query: string) {
+  const { data, error } = await supabase.rpc('search_chat_messages', {
+    p_chat_room_id: chatRoomId,
+    p_query: query,
+  });
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function fetchChatMessagesAround(chatRoomId: string, centerCreatedAt: string) {
+  const { data, error } = await supabase.rpc('fetch_chat_messages_around', {
+    p_chat_room_id: chatRoomId,
+    p_center_created_at: centerCreatedAt,
+  });
+
+  if (error) throw error;
+
+  return data;
+}

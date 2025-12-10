@@ -7,7 +7,7 @@ import { ERROR_MESSAGE } from '@/lib/constants';
 import { groupSystemMessages } from '@/lib/chats/service';
 import { MessageType } from '@/types/message-type';
 
-function useChatMessages(chatRoomId: string) {
+function useFetchChatMessages(chatRoomId: string) {
   const {
     data: chatMessages,
     fetchNextPage,
@@ -26,11 +26,8 @@ function useChatMessages(chatRoomId: string) {
       return { cursor: oldestMsg.created_at, direction: 'past' };
     },
     // 아래로 스크롤 (최신 메시지 로드) -> NEXT Page
-    getNextPageParam: (lastPage, allPages) => {
-      const hasUnread = allPages.some((page) => page.some((message: MessageType) => message.is_unread === true));
-      const firstPageUnreadCount = allPages[0].filter((message: MessageType) => message.is_unread === true).length;
-
-      if (!lastPage || lastPage.length === 0 || !hasUnread || firstPageUnreadCount < 11) return undefined;
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || lastPage.length === 0) return undefined;
       const newestMsg = lastPage[lastPage.length - 1];
       return { cursor: newestMsg.created_at, direction: 'future' };
     },
@@ -72,4 +69,4 @@ function useChatMessages(chatRoomId: string) {
   };
 }
 
-export default useChatMessages;
+export default useFetchChatMessages;

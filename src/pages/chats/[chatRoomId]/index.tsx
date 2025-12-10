@@ -2,10 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import useChatMessages from '@/hooks/useChatMessages';
-import useChatPageValidation from '@/hooks/useChatPageValidation';
+import useFetchChatMessages from '@/hooks/chats/useFetchChatMessages';
+import useSearchChatMessages from '@/hooks/chats/useSearchChatMessages';
+import useChatPageValidation from '@/hooks/chats/useChatPageValidation';
 import { MessageType } from '@/types/message-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
+import ChevronDownIcon from '@/icons/cheveron-down-icon';
+import ChevronUpIcon from '@/icons/cheveron-up-icon';
 import ChatRoomHeader from '@/components/chats/chat-room-header';
 import SystemMessage from '@/components/chats/system-message';
 import TextMessage from '@/components/chats/text-message';
@@ -34,6 +37,33 @@ function ChatRoomPage() {
   const previousInputHeightRef = useRef<number>(91);
   const [inputContainerHeight, setInputContainerHeight] = useState(91);
   const [inputValue, setInputValue] = useState('');
+
+  const {
+    firstPageUnreadCount,
+    messages,
+    firstUnreadIndex,
+    boundaryIndex,
+    fetchNextPage,
+    hasNextPage,
+    fetchPreviousPage,
+    hasPreviousPage,
+    chatMessages,
+  } = useFetchChatMessages(chatRoomId);
+
+  const {
+    isSearchMode,
+    setIsSearchMode,
+    setMessageRef,
+    searchQuery,
+    setSearchQuery,
+    currentSearchIndex,
+    searchCount,
+    isConfirm,
+    setIsConfirm,
+    handleSearchConfirm,
+    handlePreviousSearchResult,
+    handleNextSearchResult,
+  } = useSearchChatMessages();
 
   const { chatRoomInfo, isValid, ErrorComponent } = useChatPageValidation();
 
@@ -75,30 +105,19 @@ function ChatRoomPage() {
     });
   };
 
-  const {
-    firstPageUnreadCount,
-    messages,
-    firstUnreadIndex,
-    boundaryIndex,
-    fetchNextPage,
-    hasNextPage,
-    fetchPreviousPage,
-    hasPreviousPage,
-    chatMessages,
-  } = useChatMessages(chatRoomId);
-
   const { data: userId } = useQuery({
     queryKey: ['userId'],
     queryFn: fetchUserId,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
+  // 텍스트 메시지 전송
   const { mutate: handleSendTextMessage } = useMutation({
     mutationFn: (content: string) => sendTextMessage(chatRoomId, content),
     // 낙관적 업데이트: 서버 응답 전에 UI에 메시지 추가
     onMutate: async (content: string) => {
-      // 진행 중인 쿼리 취소 (낙관적 업데이트를 덮어쓰지 않도록)
-      await queryClient.cancelQueries({ queryKey: ['chatMessages', chatRoomId] });
+      // 쿼리 초기화
+      await queryClient.invalidateQueries({ queryKey: ['chatMessages', chatRoomId] });
 
       // 이전 데이터 스냅샷 저장 (롤백용)
       const previousMessages = queryClient.getQueryData(['chatMessages', chatRoomId]);
@@ -146,30 +165,18 @@ function ChatRoomPage() {
       queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
         if (!oldData) return oldData;
 
-        // 임시 메시지는 항상 마지막 페이지에 있으므로 마지막 페이지만 확인
-        const lastPageIndex = oldData.pages.length - 1;
-        const lastPage = oldData.pages[lastPageIndex];
-        const messageIndex = lastPage.findIndex((msg: any) => msg.id === tempId);
+        let found = false;
+        const updatedPages = oldData.pages.map((page: any[]) =>
+          page.map((msg: any) => {
+            if (!found && msg.id === tempId) {
+              found = true;
+              return { ...msg, id: realMessageId };
+            }
+            return msg;
+          }),
+        );
 
-        if (messageIndex === -1) {
-          // 마지막 페이지에 없으면 다른 페이지에 있을 수 없음 (임시 메시지는 항상 마지막에 추가)
-          return oldData;
-        }
-
-        // 마지막 페이지만 업데이트
-        const updatedLastPage = [...lastPage];
-        updatedLastPage[messageIndex] = {
-          ...updatedLastPage[messageIndex],
-          id: realMessageId,
-        };
-
-        const updatedPages = [...oldData.pages];
-        updatedPages[lastPageIndex] = updatedLastPage;
-
-        return {
-          ...oldData,
-          pages: updatedPages,
-        };
+        return found ? { ...oldData, pages: updatedPages } : oldData;
       });
       setInputValue('');
 
@@ -193,11 +200,13 @@ function ChatRoomPage() {
     },
   });
 
+  // 채팅방 나가면 캐시 제거
   useEffect(
     () => () => queryClient.removeQueries({ queryKey: ['chatMessages', chatRoomId] }),
     [chatRoomId, queryClient],
   );
 
+  // 위로 스크롤할 때 메시지 로드
   useEffect(() => {
     const target = topObserverElement.current;
 
@@ -223,6 +232,7 @@ function ChatRoomPage() {
     return () => observerInstance.unobserve(target);
   }, [fetchPreviousPage, hasPreviousPage]);
 
+  // 아래로 스크롤할 때 메시지 로드
   useEffect(() => {
     const target = bottomObserverElement.current;
     if (!target) return undefined;
@@ -307,16 +317,84 @@ function ChatRoomPage() {
     });
   }, [chatMessages, messages, boundaryIndex, firstPageUnreadCount]);
 
+  const isNearBottomRef = useRef(true);
+  const [hasPendingNewMessage, setHasPendingNewMessage] = useState(false);
+
+  // 스크롤 위치 확인
+  useEffect(() => {
+    const c = scrollContainerRef.current;
+    if (!c) return;
+    isNearBottomRef.current = c.scrollHeight - c.scrollTop - c.clientHeight < 40;
+  }, [messages]);
+
+  // 스크롤 위치 확인 이벤트 핸들러
+  const handleScroll = () => {
+    const c = scrollContainerRef.current;
+    if (!c) return;
+    isNearBottomRef.current = c.scrollHeight - c.scrollTop - c.clientHeight < 40; // 여유값
+  };
+
+  // 새 메시지 도착 시 로직
+  useEffect(() => {
+    const handler = (e: any) => {
+      const message = e.detail?.message;
+      if (!message || message.chat_room_id !== chatRoomId) return;
+
+      if (isNearBottomRef.current) {
+        // 바닥이면 최신 캐시로 다시 fetch (또는 setQueryData append)
+        // queryClient.invalidateQueries({ queryKey: ['chatMessages', chatRoomId] });
+        queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
+          if (!oldData) return oldData;
+
+          const lastPage = oldData.pages[oldData.pages.length - 1];
+          const newLastPage = [...lastPage, message];
+
+          // 날짜 메시지인 경우 순서 재정렬
+          const sortedLastPage = newLastPage.sort((a: any, b: any) => {
+            const aDate = new Date(a.created_at).getTime();
+            const bDate = new Date(b.created_at).getTime();
+            return aDate - bDate;
+          });
+
+          return {
+            ...oldData,
+            pages: [...oldData.pages.slice(0, -1), sortedLastPage],
+          };
+        });
+
+        requestAnimationFrame(() => {
+          scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollHeight });
+        });
+      } else {
+        // 바닥이 아니면 신호만 켜기
+        setHasPendingNewMessage(true);
+      }
+    };
+
+    window.addEventListener('chat:new-message', handler);
+    return () => window.removeEventListener('chat:new-message', handler);
+  }, [chatRoomId, queryClient]);
+
   if (!isValid) {
     return ErrorComponent;
   }
 
   return (
     <div className="flex h-screen flex-col">
-      <ChatRoomHeader />
+      <ChatRoomHeader
+        isSearchMode={isSearchMode}
+        setIsSearchMode={setIsSearchMode}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearchConfirm={handleSearchConfirm}
+        setInputValue={setInputValue}
+        setInputContainerHeight={setInputContainerHeight}
+        setIsConfirm={setIsConfirm}
+      />
       <div
         ref={scrollContainerRef}
         className="flex flex-col overflow-y-auto overscroll-none bg-tag px-[20px]"
+        onScroll={handleScroll}
         style={{
           height: `calc(100vh - ${inputContainerHeight}px)`,
           minHeight: `calc(100vh - ${inputContainerHeight}px)`,
@@ -324,7 +402,7 @@ function ChatRoomPage() {
       >
         {hasPreviousPage && <div ref={topObserverElement} />}
         {messages.map((message: MessageType, idx: number) => (
-          <div key={message.id}>
+          <div key={message.id} ref={(el) => setMessageRef(message.id, el)}>
             {idx === 0 && <div className="h-[80px]" />}
 
             {message.message_type === 'grouped_system' && (
@@ -347,6 +425,7 @@ function ChatRoomPage() {
                 index={idx}
                 boundaryIndex={boundaryIndex}
                 boundaryMessageRef={boundaryMessageRef}
+                searchQuery={searchQuery}
               />
             )}
           </div>
@@ -354,25 +433,51 @@ function ChatRoomPage() {
 
         {hasNextPage && <div ref={bottomObserverElement} />}
       </div>
-
       <div className="fixed bottom-0 left-0 right-0 z-40 mx-auto max-w-[600px] bg-white px-[20px] pb-[33px] pt-[10px]">
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={inputValue}
-          placeholder={chatRoomInfo?.is_active ? '입력' : '채팅방이 비활성화되었습니다.'}
-          className="text-regular16 box-border w-full resize-none overflow-hidden rounded-[8px] bg-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
-          onChange={handleInput}
-          disabled={!chatRoomInfo?.is_active}
-          // 1. 자동완성 끄기
-          autoComplete="off"
-          // 2. 자동교정 끄기
-          autoCorrect="off"
-          // 3. 첫글자 대문자 끄기 (선택사항)
-          autoCapitalize="off"
-          // 4. 맞춤법 검사 끄기
-          spellCheck="false"
-        />
+        {hasPendingNewMessage && (
+          <div className="absolute inset-x-0 top-[-54px] flex justify-center">
+            <button
+              type="button"
+              className="text-regular16 rounded-full bg-primary px-3 py-2 text-white shadow"
+              onClick={async () => {
+                setHasPendingNewMessage(false);
+                await queryClient.invalidateQueries({ queryKey: ['chatMessages', chatRoomId] });
+              }}
+            >
+              새 메시지 보기
+            </button>
+          </div>
+        )}
+        {isSearchMode ? (
+          <div className="flex justify-between pb-[22px]">
+            <div className="w-[56px]" />
+            {isConfirm ? (
+              <div className="text-regular16">
+                {currentSearchIndex + 1}/{searchCount}
+              </div>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center gap-[8px]">
+              <button type="button" className="text-regular16" onClick={handlePreviousSearchResult}>
+                <ChevronDownIcon />
+              </button>
+              <button type="button" className="text-regular16" onClick={handleNextSearchResult}>
+                <ChevronUpIcon />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <textarea
+            ref={textareaRef}
+            rows={1}
+            value={inputValue}
+            placeholder={chatRoomInfo?.is_active ? '입력' : '채팅방이 비활성화되었습니다.'}
+            className="text-regular16 box-border w-full resize-none overflow-hidden rounded-[8px] bg-gray0 py-[9px] pl-[21px] pr-[52px] leading-normal outline-none placeholder:text-gray2"
+            onChange={handleInput}
+            disabled={!chatRoomInfo?.is_active}
+          />
+        )}
         {inputValue.trim() !== '' && (
           <button
             type="button"

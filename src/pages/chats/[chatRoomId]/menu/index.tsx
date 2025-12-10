@@ -13,7 +13,7 @@ import {
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { getRole, hasPermission } from '@/lib/club/service';
-import useChatPageValidation from '@/hooks/useChatPageValidation';
+import useChatPageValidation from '@/hooks/chats/useChatPageValidation';
 import ToggleIcon2 from '@/icons/toggle-icon2';
 import BellIcon2 from '@/icons/bell-icon2';
 import Header from '@/components/layout/header';

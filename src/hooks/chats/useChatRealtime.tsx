@@ -133,27 +133,13 @@ export function useChatRealtime(
               });
               queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
             } else {
-              // 현재 채팅방이면 React Query 캐시에 추가
-              queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
-                if (!oldData) return oldData;
+              // 채팅 페이지가 처리할 수 있도록 전역 이벤트 발행
+              window.dispatchEvent(
+                new CustomEvent('chat:new-message', {
+                  detail: { message },
+                }),
+              );
 
-                const lastPage = oldData.pages[oldData.pages.length - 1];
-                const newLastPage = [...lastPage, message];
-
-                // 날짜 메시지인 경우 순서 재정렬
-                const sortedLastPage = newLastPage.sort((a: any, b: any) => {
-                  const aDate = new Date(a.created_at).getTime();
-                  const bDate = new Date(b.created_at).getTime();
-                  return aDate - bDate;
-                });
-
-                return {
-                  ...oldData,
-                  pages: [...oldData.pages.slice(0, -1), sortedLastPage],
-                };
-              });
-
-              // 현재 채팅방에 있을 때 last_read_at 갱신
               updateLastReadAt(chatRoomId);
             }
           },

@@ -5,20 +5,51 @@ import { MessageType } from '@/types/message-type';
 import TextMessageTail from './text-message-tail';
 import UserAvatar from '../common/user-avatar';
 
+// 검색 키워드 하이라이팅 함수 (앞에서부터 첫 번째 매칭만)
+const highlightSearchKeyword = (text: string, keyword: string) => {
+  if (!keyword.trim()) return text;
+
+  const lowerText = text.toLowerCase();
+  const lowerKeyword = keyword.toLowerCase();
+  const index = lowerText.indexOf(lowerKeyword);
+
+  if (index === -1) return text;
+
+  // 앞에서부터 첫 번째 매칭만 하이라이팅
+  const before = text.slice(0, index);
+  const matched = text.slice(index, index + keyword.length);
+  const after = text.slice(index + keyword.length);
+
+  return (
+    <>
+      {before}
+      <mark className="bg-tertiary">{matched}</mark>
+      {after}
+    </>
+  );
+};
+
 function TextMessage({
   message,
   messages,
   index,
   boundaryIndex,
   boundaryMessageRef,
+  searchQuery,
 }: {
   message: MessageType;
   messages: MessageType[];
   index: number;
   boundaryIndex: number;
   boundaryMessageRef: React.RefObject<HTMLDivElement | null>;
+  searchQuery: string;
 }) {
   const router = useRouter();
+
+  // 검색어가 있으면 하이라이팅된 텍스트, 없으면 원본 텍스트
+  const displayContent = searchQuery.trim()
+    ? highlightSearchKeyword(message.content || '', searchQuery)
+    : message.content;
 
   if (message.isMine) {
     if (index === 0 || messages[index - 1].sender_id !== message.sender_id) {
@@ -34,7 +65,7 @@ function TextMessage({
             <div className="text-regular10">{formatToTime(message.created_at)}</div>
           </div>
           <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
-            {message.content}
+            {displayContent}
           </div>
 
           <div className="absolute right-[-8px] top-[3px]">
@@ -56,7 +87,7 @@ function TextMessage({
           <div className="text-regular10">{formatToTime(message.created_at)}</div>
         </div>
         <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-primary p-[12px]">
-          {message.content}
+          {displayContent}
         </div>
       </div>
     );
@@ -86,7 +117,7 @@ function TextMessage({
             className="relative mb-[8px] flex items-end gap-[4px]"
           >
             <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
-              {message.content}
+              {displayContent}
             </div>
             <div className="flex flex-col items-start">
               {message.unread_count && message.unread_count > 0 ? (
@@ -109,7 +140,7 @@ function TextMessage({
       className="mb-[8px] ml-[40px] flex items-end gap-[4px]"
     >
       <div className="text-regular14 whitespace-pre-wrap break-all rounded-[12px] bg-white p-[12px]">
-        {message.content}
+        {displayContent}
       </div>
       <div className="flex flex-col items-start">
         {message.unread_count && message.unread_count > 0 ? (
