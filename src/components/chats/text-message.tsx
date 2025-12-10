@@ -21,7 +21,7 @@ function TextMessage({
   const router = useRouter();
 
   if (message.isMine) {
-    if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
+    if (index === 0 || messages[index - 1].sender_id !== message.sender_id) {
       return (
         <div
           ref={index === boundaryIndex ? boundaryMessageRef : null}

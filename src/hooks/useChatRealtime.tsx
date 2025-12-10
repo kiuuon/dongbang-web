@@ -55,6 +55,10 @@ export function useChatRealtime(
             } = await supabase.auth.getUser();
             const currentUserId = user?.id;
 
+            if (newMessage.sender_id === currentUserId && newMessage.message_type === 'text') {
+              return;
+            }
+
             // sender 정보 가져오기
             const { data: senderData } = await supabase
               .from('User')
@@ -136,9 +140,16 @@ export function useChatRealtime(
                 const lastPage = oldData.pages[oldData.pages.length - 1];
                 const newLastPage = [...lastPage, message];
 
+                // 날짜 메시지인 경우 순서 재정렬
+                const sortedLastPage = newLastPage.sort((a: any, b: any) => {
+                  const aDate = new Date(a.created_at).getTime();
+                  const bDate = new Date(b.created_at).getTime();
+                  return aDate - bDate;
+                });
+
                 return {
                   ...oldData,
-                  pages: [...oldData.pages.slice(0, -1), newLastPage],
+                  pages: [...oldData.pages.slice(0, -1), sortedLastPage],
                 };
               });
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useChatMessages from '@/hooks/useChatMessages';
 import useChatPageValidation from '@/hooks/useChatPageValidation';
@@ -10,8 +10,9 @@ import ChatRoomHeader from '@/components/chats/chat-room-header';
 import SystemMessage from '@/components/chats/system-message';
 import TextMessage from '@/components/chats/text-message';
 import { sendTextMessage } from '@/lib/apis/chats';
-import { handleMutationError } from '@/lib/utils';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { fetchUserId } from '@/lib/apis/auth';
 
 function ChatRoomPage() {
   const queryClient = useQueryClient();
@@ -86,9 +87,90 @@ function ChatRoomPage() {
     chatMessages,
   } = useChatMessages(chatRoomId);
 
+  const { data: userId } = useQuery({
+    queryKey: ['userId'],
+    queryFn: fetchUserId,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
+  });
+
   const { mutate: handleSendTextMessage } = useMutation({
     mutationFn: (content: string) => sendTextMessage(chatRoomId, content),
-    onSuccess: () => {
+    // 낙관적 업데이트: 서버 응답 전에 UI에 메시지 추가
+    onMutate: async (content: string) => {
+      // 진행 중인 쿼리 취소 (낙관적 업데이트를 덮어쓰지 않도록)
+      await queryClient.cancelQueries({ queryKey: ['chatMessages', chatRoomId] });
+
+      // 이전 데이터 스냅샷 저장 (롤백용)
+      const previousMessages = queryClient.getQueryData(['chatMessages', chatRoomId]);
+
+      // 임시 ID 생성
+      const tempId = `temp-${Date.now()}-${Math.random()}`;
+
+      // 임시 메시지 생성 (임시 ID 사용)
+      const optimisticMessage: MessageType = {
+        id: tempId,
+        chat_room_id: chatRoomId,
+        sender_id: userId,
+        message_type: 'text',
+        content,
+        created_at: new Date().toISOString(),
+        isMine: true,
+        is_unread: false,
+        unread_count: chatRoomInfo ? chatRoomInfo.members.length - 1 : 0,
+      };
+
+      // 캐시에 낙관적 메시지 추가
+      queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        const lastPage = oldData.pages[oldData.pages.length - 1];
+        const newLastPage = [...lastPage, optimisticMessage];
+
+        return {
+          ...oldData,
+          pages: [...oldData.pages.slice(0, -1), newLastPage],
+        };
+      });
+
+      // 롤백을 위한 이전 데이터 반환
+      return { previousMessages, tempId };
+    },
+    onSuccess: (data, _, context: any) => {
+      // 서버에서 반환된 실제 메시지 ID로 임시 메시지 교체
+      const realMessageId = data;
+
+      const { tempId } = context;
+
+      if (!tempId) return;
+
+      queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        // 임시 메시지는 항상 마지막 페이지에 있으므로 마지막 페이지만 확인
+        const lastPageIndex = oldData.pages.length - 1;
+        const lastPage = oldData.pages[lastPageIndex];
+        const messageIndex = lastPage.findIndex((msg: any) => msg.id === tempId);
+
+        if (messageIndex === -1) {
+          // 마지막 페이지에 없으면 다른 페이지에 있을 수 없음 (임시 메시지는 항상 마지막에 추가)
+          return oldData;
+        }
+
+        // 마지막 페이지만 업데이트
+        const updatedLastPage = [...lastPage];
+        updatedLastPage[messageIndex] = {
+          ...updatedLastPage[messageIndex],
+          id: realMessageId,
+        };
+
+        const updatedPages = [...oldData.pages];
+        updatedPages[lastPageIndex] = updatedLastPage;
+
+        return {
+          ...oldData,
+          pages: updatedPages,
+        };
+      });
       setInputValue('');
 
       if (textareaRef.current) {
@@ -102,7 +184,11 @@ function ChatRoomPage() {
         scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
       });
     },
-    onError: (error) => {
+    onError: (error, _, context: any) => {
+      if (context?.previousMessages) {
+        queryClient.setQueryData(['chatMessages', chatRoomId], context.previousMessages);
+      }
+
       handleMutationError(error, ERROR_MESSAGE.CHATS.SEND_FAILED);
     },
   });
@@ -197,7 +283,7 @@ function ChatRoomPage() {
           } else if (previousMessageCountRef.current < messages.length && previousMessageCountRef.current !== 0) {
             container.scrollTo({
               top: container.scrollHeight,
-              behavior: 'smooth',
+              // behavior: 'smooth',
             });
           }
           previousMessageCountRef.current = messages.length;
@@ -213,7 +299,7 @@ function ChatRoomPage() {
 
         container.scrollTo({
           top: container.scrollHeight,
-          behavior: 'smooth',
+          // behavior: 'smooth',
         });
 
         previousMessageCountRef.current = messages.length;
