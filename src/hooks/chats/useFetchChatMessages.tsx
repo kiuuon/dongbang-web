@@ -31,6 +31,10 @@ function useFetchChatMessages(chatRoomId: string) {
       const newestMsg = lastPage[lastPage.length - 1];
       return { cursor: newestMsg.created_at, direction: 'future' };
     },
+    select: (data) => {
+      const pages = (data.pages ?? []).filter((p) => Array.isArray(p) && p.length > 0);
+      return { ...data, pages };
+    },
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
     refetchOnWindowFocus: false,
   });

@@ -112,7 +112,7 @@ function ChatRoomPage() {
   });
 
   // 텍스트 메시지 전송
-  const { mutate: handleSendTextMessage } = useMutation({
+  const { mutate: handleSendTextMessage, isPending } = useMutation({
     mutationFn: (content: string) => sendTextMessage(chatRoomId, content),
     // 낙관적 업데이트: 서버 응답 전에 UI에 메시지 추가
     onMutate: async (content: string) => {
@@ -140,15 +140,19 @@ function ChatRoomPage() {
 
       // 캐시에 낙관적 메시지 추가
       queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
-        if (!oldData) return oldData;
+        if (!oldData || !oldData.pages?.length) return oldData;
 
-        const lastPage = oldData.pages[oldData.pages.length - 1];
-        const newLastPage = [...lastPage, optimisticMessage];
+        // 마지막 비어있지 않은 페이지 인덱스 찾기
+        const lastNonEmptyIndex =
+          [...oldData.pages]
+            .map((p, idx) => ({ p, idx }))
+            .reverse()
+            .find(({ p }) => p.length > 0)?.idx ?? oldData.pages.length - 1;
 
-        return {
-          ...oldData,
-          pages: [...oldData.pages.slice(0, -1), newLastPage],
-        };
+        const pages = oldData.pages.map((p: any[]) => [...p]);
+        pages[lastNonEmptyIndex] = [...pages[lastNonEmptyIndex], optimisticMessage];
+
+        return { ...oldData, pages };
       });
 
       // 롤백을 위한 이전 데이터 반환
@@ -178,6 +182,7 @@ function ChatRoomPage() {
 
         return found ? { ...oldData, pages: updatedPages } : oldData;
       });
+
       setInputValue('');
 
       if (textareaRef.current) {
@@ -344,22 +349,24 @@ function ChatRoomPage() {
         // 바닥이면 최신 캐시로 다시 fetch (또는 setQueryData append)
         // queryClient.invalidateQueries({ queryKey: ['chatMessages', chatRoomId] });
         queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
-          if (!oldData) return oldData;
+          if (!oldData || !oldData.pages?.length) return oldData;
 
-          const lastPage = oldData.pages[oldData.pages.length - 1];
-          const newLastPage = [...lastPage, message];
+          // 마지막 비어있지 않은 페이지 인덱스 찾기
+          const lastNonEmptyIndex =
+            [...oldData.pages]
+              .map((p, idx) => ({ p, idx }))
+              .reverse()
+              .find(({ p }) => p.length > 0)?.idx ?? oldData.pages.length - 1;
 
-          // 날짜 메시지인 경우 순서 재정렬
-          const sortedLastPage = newLastPage.sort((a: any, b: any) => {
-            const aDate = new Date(a.created_at).getTime();
-            const bDate = new Date(b.created_at).getTime();
-            return aDate - bDate;
-          });
+          const pages = oldData.pages.map((p: any[]) => [...p]);
+          pages[lastNonEmptyIndex] = [...pages[lastNonEmptyIndex], message];
 
-          return {
-            ...oldData,
-            pages: [...oldData.pages.slice(0, -1), sortedLastPage],
-          };
+          // 메시지 순서 재정렬
+          pages[lastNonEmptyIndex] = pages[lastNonEmptyIndex].sort(
+            (a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+          );
+
+          return { ...oldData, pages };
         });
 
         requestAnimationFrame(() => {
@@ -488,6 +495,7 @@ function ChatRoomPage() {
               handleSendTextMessage(inputValue);
               textareaRef.current?.focus();
             }}
+            disabled={isPending}
           >
             <RightArrowIcon6 />
           </button>
