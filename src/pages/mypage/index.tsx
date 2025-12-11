@@ -136,7 +136,16 @@ function MyPage() {
     <div className={`min-h-screen p-[20px] ${!isWebView && 'pb-[60px]'} pt-[72px]`}>
       <Header>
         <div />
-        <button type="button">
+        <button
+          type="button"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to setting page' }));
+            } else {
+              // router.push('/mypage/setting');
+            }
+          }}
+        >
           <CogIcon />
         </button>
       </Header>

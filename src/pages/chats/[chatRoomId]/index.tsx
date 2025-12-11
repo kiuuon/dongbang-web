@@ -459,6 +459,11 @@ function ChatRoomPage() {
               onClick={async () => {
                 setHasPendingNewMessage(false);
                 await queryClient.invalidateQueries({ queryKey: ['chatMessages', chatRoomId] });
+                requestAnimationFrame(() => {
+                  if (scrollContainerRef.current) {
+                    scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+                  }
+                });
               }}
             >
               새 메시지 보기

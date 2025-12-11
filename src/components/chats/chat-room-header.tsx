@@ -65,6 +65,7 @@ function ChatRoomHeader({
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 handleSearchConfirm();
+                inputRef.current?.blur();
               }
             }}
           />

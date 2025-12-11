@@ -1,4 +1,3 @@
-// components/ChatToast.js
 import { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -95,7 +94,7 @@ function ChatToast({
             />
             <div className="flex flex-col">
               <div className="text-bold14">{chatRoomName}</div>
-              <div className="text-regular12 text-gray3">{message}</div>
+              <div className="text-regular12 whitespace-pre-wrap break-all text-gray3">{message}</div>
             </div>
           </div>
         </motion.div>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/apis/supabaseClient';
 
+import { fetchSession } from '@/lib/apis/auth';
 import { fetchMyChatRooms, updateLastReadAt } from '@/lib/apis/chats';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
@@ -17,10 +18,17 @@ export function useChatRealtime(
   const queryClient = useQueryClient();
   const channelsRef = useRef<Map<string, any>>(new Map());
 
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: fetchSession,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
+  });
+
   // 내가 속한 채팅방 목록 가져오기
   const { data: chatRooms } = useQuery({
     queryKey: ['chatRooms'],
     queryFn: fetchMyChatRooms,
+    enabled: !!session?.user,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
   });
 
