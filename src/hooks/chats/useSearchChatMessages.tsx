@@ -174,8 +174,8 @@ function useSearchChatMessages() {
 
       setCurrentSearchIndex(nextIndex);
 
-      // 마지막 검색 결과인 경우 스크롤링
-      if (nextIndex === searchResults.length - 1) {
+      // 마지막 인덱스가 아니라 마지막 페이지인 경우 스크롤링 필요
+      if (messagesAround.length < 20) {
         setTimeout(() => {
           const messageElement = messageRefs.current.get(nextResult.id);
           if (messageElement) {

@@ -56,6 +56,7 @@ function ChatRoomPage() {
     setMessageRef,
     searchQuery,
     setSearchQuery,
+    searchResults,
     currentSearchIndex,
     searchCount,
     isConfirm,
@@ -292,7 +293,7 @@ function ChatRoomPage() {
         // 처음 로드 이후 새 페이지 로드 시 스크롤 위치 조정 (위로 스크롤 할 때)
         if (!isInitialLoadRef.current && previousScrollHeightRef.current) {
           const heightDiff = container.scrollHeight - previousScrollHeightRef.current;
-          if (heightDiff > 500 || heightDiff === 0) {
+          if (heightDiff > 100 || heightDiff === 0) {
             // 위로 스크롤할 때: 새 메시지가 위에 추가되므로 높이 차이만큼 스크롤 위치 조정
             container.scrollTop += heightDiff;
           } else if (previousMessageCountRef.current < messages.length && previousMessageCountRef.current !== 0) {
@@ -408,35 +409,44 @@ function ChatRoomPage() {
         }}
       >
         {hasPreviousPage && <div ref={topObserverElement} />}
-        {messages.map((message: MessageType, idx: number) => (
-          <div key={message.id} ref={(el) => setMessageRef(message.id, el)}>
-            {idx === 0 && <div className="h-[80px]" />}
+        {messages.map((message: MessageType, idx: number) => {
+          const isSearchResult = searchResults[currentSearchIndex]?.id === message.id;
 
-            {message.message_type === 'grouped_system' && (
-              <SystemMessage
-                message={message}
-                index={idx}
-                boundaryIndex={boundaryIndex}
-                boundaryMessageRef={boundaryMessageRef}
-              />
-            )}
-            {firstPageUnreadCount === 11 && firstUnreadIndex >= 0 && idx === firstUnreadIndex && (
-              <div className="text-regular14 mx-auto mb-[8px] w-fit max-w-full rounded-[16px] bg-gray3 px-[12px] py-[6px] text-white opacity-60">
-                마지막으로 읽은 위치
-              </div>
-            )}
-            {message.message_type === 'text' && (
-              <TextMessage
-                message={message}
-                messages={messages}
-                index={idx}
-                boundaryIndex={boundaryIndex}
-                boundaryMessageRef={boundaryMessageRef}
-                searchQuery={searchQuery}
-              />
-            )}
-          </div>
-        ))}
+          return (
+            <div
+              key={message.id}
+              ref={(el) => setMessageRef(message.id, el)}
+              className={`relative ${isSearchResult ? 'animate-[bounce_0.6s_ease-in-out]' : ''}`}
+            >
+              {/* {isSearchResult && <div className="absolute h-[80px]" />} */}
+              {idx === 0 && <div className="h-[80px]" />}
+
+              {message.message_type === 'grouped_system' && (
+                <SystemMessage
+                  message={message}
+                  index={idx}
+                  boundaryIndex={boundaryIndex}
+                  boundaryMessageRef={boundaryMessageRef}
+                />
+              )}
+              {firstPageUnreadCount === 11 && firstUnreadIndex >= 0 && idx === firstUnreadIndex && (
+                <div className="text-regular14 mx-auto mb-[8px] w-fit max-w-full rounded-[16px] bg-gray3 px-[12px] py-[6px] text-white opacity-60">
+                  마지막으로 읽은 위치
+                </div>
+              )}
+              {message.message_type === 'text' && (
+                <TextMessage
+                  message={message}
+                  messages={messages}
+                  index={idx}
+                  boundaryIndex={boundaryIndex}
+                  boundaryMessageRef={boundaryMessageRef}
+                  searchQuery={searchQuery}
+                />
+              )}
+            </div>
+          );
+        })}
 
         {hasNextPage && <div ref={bottomObserverElement} />}
       </div>

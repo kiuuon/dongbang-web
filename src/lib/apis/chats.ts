@@ -49,6 +49,10 @@ export async function fetchChatMessages(
     return data;
   }
 
+  if (cursorId && cursorId.startsWith('temp-')) {
+    return [];
+  }
+
   // 과거 로드 (Scroll Up) -> Previous Page
   if (direction === 'past') {
     const { data, error } = await supabase.rpc('fetch_chat_messages_bidirectional', {
