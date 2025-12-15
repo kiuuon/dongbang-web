@@ -156,7 +156,7 @@ function InquiryCard({
           );
         })}
       </div>
-      {(inquiry.author_id === userId || hasPermission(myRole, 'answer_inquiry')) && (
+      {hasPermission(myRole, 'answer_inquiry') && (
         <div className="relative w-full">
           <textarea
             ref={textareaRef}

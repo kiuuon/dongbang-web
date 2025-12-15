@@ -47,7 +47,7 @@ function InvitePage() {
   });
 
   const { mutate: handleJoinClub } = useMutation({
-    mutationFn: () => joinClub(club?.id, code as string),
+    mutationFn: () => joinClub(code as string),
     onSuccess: () => {
       setIsCompleted(true);
     },

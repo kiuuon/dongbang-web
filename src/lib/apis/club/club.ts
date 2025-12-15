@@ -201,7 +201,7 @@ export async function fetchClubMembers(clubId: string) {
   }));
 }
 
-export async function joinClub(clubId: string, code: string) {
+export async function joinClub(code: string) {
   const { error } = await supabase.rpc('join_club', {
     p_invite_code: code,
   });

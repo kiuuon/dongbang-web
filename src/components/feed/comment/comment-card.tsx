@@ -6,7 +6,7 @@ import { fetchSession, fetchUserId } from '@/lib/apis/auth';
 import { blockUser } from '@/lib/apis/user';
 import { deleteComment, fetchMyCommentLike, fetchReplyComment, toggleCommentLike } from '@/lib/apis/feed/comment';
 import { fetchFeedDetail } from '@/lib/apis/feed/feed';
-import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { formatToTimeAgo, handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import loginModalStore from '@/stores/login-modal-store';
 import { CommentType } from '@/types/feed-type';
@@ -194,26 +194,6 @@ export default function CommentCard({
     setIsDropDownOpen(false);
   };
 
-  function getTimeAgo(dateString: string) {
-    const now = new Date();
-    const created = new Date(dateString);
-
-    const diff = (now.getTime() - created.getTime()) / 1000; // 초 단위 차이
-
-    const minutes = diff / 60;
-    const hours = diff / 3600;
-    const days = diff / 86400;
-    const months = diff / (86400 * 30);
-    const years = diff / (86400 * 365);
-
-    if (years >= 1) return `${Math.floor(years)}년 전`;
-    if (months >= 1) return `${Math.floor(months)}개월 전`;
-    if (days >= 1) return `${Math.floor(days)}일 전`;
-    if (hours >= 1) return `${Math.floor(hours)}시간 전`;
-    if (minutes >= 1) return `${Math.floor(minutes)}분 전`;
-    return '방금 전';
-  }
-
   return (
     <div className="flex flex-col">
       <div
@@ -265,7 +245,7 @@ export default function CommentCard({
               >
                 {comment.author.name}
               </button>
-              <div className="text-regular10 text-gray2">{getTimeAgo(comment.created_at)}</div>
+              <div className="text-regular10 text-gray2">{formatToTimeAgo(comment.created_at)}</div>
             </div>
             <div className="text-regular14 break-all">
               <MentionRenderer text={comment.content} />

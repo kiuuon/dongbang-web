@@ -24,6 +24,26 @@ export function formatToTime(dateString: string): string {
   return `${hours}:${minutes}`;
 }
 
+export function formatToTimeAgo(dateString: string) {
+  const now = new Date();
+  const created = new Date(dateString);
+
+  const diff = (now.getTime() - created.getTime()) / 1000; // 초 단위 차이
+
+  const minutes = diff / 60;
+  const hours = diff / 3600;
+  const days = diff / 86400;
+  const months = diff / (86400 * 30);
+  const years = diff / (86400 * 365);
+
+  if (years >= 1) return `${Math.floor(years)}년 전`;
+  if (months >= 1) return `${Math.floor(months)}개월 전`;
+  if (days >= 1) return `${Math.floor(days)}일 전`;
+  if (hours >= 1) return `${Math.floor(hours)}시간 전`;
+  if (minutes >= 1) return `${Math.floor(minutes)}분 전`;
+  return '방금 전';
+}
+
 export function formatChatTime(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();

@@ -9,14 +9,23 @@ import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import { MessageType } from '@/types/message-type';
 
-export function useChatRealtime(
+export function useRealtime(
   onNotification: (
     message: MessageType & { chat_room_name: string; club_logo: string; notification_enabled: boolean },
   ) => void,
 ) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const channelsRef = useRef<Map<string, any>>(new Map());
+  const chatRoomChannelsRef = useRef<Map<string, any>>(new Map());
+  const notificationChannelsRef = useRef<any>(null);
+
+  const currentChatRoomIdRef = useRef<string | undefined>(undefined);
+  const currentPathRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    currentChatRoomIdRef.current = router.query.chatRoomId as string | undefined;
+    currentPathRef.current = router.pathname;
+  }, [router.query.chatRoomId, router.pathname]);
 
   const { data: session } = useQuery({
     queryKey: ['session'],
@@ -35,14 +44,12 @@ export function useChatRealtime(
   useEffect(() => {
     if (!chatRooms || chatRooms.length === 0) return;
 
-    const currentChatRoomId = router.query.chatRoomId as string | undefined;
-
     // 각 채팅방에 대해 구독
     chatRooms.forEach((chatRoom: { chat_room_id: string }) => {
       const chatRoomId = chatRoom.chat_room_id;
 
       // 이미 구독 중이면 스킵
-      if (channelsRef.current.has(chatRoomId)) return;
+      if (chatRoomChannelsRef.current.has(chatRoomId)) return;
 
       const channel = supabase
         .channel(`chat_room_${chatRoomId}`)
@@ -128,11 +135,11 @@ export function useChatRealtime(
                   }
                 : undefined,
               isMine: newMessage.sender_id === currentUserId,
-              is_unread: currentChatRoomId !== chatRoomId, // 현재 채팅방이면 false
+              is_unread: currentChatRoomIdRef.current !== chatRoomId, // 현재 채팅방이면 false
             };
 
             // 현재 채팅방이 아니면 알림 표시
-            if (currentChatRoomId !== chatRoomId) {
+            if (currentChatRoomIdRef.current !== chatRoomId) {
               onNotification({
                 ...message,
                 chat_room_name: chatRoomData?.name,
@@ -167,7 +174,7 @@ export function useChatRealtime(
             // unread_count가 업데이트된 경우
             if (updatedMessage.unread_count !== oldMessage.unread_count) {
               // 현재 채팅방이면 React Query 캐시에서 해당 메시지의 unread_count 업데이트
-              if (currentChatRoomId === chatRoomId) {
+              if (currentChatRoomIdRef.current === chatRoomId) {
                 queryClient.setQueryData(['chatMessages', chatRoomId], (oldData: any) => {
                   if (!oldData) return oldData;
 
@@ -195,17 +202,39 @@ export function useChatRealtime(
         )
         .subscribe();
 
-      channelsRef.current.set(chatRoomId, channel);
+      chatRoomChannelsRef.current.set(chatRoomId, channel);
     });
+
+    const notificationChannel = supabase
+      .channel('notification')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notification',
+          filter: `recipient_id=eq.${session?.user?.id}`,
+        },
+        async () => {
+          if (currentPathRef.current === '/notification') {
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+          } else {
+            queryClient.invalidateQueries({ queryKey: ['hasUnreadNotifications'] });
+          }
+        },
+      )
+      .subscribe();
+
+    notificationChannelsRef.current = notificationChannel;
 
     // cleanup: 구독 해제
     // eslint-disable-next-line consistent-return
     return () => {
-      channelsRef.current.forEach((channel) => {
+      chatRoomChannelsRef.current.forEach((channel) => {
         channel.unsubscribe();
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      channelsRef.current.clear();
+      chatRoomChannelsRef.current.clear();
     };
-  }, [chatRooms, router.query.chatRoomId, onNotification, queryClient]);
+  }, [chatRooms, onNotification, queryClient, session?.user?.id]);
 }

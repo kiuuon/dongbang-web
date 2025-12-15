@@ -30,7 +30,7 @@ function useClubAnnouncementPageValidation() {
     isSuccess: isAnnouncementSuccess,
   } = useQuery({
     queryKey: ['announcement', announcementId],
-    queryFn: () => fetchAnnouncement(announcementId, clubId),
+    queryFn: () => fetchAnnouncement(announcementId),
     enabled: isAnnouncementValid,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.FETCH_ANNOUNCEMENT_FAILED),
   });

@@ -10,7 +10,7 @@ import { fetchSession, login } from '@/lib/apis/auth';
 import { fetchUser } from '@/lib/apis/user';
 import { supabase } from '@/lib/apis/supabaseClient';
 import { ERROR_MESSAGE } from '@/lib/constants';
-import { useChatRealtime } from '@/hooks/chats/useChatRealtime';
+import { useRealtime } from '@/hooks/useRealtime';
 import loginModalStore from '@/stores/login-modal-store';
 import clubInfoStore from '@/stores/club-info-store';
 import clubPageStore from '@/stores/club-page-store';
@@ -41,7 +41,7 @@ function requiresLoginPath(pathname: string) {
 function ChatRealtimeSubscriber() {
   const [toast, setToast] = useState({ show: false, chatRoomId: '', chatRoomName: '', clubLogo: '', message: '' });
 
-  useChatRealtime((message) => {
+  useRealtime((message) => {
     // 알림 표시
     if (!message.notification_enabled || !message.is_unread || message.message_type === 'system') {
       return;

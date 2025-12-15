@@ -14,12 +14,11 @@ export async function fetchLatestAnnouncement(clubId: string) {
   return data ?? null;
 }
 
-export async function fetchAnnouncement(announcementId: string, clubId: string) {
+export async function fetchAnnouncement(announcementId: string) {
   const { data, error } = await supabase
     .from('club_announcement')
     .select('*, author:User(id, name, nickname, avatar, role:Club_User(role))')
     .eq('id', announcementId)
-    .eq('author.role.club_id', clubId)
     .is('deleted_at', null)
     .maybeSingle();
 

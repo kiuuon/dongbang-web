@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
+import { checkUnreadNotifications } from '@/lib/apis/notifications';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
@@ -25,6 +26,12 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
+  });
+
+  const { data: hasUnreadNotifications } = useQuery({
+    queryKey: ['hasUnreadNotifications'],
+    queryFn: checkUnreadNotifications,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.NOTIFICATION.FETCH_FAILED),
   });
 
   useEffect(() => {
@@ -81,8 +88,23 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
       {/* eslint-disable-next-line no-nested-ternary */}
       {isPending ? null : session?.user ? (
         <div className="flex items-center gap-[20px]">
-          <button type="button">
+          <button
+            type="button"
+            className="relative"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'go to notification page' }),
+                );
+              } else {
+                router.push('/notification');
+              }
+            }}
+          >
             <BellIcon />
+            {hasUnreadNotifications && (
+              <div className="absolute right-[2px] top-[2px] h-[8px] w-[8px] rounded-full bg-error" />
+            )}
           </button>
           <button
             type="button"
