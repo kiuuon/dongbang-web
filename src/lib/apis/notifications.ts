@@ -45,3 +45,35 @@ export async function markAllNotificationsAsRead() {
 
   if (error) throw error;
 }
+
+export async function fetchNotificationSettings(userId: string) {
+  const { data, error } = await supabase
+    .from('user_notification_settings')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return data;
+}
+
+export async function updateNotificationSettings(
+  userId: string,
+  commentNotification: boolean,
+  likeNotification: boolean,
+  mentionNotification: boolean,
+  newsNotification: boolean,
+) {
+  const { error } = await supabase
+    .from('user_notification_settings')
+    .update({
+      comment_notification: commentNotification,
+      like_notification: likeNotification,
+      mention_notification: mentionNotification,
+      news_notification: newsNotification,
+    })
+    .eq('user_id', userId);
+
+  if (error) throw error;
+}

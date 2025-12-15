@@ -105,6 +105,8 @@ const ERROR_MESSAGE = {
   NOTIFICATION: {
     FETCH_FAILED: '알림 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.',
     MARK_NOTIFICATIONS_AS_READ_FAILED: '알림을 읽음 처리하는 데 실패했습니다. 다시 시도해주세요.',
+    SETTINGS_FETCH_FAILED: '알림 설정을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+    SETTINGS_UPDATE_FAILED: '알림 설정을 업데이트하는 데 실패했습니다. 다시 시도해주세요.',
   },
 };
 

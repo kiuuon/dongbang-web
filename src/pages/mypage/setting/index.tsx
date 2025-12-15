@@ -76,11 +76,12 @@ function AccountSettingPage() {
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[13px] pl-[24px] pr-[20px]"
           onClick={() => {
-            // TODO: 알림 범위 설정
             if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: '' }));
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'go to notification settings page' }),
+              );
             } else {
-              // TODO: 알림 범위 설정 페이지로 이동
+              router.push('/mypage/setting/notification-settings');
             }
           }}
         >
