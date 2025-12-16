@@ -1,95 +1,24 @@
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useMutation, useQuery } from '@tanstack/react-query';
-
-import { fetchSession } from '@/lib/apis/auth';
-import { sendFeedback } from '@/lib/apis/feedback';
-import { handleMutationError, handleQueryError } from '@/lib/utils';
-import { ERROR_MESSAGE } from '@/lib/constants';
-import LoginModal from '@/components/common/login-modal';
+import { useState } from 'react';
 
 function InteractPage() {
-  const router = useRouter();
-  const [feedBack, setFeedBack] = useState('');
-  const [isWebView, setIsWebView] = useState(true);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (!window.ReactNativeWebView) {
-      setIsWebView(false);
-    }
-  }, []);
-
-  const { data: session } = useQuery({
-    queryKey: ['session'],
-    queryFn: fetchSession,
-    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
-  });
-
-  const { mutate } = useMutation({
-    mutationFn: () => sendFeedback(feedBack),
-    onSuccess: () => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'complete send feedback' }));
-        return;
-      }
-      router.back();
-    },
-    onError: (error) => handleMutationError(error, ERROR_MESSAGE.FEEDBACK.SEND_FAILED),
-  });
+  const [inputValue, setInputValue] = useState('');
 
   return (
-    <div
-      className={`flex h-screen flex-col items-center justify-between px-[20px] pt-[80px] ${isWebView ? 'pb-[20px]' : 'pb-[80px]'}`}
-    >
-      <div className="flex flex-col items-center gap-[13px]">
-        <Image src="/images/post.gif" alt="post" width={70} height={70} priority />
-        <div className="text-bold20 text-center text-gray1">
-          아직 준비중인 서비스입니다 <br />
-          이용에 불편을 드려 죄송합니다
+    <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col rounded-b-[16px] bg-white shadow-[0_2px_20px_0_rgba(0,0,0,0.16)]">
+        <div className="text-bold16 flex h-[60px] items-center justify-center">교류 공고</div>
+        <div className="px-[20px] pb-[12px] pt-[9px]">
+          <input
+            type="text"
+            value={inputValue}
+            placeholder="검색"
+            className="text-regular16 w-full rounded-[10px] bg-gray0 px-[12px] py-[10px] placeholder:text-gray2"
+            onChange={(event) => setInputValue(event.target.value)}
+          />
         </div>
+        <div className="h-[38px]" />
       </div>
-      <div className="flex w-full flex-col gap-[10px]">
-        <div className="text-bold16 text-primary">
-          더 나은 동방을 위해 <br />
-          당신의 소중한 의견을 들려주세요
-        </div>
-        <textarea
-          value={feedBack}
-          onChange={(event) => setFeedBack(event.target.value)}
-          placeholder="불편했던 점이나 바라는 기능을 적어주세요"
-          className="text-bold12 h-[163px] w-full resize-none rounded-[8px] border border-gray0 p-[16px]"
-        />
-        <button
-          type="button"
-          className="text-bold16 my-[21px] flex h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
-          onClick={() => {
-            if (session?.user) {
-              if (feedBack.trim() === '') {
-                alert('피드백을 입력해주세요.');
-                return;
-              }
-              mutate();
-            } else {
-              if (window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(
-                  JSON.stringify({
-                    type: 'event',
-                    action: 'open login modal',
-                  }),
-                );
-                return;
-              }
-
-              setIsLoginModalOpen(true);
-            }
-          }}
-        >
-          전송
-        </button>
-      </div>
-      {isLoginModalOpen && <LoginModal onClose={() => setIsLoginModalOpen(false)} />}
+      <div className="text-bold24 mt-[200px] w-full text-center">등록된 교류 공고가 없습니다.</div>
     </div>
   );
 }
