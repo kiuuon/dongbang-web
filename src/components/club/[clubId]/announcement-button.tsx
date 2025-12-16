@@ -31,11 +31,11 @@ function AnnouncementButton() {
       className="mb-[16px] mt-[18px] flex h-[40px] w-full flex-row items-center justify-between rounded-[8px] bg-secondary pl-[10px] pr-[16px]"
       onClick={goToAnnouncementPage}
     >
-      <div className="flex flex-row items-center gap-[8px]">
-        <SpeakerPhoneIcon />
-        <div className="text-bold12">
-          {(latestAnnouncement?.length as number) > 0 ? latestAnnouncement?.[0]?.title : '공지사항이 없습니다.'}
+      <div className="flex w-full flex-row items-center gap-[8px]">
+        <div className="min-w-[20px]">
+          <SpeakerPhoneIcon />
         </div>
+        <div className="text-bold12 truncate">{latestAnnouncement?.title || '공지사항이 없습니다.'}</div>
       </div>
       <RightArrowIcon4 />
     </button>

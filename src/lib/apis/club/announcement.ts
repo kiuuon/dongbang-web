@@ -7,7 +7,8 @@ export async function fetchLatestAnnouncement(clubId: string) {
     .eq('club_id', clubId)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
-    .limit(1);
+    .limit(1)
+    .maybeSingle();
 
   if (error) throw error;
 

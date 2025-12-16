@@ -44,6 +44,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
       }}
     >
       <div className="scrollbar-hide flex h-[420px] w-full flex-col gap-[16px] overflow-y-auto rounded-[20px] bg-white px-[16px] pb-[30px] pt-[40px]">
+        {/* 회장 */}
         <div className="flex flex-col gap-[8px]">
           <div className="text-bold14">회장</div>
           <div className="flex flex-col gap-[16px]">
@@ -68,6 +69,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
+        {/* 임원 */}
         <div className="flex flex-col gap-[8px]">
           <div className="text-bold14">임원</div>
           <div className="flex flex-col gap-[16px]">
@@ -92,12 +94,63 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
+        {/* 부원 */}
         <div className="flex flex-col gap-[8px]">
           <div className="text-bold14">부원</div>
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
                 member.role === 'member' && (
+                  <button
+                    type="button"
+                    className="flex items-center gap-[12px]"
+                    onClick={() => {
+                      router.push(`/profile/${member.nickname}`);
+                    }}
+                  >
+                    <UserAvatar avatar={member.avatar} size={32} />
+                    <div className="flex flex-col items-start">
+                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
+                    </div>
+                  </button>
+                ),
+            )}
+          </div>
+        </div>
+
+        {/* 휴학생 */}
+        <div className="flex flex-col gap-[8px]">
+          <div className="text-bold14">휴학생</div>
+          <div className="flex flex-col gap-[16px]">
+            {members?.map(
+              (member) =>
+                member.role === 'on_leave' && (
+                  <button
+                    type="button"
+                    className="flex items-center gap-[12px]"
+                    onClick={() => {
+                      router.push(`/profile/${member.nickname}`);
+                    }}
+                  >
+                    <UserAvatar avatar={member.avatar} size={32} />
+                    <div className="flex flex-col items-start">
+                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
+                    </div>
+                  </button>
+                ),
+            )}
+          </div>
+        </div>
+
+        {/* 졸업생 */}
+        <div className="flex flex-col gap-[8px]">
+          <div className="text-bold14">졸업생</div>
+          <div className="flex flex-col gap-[16px]">
+            {members?.map(
+              (member) =>
+                member.role === 'graduate' && (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"

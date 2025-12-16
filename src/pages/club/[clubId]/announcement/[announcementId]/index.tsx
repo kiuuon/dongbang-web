@@ -73,11 +73,28 @@ function AnnouncementDetailPage() {
     <div className="flex h-screen flex-col pt-[60px]">
       <Header>
         <BackButton />
-        {hasPermission(myRole, 'manage_announcement') && (
-          <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
-            <MoreVertIcon />
+        <div className="flex items-center gap-[8px]">
+          <button
+            type="button"
+            className="text-regular12"
+            onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'go to announcement list page' }),
+                );
+                return;
+              }
+              router.push(`/club/${clubId}/announcement`);
+            }}
+          >
+            공지 목록
           </button>
-        )}
+          {hasPermission(myRole, 'manage_announcement') && (
+            <button ref={moreButtonRef} type="button" onClick={() => setIsDropDownOpen((prev) => !prev)}>
+              <MoreVertIcon />
+            </button>
+          )}
+        </div>
       </Header>
 
       {isDropDownOpen && (
@@ -131,7 +148,7 @@ function AnnouncementDetailPage() {
           <div className="text-regular12 h-[14px] text-gray2">{announcement?.author.nickname}</div>
         </div>
       </button>
-      <div className="text-bold24 mb-[4px] mt-[16px] px-[24px]">{announcement?.title}</div>
+      <div className="text-bold24 mb-[4px] mt-[16px] break-all px-[24px]">{announcement?.title}</div>
       <div className="text-regular10 px-[24px] text-gray2">{formatKoreanDate(announcement?.created_at)}</div>
       <div className="text-regular16 my-[12px] whitespace-pre-wrap break-all px-[24px]">{announcement?.content}</div>
 

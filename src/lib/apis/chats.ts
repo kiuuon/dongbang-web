@@ -160,3 +160,11 @@ export async function fetchChatMessagesAround(chatRoomId: string, centerCreatedA
 
   return data;
 }
+
+export async function closeAnnouncement(chatRoomId: string) {
+  const { error } = await supabase.rpc('set_chat_show_announcement_false', {
+    p_chat_room_id: chatRoomId,
+  });
+
+  if (error) throw error;
+}

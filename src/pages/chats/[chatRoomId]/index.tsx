@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { fetchUserId } from '@/lib/apis/auth';
+import { fetchLatestAnnouncement } from '@/lib/apis/club/announcement';
+import { closeAnnouncement, sendTextMessage } from '@/lib/apis/chats';
+import { handleMutationError, handleQueryError } from '@/lib/utils';
+import { ERROR_MESSAGE } from '@/lib/constants';
 import useFetchChatMessages from '@/hooks/chats/useFetchChatMessages';
 import useSearchChatMessages from '@/hooks/chats/useSearchChatMessages';
 import useChatPageValidation from '@/hooks/chats/useChatPageValidation';
@@ -9,13 +14,11 @@ import { MessageType } from '@/types/message-type';
 import RightArrowIcon6 from '@/icons/right-arrow-icon6';
 import ChevronDownIcon from '@/icons/cheveron-down-icon';
 import ChevronUpIcon from '@/icons/cheveron-up-icon';
+import SpeakerPhoneIcon from '@/icons/speaker-phone-icon';
+import XIcon9 from '@/icons/x-icon9';
 import ChatRoomHeader from '@/components/chats/chat-room-header';
 import SystemMessage from '@/components/chats/system-message';
 import TextMessage from '@/components/chats/text-message';
-import { sendTextMessage } from '@/lib/apis/chats';
-import { handleMutationError, handleQueryError } from '@/lib/utils';
-import { ERROR_MESSAGE } from '@/lib/constants';
-import { fetchUserId } from '@/lib/apis/auth';
 
 function ChatRoomPage() {
   const queryClient = useQueryClient();
@@ -112,6 +115,13 @@ function ChatRoomPage() {
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ID_FETCH_FAILED),
   });
 
+  const { data: latestAnnouncement } = useQuery({
+    queryKey: ['latestAnnouncement', chatRoomInfo?.club?.id],
+    queryFn: () => fetchLatestAnnouncement(chatRoomInfo?.club?.id),
+    enabled: !!chatRoomInfo?.club?.id,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.FETCH_ANNOUNCEMENTS_FAILED),
+  });
+
   // 텍스트 메시지 전송
   const { mutate: handleSendTextMessage, isPending } = useMutation({
     mutationFn: (content: string) => sendTextMessage(chatRoomId, content),
@@ -204,6 +214,15 @@ function ChatRoomPage() {
 
       handleMutationError(error, ERROR_MESSAGE.CHATS.SEND_FAILED);
     },
+  });
+
+  // 공지사항 닫기
+  const { mutate: handleCloseAnnouncement } = useMutation({
+    mutationFn: () => closeAnnouncement(chatRoomId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['chatRoomInfo', chatRoomId] });
+    },
+    onError: (error) => handleMutationError(error, ERROR_MESSAGE.CHATS.CLOSE_ANNOUNCEMENT_FAILED),
   });
 
   // 채팅방 나가면 캐시 제거
@@ -399,6 +418,35 @@ function ChatRoomPage() {
         setInputContainerHeight={setInputContainerHeight}
         setIsConfirm={setIsConfirm}
       />
+      {latestAnnouncement && chatRoomInfo?.show_announcement && (
+        <button
+          type="button"
+          className="fixed left-0 right-0 top-[60px] z-40 mx-auto flex max-w-[600px] justify-between bg-white px-[20px] py-[18px]"
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                  type: 'event',
+                  action: 'go to announcement page',
+                  payload: { clubId: chatRoomInfo?.club?.id, announcementId: latestAnnouncement.id },
+                }),
+              );
+              return;
+            }
+            router.push(`/club/${chatRoomInfo?.club?.id}/announcement/${latestAnnouncement.id}`);
+          }}
+        >
+          <div className="flex w-[calc(100%-28px)] items-center gap-[8px]">
+            <div className="min-w-[20px]">
+              <SpeakerPhoneIcon />
+            </div>
+            <div className="text-bold14 truncate">{latestAnnouncement.title}</div>
+          </div>
+          <button type="button" className="ml-[8px]" onClick={() => handleCloseAnnouncement()}>
+            <XIcon9 />
+          </button>
+        </button>
+      )}
       <div
         ref={scrollContainerRef}
         className="flex flex-col overflow-y-auto overscroll-none bg-tag px-[20px]"
