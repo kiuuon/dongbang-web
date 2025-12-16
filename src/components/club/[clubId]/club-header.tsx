@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club/club';
-import { getChatRoomIdByClubId } from '@/lib/apis/chats';
+import { fetchChatRoomInfo, getChatRoomIdByClubId } from '@/lib/apis/chats';
 import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import MessageIcon from '@/icons/message-icon';
@@ -110,6 +110,13 @@ function ClubHeader({
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_ROOM_INFO_FAILED),
   });
 
+  const { data: chatRoomInfo } = useQuery({
+    queryKey: ['chatRoomInfo', chatRoomId],
+    queryFn: () => fetchChatRoomInfo(chatRoomId),
+    enabled: !!chatRoomId,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_ROOM_INFO_FAILED),
+  });
+
   const clickShareButton = async () => {
     try {
       const url = `${process.env.NEXT_PUBLIC_SITE_URL}/club/${clubId}`;
@@ -131,8 +138,11 @@ function ClubHeader({
       <BackButton color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
       <div className="flex gap-[10px]">
         {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
-          <button type="button" onClick={() => router.push(`/chats/${chatRoomId}`)}>
+          <button type="button" className="relative" onClick={() => router.push(`/chats/${chatRoomId}`)}>
             <MessageIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
+            {chatRoomInfo?.has_unread && (
+              <div className="absolute right-[2px] top-[2px] h-[8px] w-[8px] rounded-full bg-error" />
+            )}
           </button>
         )}
         <button type="button" onClick={clickShareButton}>

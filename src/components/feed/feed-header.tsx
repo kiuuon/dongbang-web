@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchSession } from '@/lib/apis/auth';
 import { checkUnreadNotifications } from '@/lib/apis/notifications';
+import { fetchMyChatRooms } from '@/lib/apis/chats';
 import { handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import BottomArrowIcon from '@/icons/bottom-arrow-icon';
@@ -33,6 +34,17 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
     queryFn: checkUnreadNotifications,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.NOTIFICATION.FETCH_FAILED),
   });
+
+  const { data: chatRooms } = useQuery({
+    queryKey: ['chatRooms'],
+    queryFn: fetchMyChatRooms,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
+  });
+
+  const hasAnyUnreadChat = useMemo(() => {
+    if (!chatRooms || chatRooms.length === 0) return false;
+    return chatRooms.some((chatRoom: { unread_count: number }) => chatRoom.unread_count > 0);
+  }, [chatRooms]);
 
   useEffect(() => {
     const container = document.scrollingElement || document.documentElement;
@@ -108,6 +120,7 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
           </button>
           <button
             type="button"
+            className="relative"
             onClick={() => {
               if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to chats page' }));
@@ -117,6 +130,9 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
             }}
           >
             <MessageIcon />
+            {hasAnyUnreadChat && (
+              <div className="absolute right-[2px] top-[2px] h-[8px] w-[8px] rounded-full bg-error" />
+            )}
           </button>
         </div>
       ) : (

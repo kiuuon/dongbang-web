@@ -147,6 +147,7 @@ export function useRealtime(
                 notification_enabled: notificationEnabled,
               });
               queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
+              queryClient.invalidateQueries({ queryKey: ['chatRoomInfo', chatRoomId] });
             } else {
               // 채팅 페이지가 처리할 수 있도록 전역 이벤트 발행
               window.dispatchEvent(
