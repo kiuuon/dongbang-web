@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
@@ -6,6 +7,7 @@ import CommentNotificationIcon from '@/icons/comment-notification-icon';
 import { formatToTimeAgo } from '@/lib/utils';
 import { NotificationType } from '@/types/notification-type';
 import LikeNotificationIcon from '@/icons/like-notification-icon';
+import FeedNotificationIcon from '@/icons/feed-notification';
 
 const NOTIFICATION_TYPE = {
   comment: '댓글',
@@ -22,6 +24,7 @@ const NOTIFICATION_TYPE = {
   announcement: '공지',
   inquiry: '문의',
   inquiry_reply: '문의 답변',
+  tag: '태그',
 };
 
 function NotificationCard({ notification }: { notification: NotificationType }) {
@@ -30,7 +33,7 @@ function NotificationCard({ notification }: { notification: NotificationType }) 
   return (
     <button
       type="button"
-      className="flex flex-row items-start gap-[12px] border-b border-gray0 px-[20px] py-[16px]"
+      className={`flex flex-row items-start gap-[12px] border-b border-gray0 px-[20px] py-[16px] ${notification.read_at ? 'bg-white' : 'bg-secondary'}`}
       onClick={async () => {
         if (window.ReactNativeWebView) {
           if (notification.navigation_type === 'announcement') {
@@ -77,7 +80,6 @@ function NotificationCard({ notification }: { notification: NotificationType }) 
         }
       }}
     >
-      {/* eslint-disable-next-line no-nested-ternary */}
       {notification.logo ? (
         <Image
           src={notification.logo}
@@ -88,6 +90,8 @@ function NotificationCard({ notification }: { notification: NotificationType }) 
         />
       ) : notification.type === 'like' ? (
         <LikeNotificationIcon />
+      ) : notification.type === 'tag' ? (
+        <FeedNotificationIcon />
       ) : (
         <CommentNotificationIcon />
       )}

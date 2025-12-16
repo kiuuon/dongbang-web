@@ -219,7 +219,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
           <MoreVertIcon />
         </button>
       </div>
-
       {/* 피드 이미지 */}
       <div key={feed.photos.join(',')} ref={sliderRef} className="keen-slider mb-[12px] mt-[16px] aspect-square w-full">
         {feed.photos.map((photo) => (
@@ -237,7 +236,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
           </div>
         ))}
       </div>
-
       {/* 인디케이터 */}
       {feed.photos.length > 1 && (
         <div className="mb-[8px] flex h-[7px] w-full items-center justify-center">
@@ -256,7 +254,6 @@ function FeedCard({ feed }: { feed: FeedType }) {
           </div>
         </div>
       )}
-
       {/* 피드 버튼 박스 */}
       <div className="mb-[10px] flex flex-row items-center justify-between">
         <div className="flex w-full items-center gap-[10px]">
@@ -327,10 +324,8 @@ function FeedCard({ feed }: { feed: FeedType }) {
 
       {/* 피드 제목 */}
       {feed.title && <div className="text-bold16 mb-[4px]">{feed.title}</div>}
-
       {/* 피드 내용 */}
       {feed.content && <FeedContent content={feed.content} />}
-
       {/* 바텀 시트 */}
       {isReportBottomSheetOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsReportBottomSheetOpen}>

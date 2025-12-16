@@ -62,6 +62,7 @@ export async function updateNotificationSettings(
   userId: string,
   commentNotification: boolean,
   likeNotification: boolean,
+  tagNotification: boolean,
   mentionNotification: boolean,
   newsNotification: boolean,
 ) {
@@ -70,6 +71,7 @@ export async function updateNotificationSettings(
     .update({
       comment_notification: commentNotification,
       like_notification: likeNotification,
+      tag_notification: tagNotification,
       mention_notification: mentionNotification,
       news_notification: newsNotification,
     })

@@ -223,6 +223,19 @@ export function useRealtime(
           }
         },
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notification',
+        },
+        async () => {
+          if (currentPathRef.current !== '/notification') {
+            queryClient.invalidateQueries({ queryKey: ['hasUnreadNotifications'] });
+          }
+        },
+      )
       .subscribe();
 
     notificationChannelsRef.current = notificationChannel;

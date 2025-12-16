@@ -66,17 +66,23 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
   if (clubType === 'my') {
     const userId = await fetchUserId();
 
-    const { data: feeds, error } = await supabase.rpc('fetch_my_feeds_transaction', {
-      p_user_id: userId,
-      p_limit_count: PAGE_SIZE,
-      p_offset_count: page * PAGE_SIZE,
-    }).select(`
+    const { data: feeds, error } = await supabase
+      .rpc('fetch_my_feeds_transaction', {
+        p_user_id: userId,
+        p_limit_count: PAGE_SIZE,
+        p_offset_count: page * PAGE_SIZE,
+      })
+      .select(
+        `
       *,
       author:User(id, name, nickname, avatar),
       club:Club(name, logo),
-      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedUsers:Feed_User(user:User(id, name, nickname, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
-    `);
+    `,
+      )
+      .is('Feed_User.deleted_at', null)
+      .is('Feed_Club.deleted_at', null);
 
     if (error) {
       throw error;
@@ -118,10 +124,12 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
     const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
-        '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
+        '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
       .is('deleted_at', null)
+      .is('Feed_User.deleted_at', null)
+      .is('Feed_Club.deleted_at', null)
       .order('created_at', { ascending: false })
       .range(start, end);
 
@@ -166,6 +174,9 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
       '*, author:User(id, name, nickname, avatar), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, avatar)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
     )
     .order('created_at', { ascending: false })
+    .is('deleted_at', null)
+    .is('Feed_User.deleted_at', null)
+    .is('Feed_Club.deleted_at', null)
     .range(start, end);
 
   if (fetchFeedError) {
@@ -211,12 +222,14 @@ export async function fetchFeedDetail(feedId: string) {
       *,
       author:User(id, name, nickname, avatar),
       club:Club(name, logo),
-      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedUsers:Feed_User(user:User(id, name, nickname, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
     `,
     )
     .eq('id', feedId)
     .is('deleted_at', null)
+    .is('Feed_User.deleted_at', null)
+    .is('Feed_Club.deleted_at', null)
     .single();
 
   if (!feed) return null;
@@ -249,17 +262,23 @@ export async function fetchFeedDetail(feedId: string) {
 export async function searchFeeds(keyword: string, page: number) {
   const PAGE_SIZE = 10;
 
-  const { data, error } = await supabase.rpc('search_feeds_by_keyword', {
-    keyword: keyword ?? '',
-    limit_count: PAGE_SIZE,
-    offset_count: page * PAGE_SIZE,
-  }).select(`
+  const { data, error } = await supabase
+    .rpc('search_feeds_by_keyword', {
+      keyword: keyword ?? '',
+      limit_count: PAGE_SIZE,
+      offset_count: page * PAGE_SIZE,
+    })
+    .select(
+      `
       *,
       author:User(id, name, nickname, avatar),
       club:Club(name, logo),
-      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedUsers:Feed_User(user:User(id, name, nickname, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
-    `);
+    `,
+    )
+    .is('Feed_User.deleted_at', null)
+    .is('Feed_Club.deleted_at', null);
 
   if (error) {
     throw error;
@@ -301,12 +320,14 @@ export async function fetchFeedsByAuthor(userId: string, page: number) {
       *,
       author:User(id, name, nickname, avatar),
       club:Club(id, name, logo),
-      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedUsers:Feed_User(user:User(id, name, nickname, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
     `,
     )
     .eq('author_id', userId)
     .is('deleted_at', null)
+    .is('Feed_User.deleted_at', null)
+    .is('Feed_Club.deleted_at', null)
     .order('created_at', { ascending: false })
     .range(start, end);
 
@@ -328,12 +349,14 @@ export async function fetchFeedsTaggedUser(userId: string, page: number) {
       author:User(id, name, nickname, avatar),
       Feed_User!inner(user_id),
       club:Club(id, name, logo),
-      taggedUsers:Feed_User(user:User(id, name, avatar)),
+      taggedUsers:Feed_User(user:User(id, name, nickname, avatar)),
       taggedClubs:Feed_Club(club:Club(id, name, logo))
     `,
     )
     .eq('Feed_User.user_id', userId)
     .is('deleted_at', null)
+    .is('Feed_User.deleted_at', null)
+    .is('Feed_Club.deleted_at', null)
     .order('created_at', { ascending: false })
     .range(start, end);
 

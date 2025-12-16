@@ -9,7 +9,7 @@ import BackButton from '@/components/common/back-button';
 import NotificationCard from '@/components/notification/notification-card';
 
 const NOTIFICATION_CATEGORY = {
-  activities: ['comment', 'like', 'reply', 'mention'],
+  activities: ['comment', 'like', 'reply', 'mention', 'tag'],
   news: [
     'application',
     'approval',

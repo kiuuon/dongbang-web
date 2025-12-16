@@ -15,6 +15,7 @@ function NotificationSettingsPage() {
   const [isSame, setIsSame] = useState(false);
   const [commentNotificationEnabled, setCommentNotificationEnabled] = useState(false);
   const [likeNotificationEnabled, setLikeNotificationEnabled] = useState(false);
+  const [tagNotificationEnabled, setTagNotificationEnabled] = useState(false);
   const [mentionNotificationEnabled, setMentionNotificationEnabled] = useState(false);
   const [newsNotificationEnabled, setNewsNotificationEnabled] = useState(false);
 
@@ -37,6 +38,7 @@ function NotificationSettingsPage() {
         userId as string,
         commentNotificationEnabled,
         likeNotificationEnabled,
+        tagNotificationEnabled,
         mentionNotificationEnabled,
         newsNotificationEnabled,
       ),
@@ -50,6 +52,7 @@ function NotificationSettingsPage() {
     if (notificationSettings) {
       setCommentNotificationEnabled(notificationSettings.comment_notification);
       setLikeNotificationEnabled(notificationSettings.like_notification);
+      setTagNotificationEnabled(notificationSettings.tag_notification);
       setMentionNotificationEnabled(notificationSettings.mention_notification);
       setNewsNotificationEnabled(notificationSettings.news_notification);
     }
@@ -60,6 +63,7 @@ function NotificationSettingsPage() {
       setIsSame(
         commentNotificationEnabled === notificationSettings.comment_notification &&
           likeNotificationEnabled === notificationSettings.like_notification &&
+          tagNotificationEnabled === notificationSettings.tag_notification &&
           mentionNotificationEnabled === notificationSettings.mention_notification &&
           newsNotificationEnabled === notificationSettings.news_notification,
       );
@@ -68,6 +72,7 @@ function NotificationSettingsPage() {
     notificationSettings,
     commentNotificationEnabled,
     likeNotificationEnabled,
+    tagNotificationEnabled,
     mentionNotificationEnabled,
     newsNotificationEnabled,
   ]);
@@ -105,11 +110,13 @@ function NotificationSettingsPage() {
             {/* eslint-disable-next-line no-nested-ternary */}
             {commentNotificationEnabled &&
             likeNotificationEnabled &&
+            tagNotificationEnabled &&
             mentionNotificationEnabled &&
             newsNotificationEnabled
               ? '전체'
               : !commentNotificationEnabled &&
                   !likeNotificationEnabled &&
+                  !tagNotificationEnabled &&
                   !mentionNotificationEnabled &&
                   !newsNotificationEnabled
                 ? '꺼짐'
@@ -123,15 +130,18 @@ function NotificationSettingsPage() {
               commentNotificationEnabled ||
               likeNotificationEnabled ||
               mentionNotificationEnabled ||
-              newsNotificationEnabled
+              newsNotificationEnabled ||
+              tagNotificationEnabled
             ) {
               setCommentNotificationEnabled(false);
               setLikeNotificationEnabled(false);
+              setTagNotificationEnabled(false);
               setMentionNotificationEnabled(false);
               setNewsNotificationEnabled(false);
             } else {
               setCommentNotificationEnabled(true);
               setLikeNotificationEnabled(true);
+              setTagNotificationEnabled(true);
               setMentionNotificationEnabled(true);
               setNewsNotificationEnabled(true);
             }
@@ -142,7 +152,8 @@ function NotificationSettingsPage() {
               commentNotificationEnabled ||
               likeNotificationEnabled ||
               mentionNotificationEnabled ||
-              newsNotificationEnabled
+              newsNotificationEnabled ||
+              tagNotificationEnabled
             }
           />
         </button>
@@ -152,6 +163,7 @@ function NotificationSettingsPage() {
         <div className="text-regular12 rounded-t-[8px] bg-secondary px-[16px] py-[13px] text-gray2">
           카테고리별로 다르게 설정할 수 있어요.
         </div>
+
         <div className="flex items-center justify-between rounded-b-[8px] border border-t-0 border-gray0 py-[13px] pl-[16px] pr-[13px]">
           <div>
             <div className="text-regular14">댓글</div>
@@ -161,6 +173,7 @@ function NotificationSettingsPage() {
             <ToggleIcon active={commentNotificationEnabled} />
           </button>
         </div>
+
         <div className="flex items-center justify-between rounded-b-[8px] border border-t-0 border-gray0 py-[13px] pl-[16px] pr-[13px]">
           <div>
             <div className="text-regular14">좋아요</div>
@@ -170,6 +183,17 @@ function NotificationSettingsPage() {
             <ToggleIcon active={likeNotificationEnabled} />
           </button>
         </div>
+
+        <div className="flex items-center justify-between rounded-b-[8px] border border-t-0 border-gray0 py-[13px] pl-[16px] pr-[13px]">
+          <div>
+            <div className="text-regular14">태그</div>
+            <div className="text-regular10 text-gray1">피드에 태그되면 알림을 받습니다.</div>
+          </div>
+          <button type="button" onClick={() => setTagNotificationEnabled((prev) => !prev)}>
+            <ToggleIcon active={tagNotificationEnabled} />
+          </button>
+        </div>
+
         <div className="flex items-center justify-between rounded-b-[8px] border border-t-0 border-gray0 py-[13px] pl-[16px] pr-[13px]">
           <div>
             <div className="text-regular14">언급</div>
@@ -179,6 +203,7 @@ function NotificationSettingsPage() {
             <ToggleIcon active={mentionNotificationEnabled} />
           </button>
         </div>
+
         <div className="flex items-center justify-between rounded-b-[8px] border border-t-0 border-gray0 py-[13px] pl-[16px] pr-[13px]">
           <div>
             <div className="text-regular14">소식</div>
