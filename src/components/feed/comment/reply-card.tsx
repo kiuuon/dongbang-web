@@ -86,13 +86,39 @@ export default function ReplyCard({
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.LIKE.MY_LIKE_FETCH_FAILED),
   });
 
-  const { mutate: handleToggleFeedLike } = useMutation({
+  const { mutate: handleToggleCommentLike } = useMutation({
     mutationFn: () => toggleCommentLike(reply.id),
+    onMutate: () => {
+      queryClient.setQueryData(['replyCommentList', parentId], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) =>
+            page.map((item: any) => {
+              if (item.id === reply.id) {
+                return {
+                  ...item,
+                  like_count: item.like_count + (!isLike ? 1 : -1),
+                };
+              }
+              return item;
+            }),
+          ),
+        };
+      });
+
+      queryClient.setQueryData(['isCommentLike', reply.id], (oldData: any) => !oldData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', reply.id] });
       queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['isCommentLike', reply.id] });
+      queryClient.invalidateQueries({ queryKey: ['replyCommentList', parentId] });
+    },
   });
 
   const { mutate: handleDeleteComment } = useMutation({
@@ -136,7 +162,7 @@ export default function ReplyCard({
       return;
     }
 
-    handleToggleFeedLike();
+    handleToggleCommentLike();
   };
 
   const report = () => {

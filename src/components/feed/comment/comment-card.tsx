@@ -112,13 +112,39 @@ export default function CommentCard({
     },
   });
 
-  const { mutate: handleToggleFeedLike } = useMutation({
+  const { mutate: handleToggleCommentLike } = useMutation({
     mutationFn: () => toggleCommentLike(comment.id),
+    onMutate: () => {
+      queryClient.setQueryData(['rootCommentList', feedId], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) =>
+            page.map((item: any) => {
+              if (item.id === comment.id) {
+                return {
+                  ...item,
+                  like_count: item.like_count + (!isLike ? 1 : -1),
+                };
+              }
+              return item;
+            }),
+          ),
+        };
+      });
+
+      queryClient.setQueryData(['isCommentLike', comment.id], (oldData: any) => !oldData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
       queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['isCommentLike', comment.id] });
+      queryClient.invalidateQueries({ queryKey: ['rootCommentList', feedId] });
+    },
   });
 
   const { mutate: handleDeleteComment } = useMutation({
@@ -162,7 +188,7 @@ export default function CommentCard({
       return;
     }
 
-    handleToggleFeedLike();
+    handleToggleCommentLike();
   };
 
   const report = () => {

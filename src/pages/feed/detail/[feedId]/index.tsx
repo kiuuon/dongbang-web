@@ -89,11 +89,19 @@ function FeedDetailPage() {
 
   const { mutate: handleToggleFeedLike } = useMutation({
     mutationFn: () => toggleFeedLike(feed.id),
+    onMutate: () => {
+      queryClient.setQueryData(['likeCount', feed.id], (oldData: any) => oldData + (!isLike ? 1 : -1));
+      queryClient.setQueryData(['isLike', feed.id], (oldData: any) => !oldData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
       queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.LIKE.TOGGLE_FAILED),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['likeCount', feed.id] });
+      queryClient.invalidateQueries({ queryKey: ['isLike', feed.id] });
+    },
   });
 
   const [sliderRef] = useKeenSlider({
