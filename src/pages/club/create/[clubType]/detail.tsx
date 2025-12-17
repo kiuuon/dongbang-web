@@ -19,7 +19,7 @@ function Detail() {
   }, []);
 
   return (
-    <div className="flex flex-col pt-[68px]">
+    <div className="flex min-h-screen flex-col pt-[68px]">
       <Header>
         <BackButton />
       </Header>

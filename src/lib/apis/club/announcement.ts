@@ -18,14 +18,32 @@ export async function fetchLatestAnnouncement(clubId: string) {
 export async function fetchAnnouncement(announcementId: string) {
   const { data, error } = await supabase
     .from('club_announcement')
-    .select('*, author:User(id, name, nickname, avatar, role:Club_User(role))')
+    .select('*, author:User(id, name, nickname, avatar), club_id')
     .eq('id', announcementId)
     .is('deleted_at', null)
     .maybeSingle();
 
   if (error) throw error;
+  if (!data) return null;
 
-  return data ?? null;
+  // club_id와 author_id로 role 가져오기
+  const { data: clubUser, error: roleError } = await supabase
+    .from('Club_User')
+    .select('role')
+    .eq('club_id', data.club_id)
+    .eq('user_id', data.author.id)
+    .is('deleted_at', null)
+    .maybeSingle();
+
+  if (roleError) throw roleError;
+
+  return {
+    ...data,
+    author: {
+      ...data.author,
+      role: clubUser ? [{ role: clubUser.role }] : [],
+    },
+  };
 }
 
 export async function fetchAnnouncements(clubId: string, page: number) {

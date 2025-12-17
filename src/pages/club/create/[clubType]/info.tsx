@@ -34,7 +34,7 @@ function Info() {
   }, []);
 
   return (
-    <div className="flex flex-col px-[20px] pt-[68px]">
+    <div className="flex min-h-screen flex-col px-[20px] pt-[68px]">
       <Header>
         <BackButton />
       </Header>

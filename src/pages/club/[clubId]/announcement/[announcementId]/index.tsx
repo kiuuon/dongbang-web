@@ -25,7 +25,7 @@ function AnnouncementDetailPage() {
   const moreButtonRef = useRef<HTMLButtonElement>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
 
-  const { isValid, ErrorComponent, announcement } = useClubAnnouncementPageValidation();
+  const { isValid, ErrorComponent, announcement, isPending } = useClubAnnouncementPageValidation();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -64,6 +64,10 @@ function AnnouncementDetailPage() {
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.CLUB.DELETE_ANNOUNCEMENT_FAILED),
   });
+
+  if (isPending) {
+    return null;
+  }
 
   if (!isValid) {
     return ErrorComponent;

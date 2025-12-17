@@ -110,7 +110,7 @@ function NotificationPage() {
             className={`text-bold14 relative -ml-[15px] flex-1 rounded-[24px] py-[12px] text-white ${selectedCategory === 'news' && 'bg-primary'}`}
             onClick={() => setSelectedCategory('news')}
           >
-            뉴스
+            소식
           </button>
         </div>
       </div>

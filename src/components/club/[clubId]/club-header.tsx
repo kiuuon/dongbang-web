@@ -4,10 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
 import { fetchSession } from '@/lib/apis/auth';
-import { checkIsClubMember, fetchClubInfo } from '@/lib/apis/club/club';
+import { checkIsClubMember, fetchClubInfo, fetchMyRole } from '@/lib/apis/club/club';
 import { fetchChatRoomInfo, getChatRoomIdByClubId } from '@/lib/apis/chats';
 import { handleQueryError, isValidUUID } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
+import { hasPermission } from '@/lib/club/service';
 import MessageIcon from '@/icons/message-icon';
 import MoreVertIcon from '@/icons/more-vert-icon';
 import ExternalLinkIcon from '@/icons/external-link-icon';
@@ -103,10 +104,17 @@ function ClubHeader({
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CLUB.JOIN_STATUS_FETCH_FAILED),
   });
 
+  const { data: myRole } = useQuery({
+    queryKey: ['myRole', clubId],
+    queryFn: () => fetchMyRole(clubId as string),
+    enabled: isValid,
+    throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.USER.ROLE_FETCH_FAILED),
+  });
+
   const { data: chatRoomId } = useQuery({
     queryKey: ['chatRoomId', clubId],
     queryFn: () => getChatRoomIdByClubId(clubId as string),
-    enabled: !!isClubMember && !!clubId,
+    enabled: !!isClubMember && !!clubId && !!hasPermission(myRole, 'join_chat_room'),
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_ROOM_INFO_FAILED),
   });
 
@@ -137,7 +145,7 @@ function ClubHeader({
     >
       <BackButton color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
       <div className="flex gap-[10px]">
-        {!isPending && session?.user && !isPendingToCheckingClubMember && isClubMember && (
+        {!isPending && session?.user && !isPendingToCheckingClubMember && hasPermission(myRole, 'join_chat_room') && (
           <button type="button" className="relative" onClick={() => router.push(`/chats/${chatRoomId}`)}>
             <MessageIcon color={isHeaderBackgroundWhite ? '#000' : '#fff'} />
             {chatRoomInfo?.has_unread && (

@@ -309,7 +309,7 @@ function ProfilePage() {
         // 3. 공개 + 차단 아님 → 피드 렌더링
         return (
           <div>
-            <div className="sticky left-0 right-0 top-[59px] z-50 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]">
+            <div className="sticky left-0 right-0 top-[59px] z-30 mb-[15px] flex w-full max-w-[600px] justify-between border-b border-b-gray0 bg-white px-[20px]">
               <div className="flex">
                 <button
                   type="button"
