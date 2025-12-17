@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import KakaoLoginButton from '@/components/login/KakaoLoginButton';
+import KakaoLoginButton from '@/components/login/kakao-login-button';
+import AppleLoginButton from '@/components/login/apple-login-button';
 
 function LoginPage() {
   const router = useRouter();
@@ -52,8 +53,9 @@ function LoginPage() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-[25px]">
+        <div className="flex w-full flex-col items-center">
           <KakaoLoginButton />
+          <AppleLoginButton />
           <button
             type="button"
             className="text-regular16 text-gray2"

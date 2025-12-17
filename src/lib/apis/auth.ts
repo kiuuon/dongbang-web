@@ -1,6 +1,6 @@
 import { supabase } from './supabaseClient';
 
-export async function login(provider: 'kakao' | 'google') {
+export async function login(provider: 'kakao' | 'google' | 'apple') {
   await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -9,7 +9,7 @@ export async function login(provider: 'kakao' | 'google') {
   });
 }
 
-export async function loginAndRedirect(provider: 'kakao' | 'google', redirectTo: string) {
+export async function loginAndRedirect(provider: 'kakao' | 'google' | 'apple', redirectTo: string) {
   await supabase.auth.signInWithOAuth({
     provider,
     options: {

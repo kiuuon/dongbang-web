@@ -11,7 +11,6 @@ import { fetchUser } from '@/lib/apis/user';
 import { handleMutationError, handleQueryError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import DongbangIcon from '@/icons/dongbang-icon';
-import KakaoIcon from '@/icons/kakao-icon';
 import XIcon6 from '@/icons/x-icon6';
 import CheckIcon4 from '@/icons/check-icon4';
 import AlertIcon from '@/icons/alert-icon';
@@ -171,18 +170,20 @@ function InvitePage() {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-[41px]">
+        <div className="flex flex-col items-center">
           <div className="text-regular16 text-center text-gray3">
             아래 버튼을 눌러 동방에 가입하고
             <br /> {`${club?.name}에 바로 참여해보세요!`}
           </div>
           <button
             type="button"
-            className="flex h-[48px] w-[292px] flex-row items-center justify-center gap-[8px] rounded-[12px] bg-yellow1 pl-[27px]"
+            className="mb-[8px] mt-[41px]"
             onClick={() => loginAndRedirect('kakao', `/invite/${code}`)}
           >
-            <KakaoIcon />
-            <span className="text-regular16 flex w-full items-center justify-center">카카오톡 계정으로 시작하기</span>
+            <Image src="/images/kakao_login.png" alt="카카오 로고" width={280} height={10} />
+          </button>
+          <button type="button" onClick={() => loginAndRedirect('apple', `/invite/${code}`)}>
+            <Image src="/images/apple_login.png" alt="애플 로고" width={280} height={10} />
           </button>
         </div>
       )}

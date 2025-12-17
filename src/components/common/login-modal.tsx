@@ -1,6 +1,7 @@
+import Image from 'next/image';
+
 import { login } from '@/lib/apis/auth';
 import DongbangIcon from '@/icons/dongbang-icon';
-import KakaoIcon from '@/icons/kakao-icon';
 
 function LoginModal({ onClose }: { onClose?: () => void }) {
   return (
@@ -25,13 +26,12 @@ function LoginModal({ onClose }: { onClose?: () => void }) {
           이용하려면 로그인이 필요해요.
         </div>
 
-        <button
-          type="button"
-          className="flex h-[48px] w-[292px] flex-row items-center justify-center gap-[8px] rounded-[12px] bg-yellow1 pl-[27px]"
-          onClick={() => login('kakao')}
-        >
-          <KakaoIcon />
-          <span className="text-regular16 flex w-full items-center justify-center">카카오톡 계정으로 시작하기</span>
+        <button type="button" className="" onClick={() => login('kakao')}>
+          <Image src="/images/kakao_login.png" alt="카카오 로고" width={280} height={10} />
+        </button>
+
+        <button type="button" className="mb-[25px] mt-[8px]" onClick={() => login('apple')}>
+          <Image src="/images/apple_login.png" alt="애플 로고" width={280} height={10} />
         </button>
 
         <button type="button" className="text-regular16 mt-[20px] text-gray3" onClick={onClose}>
