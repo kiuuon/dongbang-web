@@ -105,6 +105,10 @@ function MembersManageApplicationPage() {
                 type="button"
                 className="flex items-center gap-[18px]"
                 onClick={() => {
+                  if (user.deleted_at) {
+                    return;
+                  }
+
                   if (window.ReactNativeWebView) {
                     window.ReactNativeWebView.postMessage(
                       JSON.stringify({
@@ -120,7 +124,9 @@ function MembersManageApplicationPage() {
               >
                 <UserAvatar avatar={user.avatar} size={40} />
                 <div className="flex flex-col text-start">
-                  <div className="text-bold14 h-[17px]">{user.name}</div>
+                  <div className={`text-bold14 h-[17px] ${user.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                    {user.deleted_at ? '(알수없음)' : user.name}
+                  </div>
                   <div className="text-regular12 h-[14px] text-gray2">{user.nickname}</div>
                 </div>
               </button>

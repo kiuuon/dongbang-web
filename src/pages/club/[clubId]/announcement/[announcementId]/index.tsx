@@ -142,11 +142,30 @@ function AnnouncementDetailPage() {
         </div>
       )}
 
-      <button type="button" className="flex justify-start gap-[12px] px-[24px]">
+      <button
+        type="button"
+        className="flex justify-start gap-[12px] px-[24px]"
+        onClick={() => {
+          if (announcement?.author.deleted_at) {
+            return;
+          }
+
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ type: 'event', action: 'go to profile page', payload: announcement?.author.nickname }),
+            );
+            return;
+          }
+
+          router.push(`/profile/${announcement?.author.nickname}`);
+        }}
+      >
         <UserAvatar avatar={announcement?.author.avatar} size={32} />
         <div className="flex flex-col items-start">
           <div className="flex items-center gap-[2px]">
-            <div className="text-bold14 h-[17px]">{announcement?.author.name}</div>
+            <div className={`text-bold14 h-[17px] ${announcement?.author.deleted_at ? 'text-gray2' : 'text-black'}`}>
+              {announcement?.author.deleted_at ? '(알수없음)' : announcement?.author.name}
+            </div>
             <div className="text-regular12 h-[14px] text-gray2">· {getRole(announcement?.author.role[0].role)}</div>
           </div>
           <div className="text-regular12 h-[14px] text-gray2">{announcement?.author.nickname}</div>

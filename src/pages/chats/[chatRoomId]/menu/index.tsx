@@ -134,6 +134,7 @@ function ChatRoomMenu() {
                 name: string;
                 nickname: string;
                 avatar: string;
+                deleted_at: string;
                 role: 'president' | 'officer' | 'member' | 'on_leave' | 'graduate';
                 club_nickname: string;
               }) => (
@@ -142,6 +143,10 @@ function ChatRoomMenu() {
                   key={member.id}
                   className="flex items-center gap-[12px]"
                   onClick={() => {
+                    if (member.deleted_at) {
+                      return;
+                    }
+
                     if (window.ReactNativeWebView) {
                       window.ReactNativeWebView.postMessage(
                         JSON.stringify({ type: 'event', action: 'go to profile page', payload: member.nickname }),
@@ -153,7 +158,9 @@ function ChatRoomMenu() {
                 >
                   <UserAvatar avatar={member.avatar} size={32} />
                   <div className="flex flex-col items-start gap-[2px]">
-                    <div className="text-bold16 h-[17px]">{member.club_nickname}</div>
+                    <div className={`text-bold16 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                      {member.deleted_at ? '(알수없음)' : member.club_nickname}
+                    </div>
                     <div className="text-regular12 h-[14px] text-gray2">{getRole(member.role)}</div>
                   </div>
                 </button>

@@ -6,7 +6,7 @@ function TaggedUserModal({
   tagedUsers,
   onClose,
 }: {
-  tagedUsers: { user: { id: string; name: string; avatar: string; nickname: string } }[];
+  tagedUsers: { user: { id: string; name: string; avatar: string; nickname: string; deleted_at: string | null } }[];
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -22,6 +22,10 @@ function TaggedUserModal({
             type="button"
             className="flex w-full items-center gap-[29px]"
             onClick={() => {
+              if (user.deleted_at) {
+                return;
+              }
+
               sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
               router.push(`/profile/${user.nickname}`);
@@ -29,7 +33,9 @@ function TaggedUserModal({
             }}
           >
             <UserAvatar avatar={user.avatar} size={40} />
-            <div className="text-bold12">{user.name}</div>
+            <div className={`text-bold12 ${user.deleted_at ? 'text-gray2' : 'text-black'}`}>
+              {user.deleted_at ? '(알수없음)' : user.name}
+            </div>
           </button>
         ))}
       </div>

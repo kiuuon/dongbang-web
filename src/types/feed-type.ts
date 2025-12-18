@@ -6,6 +6,7 @@ export interface FeedType {
     name: string;
     nickname: string;
     avatar: string;
+    deleted_at: string;
     role: string | null;
   };
   club_id: string;
@@ -26,6 +27,7 @@ export interface FeedType {
       name: string;
       nickname: string;
       avatar: string;
+      deleted_at: string;
     };
   }[];
   taggedClubs: {
@@ -49,6 +51,7 @@ export interface CommentType {
     name: string;
     nickname: string;
     avatar: string | null;
+    deleted_at: string | null;
   };
   content: string;
   created_at: string;

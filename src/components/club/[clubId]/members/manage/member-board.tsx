@@ -28,6 +28,10 @@ function MemberBoard() {
 
   const getVisibleRoles = () => {
     if (selectedRole === 'president') {
+      if (inputValue === '') {
+        return presidents;
+      }
+
       return presidents?.filter(
         (president) =>
           president.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -36,6 +40,10 @@ function MemberBoard() {
     }
 
     if (selectedRole === 'officer') {
+      if (inputValue === '') {
+        return officers;
+      }
+
       return officers?.filter(
         (officer) =>
           officer.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -44,6 +52,10 @@ function MemberBoard() {
     }
 
     if (selectedRole === 'member') {
+      if (inputValue === '') {
+        return regulars;
+      }
+
       return regulars?.filter(
         (regular) =>
           regular.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -52,6 +64,10 @@ function MemberBoard() {
     }
 
     if (selectedRole === 'onLeave') {
+      if (inputValue === '') {
+        return onLeave;
+      }
+
       return onLeave?.filter(
         (o) =>
           o.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -60,11 +76,25 @@ function MemberBoard() {
     }
 
     if (selectedRole === 'graduate') {
+      if (inputValue === '') {
+        return graduates;
+      }
+
       return graduates?.filter(
         (graduate) =>
           graduate.name?.toLowerCase().includes(inputValue.toLowerCase()) ||
           graduate.nickname?.toLowerCase().includes(inputValue.toLowerCase()),
       );
+    }
+
+    if (inputValue === '') {
+      return [
+        ...(presidents || []),
+        ...(officers || []),
+        ...(regulars || []),
+        ...(onLeave || []),
+        ...(graduates || []),
+      ];
     }
 
     return [

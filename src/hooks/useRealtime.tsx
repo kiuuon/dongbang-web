@@ -77,7 +77,7 @@ export function useRealtime(
             // sender 정보 가져오기
             const { data: senderData } = await supabase
               .from('User')
-              .select('id, name, nickname, avatar')
+              .select('id, name, nickname, avatar, deleted_at')
               .eq('id', newMessage.sender_id)
               .single();
 
@@ -131,6 +131,7 @@ export function useRealtime(
                     name: senderData.name,
                     nickname: senderData.nickname,
                     avatar: senderData.avatar,
+                    deleted_at: senderData.deleted_at,
                     club_nickname: clubNickname,
                   }
                 : undefined,

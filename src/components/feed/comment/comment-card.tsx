@@ -229,6 +229,10 @@ export default function CommentCard({
           <button
             type="button"
             onClick={() => {
+              if (comment.author.deleted_at) {
+                return;
+              }
+
               if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(
                   JSON.stringify({
@@ -254,6 +258,10 @@ export default function CommentCard({
               <button
                 type="button"
                 onClick={() => {
+                  if (comment.author.deleted_at) {
+                    return;
+                  }
+
                   if (window.ReactNativeWebView) {
                     window.ReactNativeWebView.postMessage(
                       JSON.stringify({
@@ -267,9 +275,9 @@ export default function CommentCard({
 
                   router.push(`/profile/${comment.author.nickname}`);
                 }}
-                className="text-bold14"
+                className={`text-bold14 ${comment.author.deleted_at ? 'text-gray2' : 'text-black'}`}
               >
-                {comment.author.name}
+                {comment.author.deleted_at ? '(알수없음)' : comment.author.name}
               </button>
               <div className="text-regular10 text-gray2">{formatToTimeAgo(comment.created_at)}</div>
             </div>

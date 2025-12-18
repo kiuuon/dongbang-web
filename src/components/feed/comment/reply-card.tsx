@@ -220,6 +220,10 @@ export default function ReplyCard({
         <button
           type="button"
           onClick={() => {
+            if (reply.author.deleted_at) {
+              return;
+            }
+
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
                 JSON.stringify({
@@ -243,6 +247,10 @@ export default function ReplyCard({
             <button
               type="button"
               onClick={() => {
+                if (reply.author.deleted_at) {
+                  return;
+                }
+
                 if (window.ReactNativeWebView) {
                   window.ReactNativeWebView.postMessage(
                     JSON.stringify({
@@ -255,9 +263,9 @@ export default function ReplyCard({
                 }
                 router.push(`/profile/${reply.author.nickname}`);
               }}
-              className="text-bold14"
+              className={`text-bold14 ${reply.author.deleted_at ? 'text-gray2' : 'text-black'}`}
             >
-              {reply.author.name}
+              {reply.author.deleted_at ? '(알수없음)' : reply.author.name}
             </button>
             <div className="text-regular10 text-gray2">{getTimeAgo(reply.created_at)}</div>
           </div>

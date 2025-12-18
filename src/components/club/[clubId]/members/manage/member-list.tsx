@@ -17,6 +17,7 @@ function MemberList({
     nickname: string | undefined;
     avatar: string | undefined;
     role: string | undefined;
+    deleted_at: string | undefined;
   }[];
 }) {
   const router = useRouter();
@@ -38,6 +39,10 @@ function MemberList({
             type="button"
             className="flex items-center gap-[18px]"
             onClick={() => {
+              if (member.deleted_at) {
+                return;
+              }
+
               if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(
                   JSON.stringify({
@@ -53,8 +58,10 @@ function MemberList({
           >
             <UserAvatar avatar={member.avatar} size={40} />
             <div className="flex flex-col text-start">
-              <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
-                {member.name}
+              <div
+                className={`text-bold14 flex h-[17px] items-center gap-[2px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}
+              >
+                {member.deleted_at ? '(알수없음)' : member.name}
                 <span className="text-regular12 flex h-[14px] items-center text-gray2">
                   · {getRole(member.role as ClubRole)}
                 </span>

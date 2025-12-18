@@ -202,7 +202,8 @@ function FeedCard({ feed }: { feed: FeedType }) {
               {feed.taggedClubs.length > 0 && ` & ${feed.taggedClubs[0].club.name}`}
             </div>
             <div className="text-regular12 flex h-[18px] items-center text-gray3">
-              {formatKoreanDate(feed.created_at)} {feed.is_nickname_visible && `by ${feed.author.name}`}
+              {formatKoreanDate(feed.created_at)}{' '}
+              {feed.is_nickname_visible && `by ${feed.author.deleted_at ? '(알수없음)' : feed.author.name}`}
             </div>
           </div>
         </button>
@@ -325,7 +326,8 @@ function FeedCard({ feed }: { feed: FeedType }) {
             }}
           >
             <ProfileIcon2 />
-            {feed.taggedUsers[0].user.name} 외 {feed.taggedUsers.length - 1}명
+            {feed.taggedUsers[0].user.deleted_at ? '(알수없음)' : feed.taggedUsers[0].user.name} 외{' '}
+            {feed.taggedUsers.length - 1}명
           </button>
         )}
       </div>

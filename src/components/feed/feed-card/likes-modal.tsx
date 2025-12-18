@@ -26,13 +26,19 @@ function LikesModal({ feedId }: { feedId: string }) {
             type="button"
             className="flex w-full items-center gap-[29px]"
             onClick={() => {
+              if (user.deleted_at) {
+                return;
+              }
+
               sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
 
               router.push(`/profile/${user.nickname}`);
             }}
           >
             <UserAvatar avatar={user.avatar} size={40} />
-            <div className="text-bold12">{user.name}</div>
+            <div className={`text-bold12 ${user.deleted_at ? 'text-gray2' : 'text-black'}`}>
+              {user.deleted_at ? '(알수없음)' : user.name}
+            </div>
           </button>
         ))}
       </div>

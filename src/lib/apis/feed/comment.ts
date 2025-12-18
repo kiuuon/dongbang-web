@@ -35,7 +35,7 @@ export async function fetchRootComment(feedId: string, page: number) {
     .select(
       `
     id, feed_id, parent_id, author_id, content, like_count, reply_count, created_at,
-    author:User!Comment_author_id_fkey(id, name, nickname, avatar)
+    author:User!Comment_author_id_fkey(id, name, nickname, avatar, deleted_at)
   `,
     )
     .eq('feed_id', feedId)
@@ -72,7 +72,7 @@ export async function fetchReplyComment(feedId: string, parentId: string, page: 
     .select(
       `
     id, feed_id, parent_id, author_id, content, like_count, reply_count, created_at,
-    author:User!Comment_author_id_fkey(id, name, nickname, avatar)
+    author:User!Comment_author_id_fkey(id, name, nickname, avatar, deleted_at)
   `,
     )
     .eq('feed_id', feedId)
@@ -144,6 +144,7 @@ type LikedUser = {
   name: string;
   avatar: string | null;
   nickname: string;
+  deleted_at: string | null;
 };
 
 export async function fetchCommentLikedUsers(commentId: string): Promise<LikedUser[] | null> {
@@ -155,7 +156,8 @@ export async function fetchCommentLikedUsers(commentId: string): Promise<LikedUs
         id,
         name,
         nickname,
-        avatar
+        avatar,
+        deleted_at
       )
     `,
     )
@@ -172,6 +174,7 @@ export async function fetchCommentLikedUsers(commentId: string): Promise<LikedUs
       name: user.name,
       avatar: user.avatar,
       nickname: user.nickname,
+      deleted_at: user.deleted_at,
     })),
   );
 }

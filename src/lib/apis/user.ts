@@ -106,7 +106,7 @@ export async function fetchBlockedUserList() {
 
   const { data, error } = await supabase
     .from('user_block')
-    .select('*, blockedUser:User!User_Block_blocked_id_fkey(id, name, nickname, avatar)')
+    .select('*, blockedUser:User!User_Block_blocked_id_fkey(id, name, nickname, avatar, deleted_at)')
     .eq('blocker_id', userId);
 
   if (error) throw error;

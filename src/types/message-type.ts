@@ -8,6 +8,7 @@ export interface MessageType {
     name: string;
     nickname: string;
     avatar: string;
+    deleted_at: string;
     club_nickname: string;
   };
   metadata?: {

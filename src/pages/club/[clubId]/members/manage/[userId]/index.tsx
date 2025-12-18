@@ -169,6 +169,10 @@ function MemberManagePage() {
         type="button"
         className="flex items-center gap-[18px]"
         onClick={() => {
+          if (member?.info.deleted_at) {
+            return;
+          }
+
           if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(
               JSON.stringify({
@@ -184,8 +188,10 @@ function MemberManagePage() {
       >
         <UserAvatar avatar={member?.info.avatar} size={40} />
         <div className="flex flex-col text-start">
-          <div className="text-bold14 flex h-[17px] items-center gap-[2px]">
-            {member?.info.name}
+          <div
+            className={`text-bold14 flex h-[17px] items-center gap-[2px] ${member?.info.deleted_at ? 'text-gray2' : 'text-black'}`}
+          >
+            {member?.info.deleted_at ? '(알수없음)' : member?.info.name}
             <span className="text-regular12 flex h-[14px] items-center text-gray2">
               · {getRole(member?.role as ClubRole)}
             </span>

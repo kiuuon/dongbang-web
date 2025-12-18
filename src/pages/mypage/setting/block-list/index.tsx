@@ -16,6 +16,7 @@ function BlockListPage() {
     name: string;
     nickname: string;
     avatar: string;
+    deleted_at: string;
   } | null>(null);
 
   const { data: blockedUserList } = useQuery({
@@ -47,10 +48,17 @@ function BlockListPage() {
           <div key={blockedUser.blockedUser.id} className="flex items-center justify-between px-[8px] py-[6px]">
             <div className="flex items-center gap-[12px]">
               <UserAvatar avatar={blockedUser.blockedUser.avatar} size={40} />
-              <div className="flex flex-col items-start justify-center gap-[1px]">
-                <div className="text-bold14 h-[17px]">{blockedUser.blockedUser.name}</div>
-                <div className="text-regular12 h-[14px] text-gray2">{blockedUser.blockedUser.nickname}</div>
-              </div>
+              {blockedUser.blockedUser.deleted_at ? (
+                <div className="flex flex-col items-start justify-center gap-[1px]">
+                  <div className="text-bold14 h-[17px] text-gray2">(알수없음)</div>
+                  <div className="h-[14px]" />
+                </div>
+              ) : (
+                <div className="flex flex-col items-start justify-center gap-[1px]">
+                  <div className="text-bold14 h-[17px]">{blockedUser.blockedUser.name}</div>
+                  <div className="text-regular12 h-[14px] text-gray2">{blockedUser.blockedUser.nickname}</div>
+                </div>
+              )}
             </div>
             <button
               type="button"
@@ -82,12 +90,19 @@ function BlockListPage() {
         >
           <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white px-[27px] py-[24px]">
             <div className="text-bold14">
-              {selectedBlockedUser?.name}님({selectedBlockedUser?.nickname})님의 차단을 해제할까요?
+              {selectedBlockedUser?.deleted_at
+                ? '(알수없음)님의 차단을 해제할까요?'
+                : `${selectedBlockedUser?.name}님(${selectedBlockedUser?.nickname})님의 차단을 해제할까요?`}
             </div>
+
             <div className="text-regular14 mb-[24px] mt-[12px]">
-              차단을 해제하면 {selectedBlockedUser?.name}님({selectedBlockedUser?.nickname})님의 피드와 댓글이 다시
-              보입니다
+              차단을 해제하면{' '}
+              {selectedBlockedUser?.deleted_at
+                ? '(알수없음)님'
+                : `${selectedBlockedUser?.name}님(${selectedBlockedUser?.nickname})님`}
+              의 피드와 댓글이 다시 보입니다
             </div>
+
             <button
               type="button"
               className="text-bold14 mb-[16px] text-error"

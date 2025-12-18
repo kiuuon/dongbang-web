@@ -93,12 +93,17 @@ function TextMessage({
     );
   }
 
+  console.log(message.sender);
   if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
     return (
       <div className="mt-[8px] flex items-start gap-[8px]">
         <button
           type="button"
           onClick={() => {
+            if (message.sender?.deleted_at) {
+              return;
+            }
+
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(
                 JSON.stringify({ type: 'event', action: 'go to profile page', payload: message.sender?.nickname }),
@@ -111,7 +116,9 @@ function TextMessage({
           <UserAvatar avatar={message.sender?.avatar} size={32} />
         </button>
         <div>
-          <div className="text-bold14 mb-[4px]">{message.sender?.club_nickname}</div>
+          <div className={`text-bold14 mb-[4px] ${message.sender?.deleted_at ? 'text-gray2' : 'text-black'}`}>
+            {message.sender?.deleted_at ? '(알수없음)' : message.sender?.club_nickname}
+          </div>
           <div
             ref={index === boundaryIndex ? boundaryMessageRef : null}
             className="relative mb-[8px] flex items-end gap-[4px]"

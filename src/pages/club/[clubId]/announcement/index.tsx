@@ -122,7 +122,9 @@ function AnnouncementPage() {
                     <div className="text-regular14 h-[17px] w-full truncate text-start">{announcement.title}</div>
                     <div className="flex flex-row items-center gap-[6px]">
                       <div className="text-regular10 text-gray2">{formatKoreanDate(announcement.created_at)}</div>
-                      <div className="text-regular10 text-gray2">· {announcement.author.name}</div>
+                      <div className="text-regular10 text-gray2">
+                        · {announcement.author.deleted_at ? '(알수없음)' : announcement.author.name}
+                      </div>
                     </div>
                   </button>
                 )),

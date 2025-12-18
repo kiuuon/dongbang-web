@@ -55,12 +55,18 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
+                      if (member.deleted_at) {
+                        return;
+                      }
+
                       router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
-                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className={`text-bold14 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                        {member.deleted_at ? '(알수없음)' : member.name}
+                      </div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
@@ -80,12 +86,18 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
+                      if (member.deleted_at) {
+                        return;
+                      }
+
                       router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
-                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className={`text-bold14 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                        {member.deleted_at ? '(알수없음)' : member.name}
+                      </div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
@@ -105,12 +117,18 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
+                      if (member.deleted_at) {
+                        return;
+                      }
+
                       router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
-                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className={`text-bold14 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                        {member.deleted_at ? '(알수없음)' : member.name}
+                      </div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
@@ -130,12 +148,18 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
+                      if (member.deleted_at) {
+                        return;
+                      }
+
                       router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
-                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className={`text-bold14 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                        {member.deleted_at ? '(알수없음)' : member.name}
+                      </div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
@@ -155,12 +179,18 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                     type="button"
                     className="flex items-center gap-[12px]"
                     onClick={() => {
+                      if (member.deleted_at) {
+                        return;
+                      }
+
                       router.push(`/profile/${member.nickname}`);
                     }}
                   >
                     <UserAvatar avatar={member.avatar} size={32} />
                     <div className="flex flex-col items-start">
-                      <div className="text-bold14 h-[17px]">{member.name}</div>
+                      <div className={`text-bold14 h-[17px] ${member.deleted_at ? 'text-gray2' : 'text-black'}`}>
+                        {member.deleted_at ? '(알수없음)' : member.name}
+                      </div>
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>

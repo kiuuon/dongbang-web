@@ -177,13 +177,13 @@ export async function fetchClubInfo(clubId: string) {
 export async function fetchClubMembers(clubId: string) {
   const { data, error } = (await supabase
     .from('Club_User')
-    .select('user_id, User(name, nickname, avatar), role')
+    .select('user_id, User(name, nickname, avatar, deleted_at), role')
     .eq('club_id', clubId)
     .is('deleted_at', null)) as unknown as {
     data: {
       user_id: string;
       role: string;
-      User: { name: string; nickname: string; avatar: string } | null;
+      User: { name: string; nickname: string; avatar: string; deleted_at: string } | null;
     }[];
     error: Error | null;
   };
@@ -198,6 +198,7 @@ export async function fetchClubMembers(clubId: string) {
     nickname: member.User?.nickname,
     avatar: member.User?.avatar,
     role: member.role,
+    deleted_at: member.User?.deleted_at,
   }));
 }
 
@@ -271,7 +272,8 @@ export async function fetchApplicants(clubId: string) {
         id,
         name,
         nickname,
-        avatar
+        avatar,
+        deleted_at
       )
     `,
     )
@@ -368,7 +370,8 @@ export async function fetchClubMember(clubId: string, userId: string) {
         id,
         name,
         nickname,
-        avatar
+        avatar,
+        deleted_at
       )
     `,
     )
@@ -377,7 +380,7 @@ export async function fetchClubMember(clubId: string, userId: string) {
     .is('deleted_at', null)) as unknown as {
     data: {
       role: string;
-      info: { id: string; name: string; nickname: string; avatar: string };
+      info: { id: string; name: string; nickname: string; avatar: string; deleted_at: string };
     }[];
     error: Error | null;
   };

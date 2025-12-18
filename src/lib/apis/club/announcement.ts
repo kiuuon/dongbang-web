@@ -18,7 +18,7 @@ export async function fetchLatestAnnouncement(clubId: string) {
 export async function fetchAnnouncement(announcementId: string) {
   const { data, error } = await supabase
     .from('club_announcement')
-    .select('*, author:User(id, name, nickname, avatar), club_id')
+    .select('*, author:User(id, name, nickname, avatar, deleted_at), club_id')
     .eq('id', announcementId)
     .is('deleted_at', null)
     .maybeSingle();
@@ -58,7 +58,7 @@ export async function fetchAnnouncements(clubId: string, page: number) {
       id,
       title,
       created_at,
-      author:User(name)
+      author:User(name, deleted_at)
     `,
     )
     .eq('club_id', clubId)
