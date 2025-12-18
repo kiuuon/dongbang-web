@@ -18,7 +18,7 @@ function ProfileEditPage() {
   }, []);
 
   return (
-    <div className="flex h-screen min-h-screen flex-col items-start px-[20px] pt-[66px]">
+    <div className="flex min-h-screen flex-col items-start px-[20px] pt-[66px]">
       <Header>
         <BackButton />
       </Header>

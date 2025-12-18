@@ -23,7 +23,11 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
 
-  const { data: session, isPending } = useQuery({
+  const {
+    data: session,
+    isPending,
+    isSuccess,
+  } = useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.SESSION.FETCH_FAILED),
@@ -32,12 +36,14 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
   const { data: hasUnreadNotifications } = useQuery({
     queryKey: ['hasUnreadNotifications'],
     queryFn: checkUnreadNotifications,
+    enabled: !!session?.user,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.NOTIFICATION.FETCH_FAILED),
   });
 
   const { data: chatRooms } = useQuery({
     queryKey: ['chatRooms'],
     queryFn: fetchMyChatRooms,
+    enabled: !!session?.user,
     throwOnError: (error) => handleQueryError(error, ERROR_MESSAGE.CHATS.FETCH_FAILED),
   });
 
@@ -98,7 +104,7 @@ function FeedHeader({ setIsBottomSheetOpen }: { setIsBottomSheetOpen: React.Disp
       </div>
 
       {/* eslint-disable-next-line no-nested-ternary */}
-      {isPending ? null : session?.user ? (
+      {isPending ? null : isSuccess && session?.user ? (
         <div className="flex items-center gap-[20px]">
           <button
             type="button"

@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import { logout } from '@/lib/apis/auth';
+import { supabase } from '@/lib/apis/supabaseClient';
 import { handleMutationError } from '@/lib/utils';
 import { ERROR_MESSAGE } from '@/lib/constants';
 import RightArrowIcon2 from '@/icons/right-arrow-icon2';
@@ -9,10 +11,13 @@ import LogoutIcon from '@/icons/logout-icon';
 import ReportIcon3 from '@/icons/report-icon3';
 import Header from '@/components/layout/header';
 import BackButton from '@/components/common/back-button';
+import BottomSheet from '@/components/common/bottom-sheet';
 
 function AccountSettingPage() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
+  const [isWithdrawalAgreed, setIsWithdrawalAgreed] = useState(false);
 
   const { mutate } = useMutation({
     mutationFn: logout,
@@ -23,6 +28,34 @@ function AccountSettingPage() {
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.AUTH.LOGOUT_FAILED),
   });
+
+  const handleWithdrawal = async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      // Edge Function 호출
+      const { error } = await supabase.functions.invoke('delete-user', {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      // 탈퇴 성공 시 처리
+      alert('회원 탈퇴가 완료되었습니다.');
+
+      // 로그아웃 처리 및 메인 이동
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('탈퇴 처리 중 오류:', error);
+      alert('탈퇴 처리에 실패했습니다. 고객센터에 문의해주세요.');
+    }
+  };
 
   return (
     <div className="h-screen pt-[82px]">
@@ -123,14 +156,44 @@ function AccountSettingPage() {
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[20px] pl-[24px] pr-[20px] text-error"
-          onClick={() => {
-            // TODO: 회원탈퇴
+          onClick={async () => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'open withdrawal modal' }));
+            } else {
+              setIsWithdrawalModalOpen(true);
+            }
           }}
         >
           탈퇴하기
           <ReportIcon3 />
         </button>
       </div>
+      {isWithdrawalModalOpen && (
+        <BottomSheet setIsBottomSheetOpen={setIsWithdrawalModalOpen}>
+          <div className="flex w-full flex-col p-[20px]">
+            <div className="text-bold16 text-error">회원탈퇴</div>
+            <div className="text-regular14 mt-[8px]">탈퇴 문구</div>
+            <button
+              type="button"
+              className="text-regular14 flex items-center gap-[8px]"
+              onClick={() => setIsWithdrawalAgreed((prev) => !prev)}
+            >
+              <div
+                className={`my-[19px] h-[14px] w-[14px] rounded-[2px] ${isWithdrawalAgreed ? 'bg-primary' : 'bg-gray0'}`}
+              />
+              동의합니다.
+            </button>
+            <button
+              type="button"
+              className={`text-bold12 w-full rounded-[24px] py-[21px] text-center text-white ${!isWithdrawalAgreed ? 'bg-gray0' : 'bg-error'}`}
+              disabled={!isWithdrawalAgreed}
+              onClick={handleWithdrawal}
+            >
+              탈퇴하기
+            </button>
+          </div>
+        </BottomSheet>
+      )}
     </div>
   );
 }

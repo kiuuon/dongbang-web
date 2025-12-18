@@ -180,6 +180,8 @@ export default function App({ Component, pageProps }: AppProps) {
             queryClient.invalidateQueries({ queryKey: ['myApply', payload] });
           } else if (action === 'write comment') {
             queryClient.invalidateQueries({ queryKey: ['commentCount', payload] });
+          } else if (action === 'not logged in') {
+            localStorage.clear();
           }
         }
       } catch (error) {
