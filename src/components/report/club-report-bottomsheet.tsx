@@ -9,7 +9,7 @@ import { handleMutationError } from '@/lib/utils';
 const REPORT_ITEMS = {
   falseInformation: '동아리 소개 내용이 사실과 다릅니다',
   illegal: '불법/위험 활동이 의심됩니다',
-  discrimination: '특정 인물/집단에 대한 혐오/차별을 조장합니다',
+  discrimination: '특정 인물/집단 혐오를 조장합니다',
 };
 
 function ClubReportBottomSheet({ clubId, onClose }: { clubId: string; onClose: () => void }) {
@@ -43,7 +43,7 @@ function ClubReportBottomSheet({ clubId, onClose }: { clubId: string; onClose: (
       <div className="flex w-full flex-col gap-[8px]">
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'falseInformation' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'falseInformation' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('falseInformation')}
         >
           {REPORT_ITEMS.falseInformation}
@@ -53,7 +53,7 @@ function ClubReportBottomSheet({ clubId, onClose }: { clubId: string; onClose: (
         </button>
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'illegal' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'illegal' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('illegal')}
         >
           {REPORT_ITEMS.illegal}
@@ -63,7 +63,7 @@ function ClubReportBottomSheet({ clubId, onClose }: { clubId: string; onClose: (
         </button>
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'discrimination' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'discrimination' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('discrimination')}
         >
           {REPORT_ITEMS.discrimination}

@@ -86,7 +86,7 @@ function ClubListPage() {
       </Header>
       {myClubs?.length === 0 ? (
         <div className="mt-[177px] flex w-full flex-col items-center gap-[25px]">
-          <Image src="/images/join.gif" alt="post" width={70} height={70} priority />
+          <Image src="/images/dongbang.gif" alt="post" width={70} height={70} priority />
           <p className="text-bold20 text-gray1">소속된 동아리가 없습니다</p>
         </div>
       ) : (

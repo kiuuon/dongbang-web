@@ -91,7 +91,11 @@ function FeedCard({ feed }: { feed: FeedType }) {
     if (feed.taggedClubs.length > 0) {
       if (window.ReactNativeWebView) {
         window.ReactNativeWebView.postMessage(
-          JSON.stringify({ type: 'event', action: 'tagged club click', payload: feed.taggedClubs }),
+          JSON.stringify({
+            type: 'event',
+            action: 'tagged club click',
+            payload: { taggedClubs: feed.taggedClubs, feedId: feed.id },
+          }),
         );
         return;
       }
@@ -355,7 +359,7 @@ function FeedCard({ feed }: { feed: FeedType }) {
       )}
       {isTaggedClubModalOpen && (
         <BottomSheet setIsBottomSheetOpen={setIsTaggedClubModalOpen}>
-          <TaggedClubModal taggedClubs={feed.taggedClubs} onClose={() => setIsTaggedClubModalOpen(false)} />
+          <TaggedClubModal feed={feed} taggedClubs={feed.taggedClubs} onClose={() => setIsTaggedClubModalOpen(false)} />
         </BottomSheet>
       )}
       {isTaggedUserModalOpen && (

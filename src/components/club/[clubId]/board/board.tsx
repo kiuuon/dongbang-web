@@ -36,21 +36,21 @@ function BoardSummary() {
         <div className="flex">
           <button
             type="button"
-            className={`flex w-[75px] items-center justify-center ${selectedTab === 'feed' && 'border-b border-b-primary'} pb-[5px]`}
+            className={`flex w-[75px] items-center justify-center ${selectedTab === 'feed' ? 'text-bold12 border-b border-b-primary' : 'text-regular12 text-gray2'} pb-[5px]`}
             onClick={() => setSelectedTab(clubId, 'feed')}
           >
             피드
           </button>
           <button
             type="button"
-            className={`flex w-[75px] items-center justify-center ${selectedTab === 'interact' && 'border-b border-b-primary'} pb-[5px]`}
+            className={`flex w-[75px] items-center justify-center ${selectedTab === 'interact' ? 'text-bold12 border-b border-b-primary' : 'text-regular12 text-gray2'} pb-[5px]`}
             onClick={() => setSelectedTab(clubId, 'interact')}
           >
             교류
           </button>
           <button
             type="button"
-            className={`flex w-[75px] items-center justify-center ${selectedTab === 'inquiry' && 'border-b border-b-primary'} pb-[5px]`}
+            className={`flex w-[75px] items-center justify-center ${selectedTab === 'inquiry' ? 'text-bold12 border-b border-b-primary' : 'text-regular12 text-gray2'} pb-[5px]`}
             onClick={() => setSelectedTab(clubId, 'inquiry')}
           >
             문의

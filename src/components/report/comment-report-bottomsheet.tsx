@@ -68,7 +68,7 @@ function CommentReportBottomSheet({
       <div className="flex w-full flex-col gap-[8px]">
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'abuse' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'abuse' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('abuse')}
         >
           {REPORT_ITEMS.abuse}
@@ -78,7 +78,7 @@ function CommentReportBottomSheet({
         </button>
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'spam' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'spam' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('spam')}
         >
           {REPORT_ITEMS.spam}
@@ -88,7 +88,7 @@ function CommentReportBottomSheet({
         </button>
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'illegal' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'illegal' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('illegal')}
         >
           {REPORT_ITEMS.illegal}
@@ -99,7 +99,7 @@ function CommentReportBottomSheet({
 
         <button
           type="button"
-          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] ${selectedReportItem === 'inappropriate' ? 'bg-background' : 'bg-white'}`}
+          className={`flex h-[56px] w-full items-center justify-between gap-[8px] rounded-[8px] border border-gray0 pl-[24px] pr-[17px] text-start ${selectedReportItem === 'inappropriate' ? 'bg-background' : 'bg-white'}`}
           onClick={() => setSelectedReportItem('inappropriate')}
         >
           {REPORT_ITEMS.inappropriate}

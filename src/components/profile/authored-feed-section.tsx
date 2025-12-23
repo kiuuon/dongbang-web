@@ -49,7 +49,7 @@ function AuthoredFeedSection({ userId, viewType }: { userId: string; viewType: s
   return (
     <div>
       {viewType === 'grid' && (
-        <div className="grid w-full grid-cols-3">
+        <div className="grid w-full grid-cols-3 gap-[1px]">
           {data?.pages.map((page) =>
             page.map((feed) => (
               <button

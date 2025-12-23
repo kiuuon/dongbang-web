@@ -50,7 +50,8 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
-                member.role === 'president' && (
+                member.role === 'president' &&
+                (member.deleted_at ? null : (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"
@@ -70,7 +71,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
-                ),
+                )),
             )}
           </div>
         </div>
@@ -81,7 +82,8 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
-                member.role === 'officer' && (
+                member.role === 'officer' &&
+                (member.deleted_at ? null : (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"
@@ -101,7 +103,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
-                ),
+                )),
             )}
           </div>
         </div>
@@ -112,7 +114,8 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
-                member.role === 'member' && (
+                member.role === 'member' &&
+                (member.deleted_at ? null : (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"
@@ -132,7 +135,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
-                ),
+                )),
             )}
           </div>
         </div>
@@ -143,7 +146,8 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
-                member.role === 'on_leave' && (
+                member.role === 'on_leave' &&
+                (member.deleted_at ? null : (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"
@@ -163,7 +167,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
-                ),
+                )),
             )}
           </div>
         </div>
@@ -174,7 +178,8 @@ function MembersModal({ onClose }: { onClose: () => void }) {
           <div className="flex flex-col gap-[16px]">
             {members?.map(
               (member) =>
-                member.role === 'graduate' && (
+                member.role === 'graduate' &&
+                (member.deleted_at ? null : (
                   <button
                     type="button"
                     className="flex items-center gap-[12px]"
@@ -194,7 +199,7 @@ function MembersModal({ onClose }: { onClose: () => void }) {
                       <div className="text-regular12 h-[14px] text-gray2">{member.nickname}</div>
                     </div>
                   </button>
-                ),
+                )),
             )}
           </div>
         </div>

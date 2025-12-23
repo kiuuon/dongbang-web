@@ -40,7 +40,7 @@ function ComingSoonPage() {
         <BackButton />
       </Header>
       <div className="flex flex-col items-center gap-[13px]">
-        <Image src="/images/post.gif" alt="post" width={70} height={70} priority />
+        <Image src="/images/dongbang.gif" alt="post" width={70} height={70} priority />
         <div className="text-bold20 text-center text-gray1">
           아직 준비중인 서비스입니다 <br />
           이용에 불편을 드려 죄송합니다

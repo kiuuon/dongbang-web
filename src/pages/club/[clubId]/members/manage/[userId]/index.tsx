@@ -203,7 +203,7 @@ function MemberManagePage() {
       <div className="flex flex-col gap-[16px]">
         {/* 역할 설정 */}
         <div>
-          <div className="text-bold14">역할 설정</div>
+          <div className="text-bold14">직위 설정</div>
           <div className="scrollbar-hide mt-[6px] flex gap-[12px] overflow-x-auto">
             {myRole === 'president' && (
               <button

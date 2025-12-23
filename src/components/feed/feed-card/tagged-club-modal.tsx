@@ -1,10 +1,14 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
+import { FeedType } from '@/types/feed-type';
+
 function TaggedClubModal({
+  feed,
   taggedClubs,
   onClose,
 }: {
+  feed: FeedType;
   taggedClubs: { club: { id: string; name: string; logo: string } }[];
   onClose: () => void;
 }) {
@@ -15,6 +19,32 @@ function TaggedClubModal({
       <div className="mb-[12px] mt-[12px] h-[2px] w-[37px] rounded-[10px] bg-gray1" />
       <div className="text-bold14 mb-[27px]">피드에 태그된 동아리</div>
       <div className="scrollbar-hide mb-[20px] flex max-h-[190px] w-full flex-col gap-[10px] overflow-y-scroll">
+        <button
+          key={feed.club_id}
+          type="button"
+          className="flex w-full items-center gap-[29px]"
+          onClick={() => {
+            sessionStorage.setItem(`scroll:${router.asPath}`, `${document.scrollingElement?.scrollTop || 0}`);
+
+            router.push(`/club/${feed.club_id}`);
+            onClose();
+          }}
+        >
+          <Image
+            src={feed.club.logo}
+            alt="로고"
+            width={40}
+            height={40}
+            style={{
+              objectFit: 'cover',
+              width: '40px',
+              height: '40px',
+              borderRadius: '5px',
+              border: '1px solid #F9F9F9',
+            }}
+          />
+          <div className="text-bold12">{feed.club.name}</div>
+        </button>
         {taggedClubs.map(({ club }) => (
           <button
             key={club.logo}

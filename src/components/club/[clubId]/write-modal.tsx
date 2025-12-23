@@ -106,7 +106,7 @@ function WriteModal({ onClose }: { onClose: () => void }) {
           </button>
           <button type="button" className="text-regular16 flex items-center gap-[8px]" onClick={editClubInfo}>
             <EditIcon color="#F9A825" />
-            동아리 소개 수정
+            동아리 정보 수정
           </button>
         </div>
       )}

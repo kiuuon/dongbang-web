@@ -130,7 +130,7 @@ function MemberBoard() {
 
   return (
     <div>
-      <div className="text-regular14 text-gray2">역할</div>
+      <div className="text-regular14 text-gray2">직위</div>
       <div className="scrollbar-hide mt-[6px] flex gap-[12px] overflow-x-auto">
         <button
           type="button"

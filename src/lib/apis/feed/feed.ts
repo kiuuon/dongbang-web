@@ -176,10 +176,10 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
     const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
-        '*, author:User(id, name, nickname, avatar, deleted_at), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar, deleted_at)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
+        '*, author:User(id, name, nickname, avatar, deleted_at, university_id), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar, deleted_at)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
-      .eq('university_id', universityId)
+      .eq('author.university_id', universityId)
       .is('deleted_at', null)
       .is('Feed_User.deleted_at', null)
       .is('Feed_Club.deleted_at', null)
