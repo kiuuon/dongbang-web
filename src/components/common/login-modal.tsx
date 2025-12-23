@@ -3,14 +3,22 @@ import Image from 'next/image';
 import { login } from '@/lib/apis/auth';
 import DongbangIcon from '@/icons/dongbang-icon';
 
-function LoginModal({ onClose }: { onClose?: () => void }) {
+function LoginModal({ onClose }: { onClose: () => void }) {
   return (
     <div
       tabIndex={0}
       role="button"
       className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-center bg-black bg-opacity-60 px-[32px]"
-      onClick={onClose}
-      onKeyDown={onClose}
+      onClick={(event) => {
+        if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+          onClose();
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+          onClose();
+        }
+      }}
     >
       <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white py-[30px]">
         <div className="H-[71px] flex flex-row items-center justify-center gap-[18px]">

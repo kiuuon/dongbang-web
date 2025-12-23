@@ -79,13 +79,17 @@ function BlockListPage() {
           tabIndex={0}
           role="button"
           className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-center bg-black bg-opacity-60 px-[32px]"
-          onClick={() => {
-            setIsModalOpen(false);
-            setSelectedBlockedUser(null);
+          onClick={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsModalOpen(false);
+              setSelectedBlockedUser(null);
+            }
           }}
-          onKeyDown={() => {
-            setIsModalOpen(false);
-            setSelectedBlockedUser(null);
+          onKeyDown={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsModalOpen(false);
+              setSelectedBlockedUser(null);
+            }
           }}
         >
           <div className="flex h-auto w-full flex-col items-center rounded-[20px] bg-white px-[27px] py-[24px]">

@@ -11,11 +11,11 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // if (pathname === '/sign-up/info') {
-  //   if (!referer || !referer.includes(`${req.nextUrl.origin}/sign-up/terms`)) {
-  //     return NextResponse.redirect(new URL('/sign-up/terms', req.url));
-  //   }
-  // }
+  if (pathname === '/sign-up/info') {
+    if (!referer || !referer.includes(`${req.nextUrl.origin}/sign-up/terms`)) {
+      return NextResponse.redirect(new URL('/sign-up/terms', req.url));
+    }
+  }
 
   if (pathname === '/sign-up/complete') {
     if (!referer || !referer.includes(`${req.nextUrl.origin}/sign-up/info`)) {

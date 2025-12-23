@@ -7,7 +7,6 @@ function NextButton() {
   const termOfUse = termsStore((state) => state.temrOfUse);
   const privacyPolicy = termsStore((state) => state.privacyPolicy);
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
-  const marketing = termsStore((state) => state.marketing);
 
   const redirectTo = (router.query.redirect as string) || '/';
 
@@ -21,7 +20,6 @@ function NextButton() {
             termOfUse,
             privacyPolicy,
             thirdPartyConsent,
-            marketing,
           },
         }),
       );
@@ -35,7 +33,7 @@ function NextButton() {
     }
   };
 
-  const isDisabled = !(termOfUse && privacyPolicy);
+  const isDisabled = !(termOfUse && privacyPolicy && thirdPartyConsent);
 
   return (
     <button

@@ -57,7 +57,7 @@ function InfoForm({ isClubIdValid }: { isClubIdValid: boolean }) {
       description: clubInfoStore.getState().description ?? '',
     },
 
-    mode: 'onBlur',
+    mode: 'onChange',
     resolver: yupResolver(campusClubInfoSchema),
   });
 

@@ -93,7 +93,6 @@ function TextMessage({
     );
   }
 
-  console.log(message.sender);
   if (index === 0 || messages[index - 1].sender?.id !== message.sender?.id) {
     return (
       <div className="mt-[8px] flex items-start gap-[8px]">

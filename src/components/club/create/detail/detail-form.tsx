@@ -141,63 +141,67 @@ function DetailForm() {
         {errors.background && <p className="text-regular10 mt-[8px] text-error">{errors.background.message}</p>}
 
         <div className="relative">
-          <div className="absolute top-[-53px] flex w-full flex-col gap-[20px] px-[20px]">
+          <div className="absolute top-[-53px] flex w-full flex-col gap-[20px]">
             {/* club profile */}
-            <div className="flex flex-col rounded-[8px] bg-white px-[12px] pb-[8px] pt-[12px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.15)]">
-              <div className="flex gap-[14px]">
-                <Controller
-                  name="logo"
-                  control={control}
-                  defaultValue={undefined}
-                  render={({ field }) => <LogoInput onChange={field.onChange} />}
-                />
-                <div className="flex flex-col justify-center">
-                  <div className="text-bold24">{name}</div>
-                  {clubType === 'campus' && (
-                    <div className="text-regular14 flex items-center gap-[3px] text-gray3">
-                      <LocationMarkerIcon />
-                      {location}
-                    </div>
-                  )}
+            <div className="px-[20px]">
+              <div className="flex flex-col rounded-[8px] bg-white px-[12px] pb-[8px] pt-[12px] shadow-[0px_1px_4px_0px_rgba(0,0,0,0.15)]">
+                <div className="flex gap-[14px]">
+                  <Controller
+                    name="logo"
+                    control={control}
+                    defaultValue={undefined}
+                    render={({ field }) => <LogoInput onChange={field.onChange} />}
+                  />
+                  <div className="flex flex-col justify-center">
+                    <div className="text-bold24">{name}</div>
+                    {clubType === 'campus' && (
+                      <div className="text-regular14 flex items-center gap-[3px] text-gray3">
+                        <LocationMarkerIcon />
+                        {location}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="my-[8px] flex flex-wrap gap-[8px]">
-                <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">
-                  {clubType === 'campus' ? '교내' : '연합'}
+                <div className="my-[8px] flex flex-wrap gap-[8px]">
+                  <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">
+                    {clubType === 'campus' ? '교내' : '연합'}
+                  </div>
+                  {tags.map((tag) => (
+                    <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">{tag}</div>
+                  ))}
                 </div>
-                {tags.map((tag) => (
-                  <div className="text-bold10 rounded-[8px] bg-gray1 p-[5px]">{tag}</div>
-                ))}
-              </div>
 
-              <div className="flex flex-col items-start">
-                <div className="text-regular12 whitespace-pre-line text-gray2">
-                  {desciptionType === 'bio' ? bio : description}
+                <div className="flex flex-col items-start">
+                  <div className="text-regular12 whitespace-pre-line text-gray2">
+                    {desciptionType === 'bio' ? bio : description}
+                  </div>
+                  <button
+                    type="button"
+                    className="text-bold12 text-primary"
+                    onClick={() => {
+                      if (desciptionType === 'bio') {
+                        setDescriptionType('description');
+                      } else {
+                        setDescriptionType('bio');
+                      }
+                    }}
+                  >
+                    {desciptionType === 'bio' ? '더보기' : '숨기기'}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="text-bold12 text-primary"
-                  onClick={() => {
-                    if (desciptionType === 'bio') {
-                      setDescriptionType('description');
-                    } else {
-                      setDescriptionType('bio');
-                    }
-                  }}
-                >
-                  {desciptionType === 'bio' ? '더보기' : '숨기기'}
-                </button>
               </div>
             </div>
 
-            {/* tag input */}
-            <Controller
-              name="tags"
-              control={control}
-              render={({ field }) => <TagInput value={field.value} onChange={field.onChange} />}
-            />
-            <SubmitButton disabled={!isValid || isSubmitting}>개설하기</SubmitButton>
+            <div className="flex flex-col gap-[20px] bg-white px-[20px]">
+              {/* tag input */}
+              <Controller
+                name="tags"
+                control={control}
+                render={({ field }) => <TagInput value={field.value} onChange={field.onChange} />}
+              />
+              <SubmitButton disabled={!isValid || isSubmitting}>개설하기</SubmitButton>
+            </div>
           </div>
         </div>
       </div>

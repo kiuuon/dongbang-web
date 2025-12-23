@@ -1,6 +1,7 @@
 import { FeedType } from '@/types/feed-type';
 import { supabase } from '../supabaseClient';
 import { fetchUserId } from '../auth';
+import { fetchUser } from '../user';
 
 export async function writeFeed(
   photos: string[],
@@ -120,13 +121,65 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
     return feedsWithRole;
   }
 
-  if (clubType === 'union' || clubType === 'campus') {
+  if (clubType === 'union') {
     const { data: feeds, error: fetchFeedError } = await supabase
       .from('Feed')
       .select(
         '*, author:User(id, name, nickname, avatar, deleted_at), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar, deleted_at)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
+      .is('deleted_at', null)
+      .is('Feed_User.deleted_at', null)
+      .is('Feed_Club.deleted_at', null)
+      .order('created_at', { ascending: false })
+      .range(start, end);
+
+    if (fetchFeedError) {
+      throw fetchFeedError;
+    }
+
+    if (!feeds) {
+      return [];
+    }
+
+    const feedsWithRole = await Promise.all(
+      feeds.map(async (feed) => {
+        const { data: clubUser, error: fetchRoleError } = await supabase
+          .from('Club_User')
+          .select('role')
+          .eq('user_id', feed.author_id)
+          .eq('club_id', feed.club_id)
+          .is('deleted_at', null)
+          .maybeSingle();
+
+        if (fetchRoleError) {
+          throw fetchRoleError;
+        }
+
+        return {
+          ...feed,
+          author: {
+            ...feed.author,
+            role: clubUser?.role ?? null,
+          },
+        };
+      }),
+    );
+
+    return feedsWithRole;
+  }
+
+  if (clubType === 'campus') {
+    const userInfo = await fetchUser();
+    const universityId = userInfo?.university_id;
+
+    const { data: feeds, error: fetchFeedError } = await supabase
+      .from('Feed')
+      .select(
+        '*, author:User(id, name, nickname, avatar, deleted_at), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar, deleted_at)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
+      )
+      .eq('club_type', clubType)
+      .eq('university_id', universityId)
       .is('deleted_at', null)
       .is('Feed_User.deleted_at', null)
       .is('Feed_Club.deleted_at', null)

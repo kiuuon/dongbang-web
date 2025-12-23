@@ -180,6 +180,13 @@ function ChatRoomMenu() {
           <button
             type="button"
             onClick={() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'event', action: 'handle chat room deactivate' }),
+                );
+                return;
+              }
+
               if (isChatRoomActive) {
                 handleDeactivateChatRoom();
               } else {

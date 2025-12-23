@@ -170,9 +170,6 @@ function ChatRoomPage() {
       return { previousMessages, tempId };
     },
     onSuccess: (data, _, context: any) => {
-      // 서버에서 반환된 실제 메시지 ID로 임시 메시지 교체
-      const realMessageId = data;
-
       const { tempId } = context;
 
       if (!tempId) return;
@@ -185,7 +182,7 @@ function ChatRoomPage() {
           page.map((msg: any) => {
             if (!found && msg.id === tempId) {
               found = true;
-              return { ...msg, id: realMessageId };
+              return data;
             }
             return msg;
           }),

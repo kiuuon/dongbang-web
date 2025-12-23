@@ -1,8 +1,20 @@
+import { useState } from 'react';
+
+import { SERVICE_TERMS } from '@/lib/terms/service-terms';
+import { PRIVACY_POLICY } from '@/lib/terms/privacy-policy';
+import { THIRD_PARTY_SHARING } from '@/lib/terms/third-party-sharing';
 import termsStore from '@/stores/terms-store';
 import CheckIcon from '@/icons/check-icon';
 import CheckIcon2 from '@/icons/check-icon2';
 import NoneCheckIcon from '@/icons/none-check-icon';
 import RightArrowIcon3 from '@/icons/right-arrow-icon3';
+import TermsModal from './terms-modal';
+
+const TERMS_MAP = {
+  termOfUse: '서비스 이용약관',
+  privacyPolicy: '개인정보 처리 방침',
+  thirdPartyConsent: '개인정보 제 3자 제공 동의서',
+};
 
 function CheckBox() {
   const termOfUse = termsStore((state) => state.temrOfUse);
@@ -11,20 +23,19 @@ function CheckBox() {
   const setPrivacyPolicy = termsStore((state) => state.setPrivacyPolicy);
   const thirdPartyConsent = termsStore((state) => state.thirdPartyConsent);
   const setThirdPartyConsent = termsStore((state) => state.setThirdPartyConsent);
-  const marketing = termsStore((state) => state.marketing);
-  const setMarketing = termsStore((state) => state.setMarketing);
+
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [selectedTermsModal, setSelectedTermsModal] = useState<string | null>(null);
 
   const handleFullAgreeButton = () => {
-    if (termOfUse && privacyPolicy && thirdPartyConsent && marketing) {
+    if (termOfUse && privacyPolicy && thirdPartyConsent) {
       setTermOfUse(false);
       setPrivacyPolicy(false);
       setThirdPartyConsent(false);
-      setMarketing(false);
     } else {
       setTermOfUse(true);
       setPrivacyPolicy(true);
       setThirdPartyConsent(true);
-      setMarketing(true);
     }
   };
   return (
@@ -32,7 +43,7 @@ function CheckBox() {
       <div
         role="button"
         tabIndex={0}
-        className={`text-bold20 flex h-[56px] w-full cursor-pointer items-center justify-center rounded-[24px] ${termOfUse && privacyPolicy && thirdPartyConsent && marketing ? 'bg-primary' : 'bg-gray0'} pl-[11px] text-white`}
+        className={`text-bold20 flex h-[56px] w-full cursor-pointer items-center justify-center rounded-[24px] ${termOfUse && privacyPolicy && thirdPartyConsent ? 'bg-primary' : 'bg-gray0'} pl-[11px] text-white`}
         onClick={handleFullAgreeButton}
         onKeyDown={handleFullAgreeButton}
       >
@@ -60,7 +71,8 @@ function CheckBox() {
           <button
             type="button"
             onClick={() => {
-              // TODO: 약관 전체보기
+              setSelectedTermsModal('termOfUse');
+              setIsTermsModalOpen(true);
             }}
           >
             <RightArrowIcon3 />
@@ -81,7 +93,8 @@ function CheckBox() {
           <button
             type="button"
             onClick={() => {
-              // TODO: 약관 전체보기
+              setSelectedTermsModal('privacyPolicy');
+              setIsTermsModalOpen(true);
             }}
           >
             <RightArrowIcon3 />
@@ -96,40 +109,34 @@ function CheckBox() {
             onKeyDown={() => setThirdPartyConsent(!thirdPartyConsent)}
           >
             {thirdPartyConsent ? <CheckIcon2 /> : <NoneCheckIcon />}
-            <span className="text-regular16 ml-[15px] mr-[13px]">[선택]</span>
+            <span className="text-bold16 ml-[15px] mr-[13px] text-error">[필수]</span>
             <div className="text-regular16">개인정보 제3자 제공 동의</div>
           </div>
           <button
             type="button"
             onClick={() => {
-              // TODO: 약관 전체보기
-            }}
-          >
-            <RightArrowIcon3 />
-          </button>
-        </div>
-        <div className="flex items-center justify-between">
-          <div
-            role="button"
-            tabIndex={0}
-            className="flex cursor-pointer items-center text-[16px]"
-            onClick={() => setMarketing(!marketing)}
-            onKeyDown={() => setMarketing(!marketing)}
-          >
-            {marketing ? <CheckIcon2 /> : <NoneCheckIcon />}
-            <span className="text-regular16 ml-[15px] mr-[13px]">[선택]</span>
-            <div className="text-regular16">마케팅 정보 메일 수신 동의</div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              // TODO: 약관 전체보기
+              setSelectedTermsModal('thirdPartyConsent');
+              setIsTermsModalOpen(true);
             }}
           >
             <RightArrowIcon3 />
           </button>
         </div>
       </div>
+      {isTermsModalOpen && selectedTermsModal && (
+        <TermsModal
+          title={TERMS_MAP[selectedTermsModal as keyof typeof TERMS_MAP]}
+          terms={
+            // eslint-disable-next-line no-nested-ternary
+            selectedTermsModal === 'termOfUse'
+              ? SERVICE_TERMS
+              : selectedTermsModal === 'privacyPolicy'
+                ? PRIVACY_POLICY
+                : THIRD_PARTY_SHARING
+          }
+          onClose={() => setIsTermsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

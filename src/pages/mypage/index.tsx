@@ -142,7 +142,7 @@ function MyPage() {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'go to setting page' }));
             } else {
-              // router.push('/mypage/setting');
+              router.push('/setting');
             }
           }}
         >

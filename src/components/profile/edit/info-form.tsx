@@ -252,8 +252,12 @@ function InfoForm() {
             </label>
             <input
               id="name"
-              {...register('name')}
-              onChange={(event) => setName(event.target.value)}
+              {...register('name', {
+                onChange: (event) => {
+                  setName(event.target.value);
+                  trigger('name');
+                },
+              })}
               placeholder="이름을 입력해주세요."
               className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
             />
@@ -291,8 +295,12 @@ function InfoForm() {
             </label>
             <input
               id="major"
-              {...register('major')}
-              onChange={(event) => setMajor(event.target.value)}
+              {...register('major', {
+                onChange: (event) => {
+                  setMajor(event.target.value);
+                  trigger('major');
+                },
+              })}
               placeholder="전공을 입력해주세요."
               className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
             />
