@@ -1,13 +1,15 @@
 ### [🪟 동방 바로가기](https://www.dongaribang.com)
 
-## 동방 - 동아리 홍보와 관리를 효율적으로 도와주는 서비스
+## 동방 - 대학 동아리 교류 플랫폼
 
 ### 🔍 어떤 서비스 인가요?
 
-동아리 소식을 공유하며 홍보하고, 다른 동아리와 교류하거나 부원들과 소통하며, 동아리를 효율적으로 관리할 수 있는 SNS 서비스입니다.
+동방은 대학 동아리들이 활동을 공유하고, 다른 동아리와 자연스럽게 교류할 수 있도록 돕는 커뮤니티 플랫폼입니다.
 
 ### ⚙️ 어떤 기술을 사용했나요?
 
 `TypeScript` `Next.js` `Tailwind CSS`  
 `Axios` `TanStack Query` `Supabase`  
 `React Hook Form` `Yup`
+
+:octocat: [App 저장소](https://github.com/kiuuon/dongbang-app)
