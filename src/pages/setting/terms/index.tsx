@@ -103,7 +103,15 @@ function TermsPage() {
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
-          onClick={() => {}}
+          onClick={() => {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({ type: 'event', action: 'open GitHub repository' }),
+              );
+            } else {
+              window.open('https://github.com/kiuuon/dongbang-app', '_blank');
+            }
+          }}
         >
           오픈소스 라이선스
           <RightArrowIcon2 />
