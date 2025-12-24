@@ -23,6 +23,7 @@ function InquiryPage() {
   const [isAgreed, setIsAgreed] = useState(false);
   const [, setDeletedUrls] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -34,11 +35,7 @@ function InquiryPage() {
   const { mutate: handleWriteAnnouncement } = useMutation({
     mutationFn: async (photoUrls: string[]) => sendInquiry(title, content, replyToEmail, photoUrls),
     onSuccess: () => {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'back button click' }));
-      } else {
-        router.back();
-      }
+      setIsSuccessModalOpen(true);
     },
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.INQUIRY.SEND_FAILED, () => setIsLoading(false)),
   });
@@ -179,6 +176,42 @@ function InquiryPage() {
       </button>
 
       {isLoading && <Loading />}
+
+      {isSuccessModalOpen && (
+        <div
+          tabIndex={0}
+          role="button"
+          className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-center bg-black bg-opacity-60 px-[32px]"
+          onClick={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsSuccessModalOpen(false);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsSuccessModalOpen(false);
+            }
+          }}
+        >
+          <div className="flex h-auto w-full flex-col items-center gap-[35px] rounded-[20px] bg-white px-[20px] py-[16px]">
+            <div className="text-bold14 mt-[24px]">문의가 접수되었습니다.</div>
+            <button
+              type="button"
+              className="text-bold16 flex h-[56px] w-full items-center justify-center rounded-[24px] bg-primary text-white"
+              onClick={() => {
+                setIsSuccessModalOpen(false);
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'event', action: 'back button click' }));
+                } else {
+                  router.back();
+                }
+              }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -107,4 +107,7 @@ li::marker {
     font-size: 32px;
     font-weight: 600;
   }
+  .pretendard {
+    font-family: 'Pretendard Variable';
+  }
 }

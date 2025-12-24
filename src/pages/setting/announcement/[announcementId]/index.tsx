@@ -52,7 +52,9 @@ function AnnouncementDetailPage() {
       </Header>
       <div className="text-bold24">{announcement?.title}</div>
       <div className="text-regular10 mb-[12px] text-gray2">{formatKoreanDate(announcement?.created_at)}</div>
-      <ReactMarkdown components={MarkdownComponents}>{announcement?.content}</ReactMarkdown>
+      <div className="pretendard">
+        <ReactMarkdown components={MarkdownComponents}>{announcement?.content}</ReactMarkdown>
+      </div>
     </div>
   );
 }
