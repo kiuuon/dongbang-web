@@ -112,6 +112,9 @@ const ERROR_MESSAGE = {
   INQUIRY: {
     SEND_FAILED: '문의 전송에 실패했습니다. 다시 시도해주세요.',
   },
+  ANNOUNCEMENT: {
+    FETCH_FAILED: '공지사항을 불러오는 데 실패했습니다. 다시 시도해주세요.',
+  },
 };
 
 const SPORTS_CATEGORIES = [

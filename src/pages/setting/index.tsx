@@ -21,7 +21,9 @@ function SettingPage() {
         <button
           type="button"
           className="text-regular14 flex w-full items-center justify-between border-b border-gray0 py-[18px] pl-[24px] pr-[20px]"
-          onClick={() => {}}
+          onClick={() => {
+            router.push('/setting/announcement');
+          }}
         >
           공지사항
           <RightArrowIcon2 />
