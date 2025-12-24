@@ -71,6 +71,7 @@ function WriteFeedPage() {
         isPrivate,
         clubId as string,
         clubInfo?.type,
+        clubInfo?.university_id,
         selectedMembers,
         selectedClubs,
       ),
@@ -117,6 +118,7 @@ function WriteFeedPage() {
               isNicknameVisible,
               isPrivate,
               clubType: clubInfo?.type,
+              universityId: clubInfo?.university_id,
             },
           }),
         );

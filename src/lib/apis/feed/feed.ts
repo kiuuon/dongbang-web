@@ -11,6 +11,7 @@ export async function writeFeed(
   isPrivate: boolean,
   clubId: string,
   clubType: 'campus' | 'union',
+  universityId: string,
   selectedMembers: string[],
   selectedClubs: string[],
 ) {
@@ -22,6 +23,7 @@ export async function writeFeed(
     p_is_private: isPrivate,
     p_club_id: clubId,
     p_club_type: clubType,
+    p_university_id: universityId,
     p_selected_members: selectedMembers,
     p_selected_clubs: selectedClubs,
   });
@@ -179,7 +181,7 @@ export async function fetchFeedsByClubType(clubType: 'my' | 'campus' | 'union' |
         '*, author:User(id, name, nickname, avatar, deleted_at, university_id), club:Club(name, logo), taggedUsers:Feed_User(user:User(id, name, nickname, avatar, deleted_at)), taggedClubs:Feed_Club(club:Club(id, name, logo))',
       )
       .eq('club_type', clubType)
-      .eq('author.university_id', universityId)
+      .eq('university_id', universityId)
       .is('deleted_at', null)
       .is('Feed_User.deleted_at', null)
       .is('Feed_Club.deleted_at', null)
