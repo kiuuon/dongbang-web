@@ -75,8 +75,8 @@ function PhotoInput({
 
     const newFiles = Array.from(files);
     const totalCount = previewUrls.length + newFiles.length;
-    if (totalCount > 10) {
-      alert('사진은 최대 10장까지 등록할 수 있습니다.');
+    if (totalCount > 3) {
+      alert('사진은 최대 3장까지 등록할 수 있습니다.');
       return;
     }
 
@@ -135,7 +135,7 @@ function PhotoInput({
         />
         <CameraIcon />
         <div className="text-regular12 text-gray0">
-          (<span className={previewUrls.length > 0 ? 'text-primary' : ''}>{previewUrls.length}</span>/10)
+          (<span className={previewUrls.length > 0 ? 'text-primary' : ''}>{previewUrls.length}</span>/3)
         </div>
       </label>
       <div

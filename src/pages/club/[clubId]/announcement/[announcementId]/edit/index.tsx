@@ -64,7 +64,8 @@ function AnnouncementEditPage() {
   }, [announcement]);
 
   const { mutateAsync: uploadPhoto } = useMutation({
-    mutationFn: ({ file, fileName }: { file: File; fileName: string }) => upload(file, fileName, 'announcement-image'),
+    mutationFn: ({ file, fileName }: { file: File; fileName: string }) =>
+      upload(file, fileName, 'club-announcement-image'),
     onError: (error) => handleMutationError(error, ERROR_MESSAGE.IMAGE.PHOTO_UPLOAD_FAILED, () => setIsLoading(false)),
   });
 

@@ -249,7 +249,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <ChatRealtimeSubscriber />
-      <div className="scrollbar-hide m-auto max-w-[600px] shadow-lg">
+      <div className="scrollbar-hide m-auto max-w-[600px] bg-white shadow-lg">
         <Head>
           <title>동방</title>
         </Head>
