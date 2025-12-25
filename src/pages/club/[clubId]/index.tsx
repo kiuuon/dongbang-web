@@ -222,7 +222,7 @@ function ClubPage() {
           }}
         >
           <MembersIcon />
-          {members?.length}명
+          {members?.filter((member) => member.deleted_at === null).length}명
         </button>
       </div>
 
