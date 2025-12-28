@@ -1,11 +1,54 @@
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
+import { supabase } from '@/lib/apis/supabaseClient';
 import KakaoLoginButton from '@/components/login/kakao-login-button';
 import AppleLoginButton from '@/components/login/apple-login-button';
 
 function LoginPage() {
   const router = useRouter();
+
+  const [isReviewMode, setIsReviewMode] = useState(false);
+  const [testLoginEmail, setTestLoginEmail] = useState('');
+  const [testLoginPassword, setTestLoginPassword] = useState('');
+  const [isTestLoginModalOpen, setIsTestLoginModalOpen] = useState(false);
+
+  useEffect(() => {
+    async function fetchConfig() {
+      const { data } = await supabase.from('app_settings').select('value').eq('key', 'is_review_mode').single();
+
+      if (data) {
+        setIsReviewMode(data.value);
+      }
+    }
+    fetchConfig();
+  }, []);
+
+  const handleTestLogin = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: testLoginEmail,
+        password: testLoginPassword,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const { access_token: accessToken, refresh_token: refreshToken } = data.session;
+
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ type: 'event', action: 'login success', payload: { accessToken, refreshToken } }),
+        );
+      } else {
+        router.replace('/');
+      }
+    } catch (error) {
+      alert('로그인에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
     <div className="flex h-screen max-w-[600px] items-center justify-center bg-white">
@@ -56,9 +99,18 @@ function LoginPage() {
         <div className="flex w-full flex-col items-center">
           <KakaoLoginButton />
           <AppleLoginButton />
+          {isReviewMode && (
+            <button
+              type="button"
+              className="text-regular16 mt-[8px] flex h-[42px] w-[280px] items-center justify-center rounded-[12px] bg-primary text-white"
+              onClick={() => setIsTestLoginModalOpen(true)}
+            >
+              테스트 계정으로 로그인
+            </button>
+          )}
           <button
             type="button"
-            className="text-regular16 text-gray2"
+            className="text-regular16 mt-[25px] text-gray2"
             onClick={() => {
               if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(
@@ -76,6 +128,47 @@ function LoginPage() {
           </button>
         </div>
       </div>
+      {isTestLoginModalOpen && (
+        <div
+          tabIndex={0}
+          role="button"
+          className="fixed bottom-0 left-0 right-0 z-50 m-auto flex h-screen w-screen max-w-[600px] items-center bg-black bg-opacity-60 px-[32px]"
+          onClick={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsTestLoginModalOpen(false);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.target instanceof HTMLElement && event.target.classList.contains('bg-black')) {
+              setIsTestLoginModalOpen(false);
+            }
+          }}
+        >
+          <div className="flex h-auto w-full flex-col items-center gap-[12px] rounded-[20px] bg-white px-[27px] py-[24px]">
+            <input
+              type="text"
+              placeholder="이메일"
+              value={testLoginEmail}
+              className="text-regular16 w-full rounded-[12px] border border-gray1 p-[12px]"
+              onChange={(event) => setTestLoginEmail(event.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="비밀번호"
+              value={testLoginPassword}
+              className="text-regular16 w-full rounded-[12px] border border-gray1 p-[12px]"
+              onChange={(event) => setTestLoginPassword(event.target.value)}
+            />
+            <button
+              type="button"
+              className="text-regular16 mt-[8px] flex h-[42px] w-[280px] items-center justify-center rounded-[12px] bg-primary text-white"
+              onClick={handleTestLogin}
+            >
+              로그인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
