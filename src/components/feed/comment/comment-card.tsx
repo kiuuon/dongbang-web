@@ -238,7 +238,7 @@ export default function CommentCard({
                   JSON.stringify({
                     type: 'event',
                     action: 'go to profile page',
-                    payload: comment.author_id,
+                    payload: comment.author.nickname,
                   }),
                 );
                 return;
@@ -267,7 +267,7 @@ export default function CommentCard({
                       JSON.stringify({
                         type: 'event',
                         action: 'go to profile page',
-                        payload: comment.author_id,
+                        payload: comment.author.nickname,
                       }),
                     );
                     return;
