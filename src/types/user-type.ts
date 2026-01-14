@@ -2,7 +2,7 @@ export interface UserType {
   id: string;
   avatar?: string | null;
   name: string;
-  gender: string;
+  gender: string | null;
   nickname: string;
   university_id: number;
   major: string;

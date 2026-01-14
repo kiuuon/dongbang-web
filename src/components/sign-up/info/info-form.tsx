@@ -14,7 +14,6 @@ import termsStore from '@/stores/terms-store';
 import { UserType } from '@/types/user-type';
 import SubmitButton from '@/components/common/submit-button';
 import Loading from '@/components/common/loading';
-import GenderInput from './gender-input';
 import UniversityInput from './university-input';
 import NicknameInput from './nickname-input';
 import AvatarInput from './avatar-input';
@@ -22,7 +21,6 @@ import AvatarInput from './avatar-input';
 interface UserInfoType {
   avatar?: File | null;
   name: string;
-  gender: string;
   university: string;
   major: string;
   nickname: string;
@@ -99,7 +97,6 @@ function InfoForm() {
       : undefined,
     defaultValues: {
       name: '',
-      gender: '',
       university: '',
       major: '',
       nickname: '',
@@ -124,7 +121,7 @@ function InfoForm() {
       const body = {
         id: session?.user?.id as string,
         name: data.name,
-        gender: data.gender,
+        gender: null,
         nickname: data.nickname,
         university_id: universityList?.find((item) => item.name === data.university)?.id,
         major: data.major,
@@ -141,7 +138,7 @@ function InfoForm() {
             payload: {
               id: session?.user?.id as string,
               name: data.name,
-              gender: data.gender,
+              gender: null,
               nickname: data.nickname,
               university_id: universityList?.find((item) => item.name === data.university)?.id,
               major: data.major,
@@ -195,17 +192,6 @@ function InfoForm() {
           </div>
         </div>
 
-        {/* 성별 */}
-        <div className="mb-[8px] flex flex-col">
-          <Controller
-            name="gender"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <GenderInput value={field.value} onChange={field.onChange} />}
-          />
-          {errors.gender && <span className="text-regular10 mt-[8px] text-error">{errors.gender.message}</span>}
-        </div>
-
         {/* 사용자명 */}
         <div>
           <Controller
@@ -235,7 +221,7 @@ function InfoForm() {
         <div>
           <div className="flex flex-col gap-[10px]">
             <label htmlFor="name" className="text-bold12">
-              이름
+              프로필 이름
             </label>
             <input
               id="name"
@@ -245,7 +231,7 @@ function InfoForm() {
                   trigger('name');
                 },
               })}
-              placeholder="이름을 입력해주세요."
+              placeholder="프로필 이름을 입력해주세요."
               className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
             />
           </div>

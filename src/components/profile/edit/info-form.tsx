@@ -14,7 +14,6 @@ import { getSignUpInfoSchema } from '@/lib/validationSchema';
 import { UserType } from '@/types/user-type';
 import SubmitButton from '@/components/common/submit-button';
 import Loading from '@/components/common/loading';
-import GenderInput from './gender-input';
 import UniversityInput from './university-input';
 import NicknameInput from './nickname-input';
 import AvatarInput from './avatar-input';
@@ -22,7 +21,6 @@ import AvatarInput from './avatar-input';
 interface UserInfoType {
   avatar?: File | null;
   name: string;
-  gender: string;
   university: string;
   major: string;
   nickname: string;
@@ -108,7 +106,6 @@ function InfoForm() {
       : undefined,
     defaultValues: {
       name: user?.name,
-      gender: user?.gender,
       university: user?.University.name,
       major: user?.major,
       nickname: user?.nickname,
@@ -125,7 +122,6 @@ function InfoForm() {
       setIsDuplicate(false);
       setIsSameCheck(true);
       setValue('name', user.name, { shouldValidate: true });
-      setValue('gender', user.gender, { shouldValidate: true });
       setValue('university', user.University.name, { shouldValidate: true });
       setValue('major', user.major, { shouldValidate: true });
       setValue('nickname', user.nickname, { shouldValidate: true });
@@ -154,7 +150,7 @@ function InfoForm() {
       const body = {
         id: session?.user?.id as string,
         name: data.name,
-        gender: data.gender,
+        gender: null,
         nickname: data.nickname,
         university_id: universityList?.find((item) => item.name === data.university)?.id,
         major: data.major,
@@ -205,17 +201,6 @@ function InfoForm() {
               <span>{major}</span>
             </div>
           </div>
-        </div>
-
-        {/* 성별 */}
-        <div className="mb-[8px] flex flex-col">
-          <Controller
-            name="gender"
-            control={control}
-            defaultValue=""
-            render={({ field }) => <GenderInput value={field.value} onChange={field.onChange} />}
-          />
-          {errors.gender && <span className="text-regular10 mt-[8px] text-error">{errors.gender.message}</span>}
         </div>
 
         {/* 사용자명 */}

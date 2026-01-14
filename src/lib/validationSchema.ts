@@ -11,7 +11,6 @@ export const getSignUpInfoSchema = (
       .string()
       .required('이름을 입력하세요')
       .matches(/^[a-zA-Z가-힣]{2,10}$/, '2~10글자 이내의 한글 또는 영문을 입력하세요'),
-    gender: yup.string().required('성별을 선택하세요'),
     university: yup
       .string()
       .required('학교를 입력하세요')
