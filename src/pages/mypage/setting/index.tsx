@@ -172,7 +172,10 @@ function AccountSettingPage() {
         <BottomSheet setIsBottomSheetOpen={setIsWithdrawalModalOpen}>
           <div className="flex w-full flex-col p-[20px]">
             <div className="text-bold16 text-error">회원탈퇴</div>
-            <div className="text-regular14 mt-[8px]">탈퇴 문구</div>
+            <div className="text-regular14 mt-[8px]">
+              탈퇴시 회원 정보와 프로필은 영구 삭제되어 복구할 수 없습니다. 단, 서비스 내에 작성한 콘텐츠(게시글, 댓글,
+              채팅 등)는 삭제되지 않으며, 작성자 정보는 &apos;(알수없음)&apos;으로 표시됩니다.
+            </div>
             <button
               type="button"
               className="text-regular14 flex items-center gap-[8px]"
@@ -181,7 +184,7 @@ function AccountSettingPage() {
               <div
                 className={`my-[19px] h-[14px] w-[14px] rounded-[2px] ${isWithdrawalAgreed ? 'bg-primary' : 'bg-gray0'}`}
               />
-              동의합니다.
+              회원탈퇴에 동의합니다.
             </button>
             <button
               type="button"
