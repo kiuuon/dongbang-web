@@ -233,7 +233,7 @@ function InfoForm() {
         <div>
           <div className="flex flex-col gap-[10px]">
             <label htmlFor="name" className="text-bold12">
-              이름
+              프로필 이름
             </label>
             <input
               id="name"
@@ -243,7 +243,7 @@ function InfoForm() {
                   trigger('name');
                 },
               })}
-              placeholder="이름을 입력해주세요."
+              placeholder="프로필 이름을 입력해주세요."
               className="text-regular14 flex h-[48px] w-full rounded-[8px] border border-gray0 pl-[16px] outline-none placeholder:text-gray1"
             />
           </div>
