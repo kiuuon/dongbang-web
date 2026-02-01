@@ -14,7 +14,7 @@
 ### ⚙️ 어떤 기술을 사용했나요?
 
 `TypeScript` `Next.js` `Tailwind CSS`  
-`Axios` `TanStack Query` `Supabase`  
+`Supabase` `TanStack Query` `Zustand`  
 `React Hook Form` `Yup`
 
 :octocat: [App 저장소](https://github.com/kiuuon/dongbang-app)
