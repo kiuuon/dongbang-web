@@ -1,6 +1,7 @@
 ### [🪟 동방 바로가기](https://www.dongaribang.com)
 
 ## 동방 - 대학 동아리 교류 플랫폼
+<img width="512" height="156" alt="logo" src="https://github.com/user-attachments/assets/72f3dc61-a8b1-4160-acfe-9f485bab8854" />
 
 ### 🔍 어떤 서비스 인가요?
 
